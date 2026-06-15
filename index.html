@@ -5,299 +5,447 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jessica · Cal Sync</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
 
 :root {
-  --bg: #f7f7f8;
+  /* Dark panel (left) */
+  --panel: #0f1117;
+  --panel2: #181c27;
+  --panel-border: #252a38;
+  --panel-text: #e8ecf5;
+  --panel-muted: #5a6380;
+  --panel-hint: #2a304a;
+
+  /* Light content (right) */
+  --bg: #f4f5f8;
   --surface: #ffffff;
-  --surface2: #fff5f7;
-  --border: #f0dde2;
-  --border2: #e8c8d0;
-  --text: #2a1520;
-  --muted: #b08090;
-  --accent: #e16b8c;
-  --accent-dark: #c44d70;
-  --accent-light: #fce8ef;
-  --green: #3d7a55;
-  --green-light: #eaf5ef;
-  --green-border: #aad8bc;
-  --blue: #3a5c8a;
-  --blue-light: #e8f0fa;
-  --blue-border: #b0c8e8;
-  --sans: 'Noto Sans TC', sans-serif;
-  --radius: 14px;
-  --radius-sm: 9px;
-  --shadow: 0 2px 16px rgba(225,107,140,0.08);
-  --shadow-md: 0 6px 32px rgba(225,107,140,0.14);
+  --surface2: #f8f9fc;
+  --border: #e4e7f0;
+  --border2: #cdd3e3;
+  --text: #1a1d2e;
+  --muted: #8590a8;
+
+  /* Accent – electric teal */
+  --accent: #2dd4bf;
+  --accent-dark: #14b8a6;
+  --accent-dim: rgba(45,212,191,0.12);
+  --accent-glow: rgba(45,212,191,0.25);
+
+  /* Status */
+  --green: #22c55e;
+  --green-light: #f0fdf4;
+  --green-border: #86efac;
+  --blue: #3b82f6;
+  --blue-light: #eff6ff;
+  --blue-border: #93c5fd;
+  --amber: #f59e0b;
+  --amber-light: #fffbeb;
+  --amber-border: #fcd34d;
+  --purple: #a855f7;
+  --purple-light: #faf5ff;
+  --purple-border: #d8b4fe;
+
+  --sans: 'Inter', 'Noto Sans TC', sans-serif;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 8px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 24px rgba(0,0,0,0.10);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
 /* ── Header ── */
 header {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 0 32px;
-  height: 64px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--panel-border);
+  padding: 0 28px;
+  height: 58px;
   display: flex; align-items: center; justify-content: space-between;
-  box-shadow: var(--shadow);
   position: relative; z-index: 10;
+  flex-shrink: 0;
 }
 
 .logo {
-  font-size: 16px; font-weight: 700;
-  color: var(--accent);
+  font-size: 14px; font-weight: 600;
+  color: var(--panel-text);
   display: flex; align-items: center; gap: 10px;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.2px;
 }
 .logo-mark {
-  width: 32px; height: 32px;
+  width: 28px; height: 28px;
   background: var(--accent);
-  border-radius: 10px;
+  border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 3px 12px rgba(225,107,140,0.4);
 }
-.logo-mark svg { width: 15px; height: 15px; fill: white; }
+.logo-mark svg { width: 13px; height: 13px; fill: var(--panel); }
+.logo-dot { color: var(--panel-muted); }
 
 #auth-btn {
-  font-family: var(--sans); font-size: 13px; font-weight: 600;
-  padding: 9px 24px;
-  background: var(--accent);
-  border: none;
-  color: #ffffff;
-  border-radius: 50px;
+  font-family: var(--sans); font-size: 12px; font-weight: 500;
+  padding: 7px 18px;
+  background: var(--panel2);
+  border: 1px solid var(--panel-border);
+  color: var(--panel-text);
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s;
-  display: flex; align-items: center; gap: 7px;
-  box-shadow: 0 3px 12px rgba(225,107,140,0.35);
-  letter-spacing: 0.2px;
+  transition: all 0.18s;
+  display: flex; align-items: center; gap: 6px;
+  letter-spacing: 0.1px;
 }
-#auth-btn:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 5px 18px rgba(225,107,140,0.45); }
-#auth-btn.out { background: #fff0f4; border: 1.5px solid var(--border); color: var(--accent-dark); box-shadow: none; }
+#auth-btn:hover { border-color: var(--accent); color: var(--accent); }
+#auth-btn.out { border-color: var(--panel-border); color: var(--panel-muted); }
+#auth-btn.out:hover { border-color: #ef4444; color: #ef4444; }
 
-main { flex: 1; display: grid; grid-template-columns: 400px 1fr; min-height: 0; }
+.status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--panel-muted);
+  transition: background 0.2s;
+}
+#auth-btn.out .status-dot { background: var(--accent); }
 
-/* ── LEFT ── */
+/* ── Layout ── */
+main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── LEFT PANEL (dark) ── */
 .left {
-  background: var(--surface);
-  border-right: 1px solid var(--border);
+  background: var(--panel);
+  border-right: 1px solid var(--panel-border);
   display: flex; flex-direction: column;
+  overflow: hidden;
 }
 
-.section-label {
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 1.5px; text-transform: uppercase;
-  color: var(--accent);
-  padding: 20px 24px 14px;
-  border-bottom: 1px solid var(--border);
+.panel-header {
+  padding: 18px 22px 16px;
+  border-bottom: 1px solid var(--panel-border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.panel-title {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--panel-muted);
+}
+.panel-badge {
+  font-size: 10px; font-weight: 500;
+  padding: 3px 8px; border-radius: 4px;
+  background: var(--panel-hint);
+  color: var(--panel-muted);
+  letter-spacing: 0.3px;
 }
 
 .paste-area {
-  padding: 20px 24px; flex: 1;
-  display: flex; flex-direction: column; gap: 14px;
+  padding: 16px 20px; flex: 1;
+  display: flex; flex-direction: column; gap: 12px;
+  overflow: hidden;
 }
 
 .paste-hint {
-  font-size: 12px; font-weight: 400; color: var(--muted);
-  line-height: 1.75; padding: 14px 16px;
-  background: var(--surface2);
+  font-size: 11.5px; font-weight: 300; color: var(--panel-muted);
+  line-height: 1.8; padding: 12px 14px;
+  background: var(--panel2);
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
+  border: 1px solid var(--panel-border);
 }
-.paste-hint strong { color: var(--accent); font-weight: 600; }
+.paste-hint strong { color: var(--accent); font-weight: 500; }
 .paste-hint code {
-  font-family: var(--sans); font-size: 11px; font-weight: 600;
-  background: rgba(225,107,140,0.12); color: var(--accent);
-  padding: 1px 7px; border-radius: 5px;
+  font-family: var(--sans); font-size: 10.5px; font-weight: 600;
+  background: var(--accent-dim); color: var(--accent);
+  padding: 1px 6px; border-radius: 4px;
+  border: 1px solid rgba(45,212,191,0.2);
 }
 
 textarea#paste-input {
-  flex: 1; min-height: 300px; resize: none;
-  font-family: var(--sans); font-size: 12px; line-height: 1.75;
-  padding: 16px;
-  background: #ffffff;
-  border: 1.5px solid var(--border);
+  flex: 1; min-height: 200px; resize: none;
+  font-family: var(--sans); font-size: 11.5px; line-height: 1.75;
+  padding: 14px;
+  background: var(--panel2);
+  border: 1px solid var(--panel-border);
   border-radius: var(--radius-sm);
-  color: var(--text); outline: none;
+  color: var(--panel-text); outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-textarea#paste-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(225,107,140,0.12); }
-textarea#paste-input::placeholder { color: #d0a0b0; }
+textarea#paste-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+textarea#paste-input::placeholder { color: var(--panel-muted); opacity: 0.6; }
 
-.left-actions { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; }
+.left-actions {
+  padding: 14px 20px;
+  border-top: 1px solid var(--panel-border);
+  display: flex; flex-direction: column; gap: 8px;
+  flex-shrink: 0;
+}
 
 .btn {
-  width: 100%; padding: 13px; border-radius: var(--radius);
-  font-family: var(--sans); font-size: 13px; font-weight: 600;
+  width: 100%; padding: 11px;
+  border-radius: var(--radius-sm);
+  font-family: var(--sans); font-size: 12.5px; font-weight: 500;
   cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  transition: all 0.2s; border: none;
-  letter-spacing: 0.2px;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  transition: all 0.18s; border: none;
+  letter-spacing: 0.15px;
 }
 .btn-primary {
   background: var(--accent);
-  color: white;
-  box-shadow: 0 4px 16px rgba(225,107,140,0.38);
+  color: var(--panel);
+  font-weight: 600;
 }
-.btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 6px 22px rgba(225,107,140,0.48); }
-.btn-primary:active { transform: translateY(0); }
-.btn-primary:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
-.btn-ghost { background: transparent; border: 1.5px solid var(--border); color: var(--muted); font-weight: 400; }
-.btn-ghost:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.btn-primary:hover { background: var(--accent-dark); }
+.btn-primary:active { transform: scale(0.99); }
+.btn-primary:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--panel-border);
+  color: var(--panel-muted); font-weight: 400;
+}
+.btn-ghost:hover { border-color: var(--panel-muted); color: var(--panel-text); }
 
-/* ── RIGHT ── */
+/* Push progress bar */
+.push-progress {
+  height: 3px;
+  background: var(--panel-border);
+  border-radius: 2px;
+  overflow: hidden;
+  display: none;
+}
+.push-progress.active { display: block; }
+.push-progress-bar {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+/* ── RIGHT PANEL ── */
 .right { display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
 
 .right-header {
-  padding: 16px 28px;
+  padding: 14px 24px;
   border-bottom: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between;
   background: var(--surface);
+  flex-shrink: 0;
 }
-.right-title { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); }
-.right-stats { display: flex; gap: 8px; }
-.stat-pill { font-size: 11px; font-weight: 500; padding: 4px 13px; border-radius: 50px; }
+.right-title {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--muted);
+}
+.right-stats { display: flex; gap: 6px; }
+.stat-pill {
+  font-size: 11px; font-weight: 500;
+  padding: 4px 11px; border-radius: 6px;
+  display: flex; align-items: center; gap: 5px;
+}
 .stat-synced { background: var(--green-light); border: 1px solid var(--green-border); color: var(--green); }
 .stat-allday { background: var(--blue-light); border: 1px solid var(--blue-border); color: var(--blue); }
 .stat-total { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); }
 
 #events-list {
   flex: 1; overflow-y: auto;
-  padding: 20px 28px;
-  display: flex; flex-direction: column; gap: 10px;
+  padding: 18px 24px;
+  display: flex; flex-direction: column; gap: 8px;
 }
 
 .empty-state {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 14px; padding: 80px 40px; color: var(--muted); text-align: center;
+  gap: 10px; padding: 80px 40px; color: var(--muted); text-align: center;
+  height: 100%;
 }
-.empty-icon { font-size: 40px; opacity: 0.2; }
-.empty-state p { font-size: 13px; line-height: 1.8; font-weight: 300; }
+.empty-icon {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  background: var(--surface2);
+  border: 1.5px dashed var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.empty-state h3 { font-size: 14px; font-weight: 500; color: var(--text); opacity: 0.5; }
+.empty-state p { font-size: 12px; line-height: 1.8; font-weight: 300; opacity: 0.7; }
 
+/* ── Event Row ── */
 .event-row {
   background: var(--surface);
-  border: 1.5px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 14px 16px;
-  display: grid; grid-template-columns: 3px 1fr auto;
+  display: grid;
+  grid-template-columns: 3px 1fr auto;
   gap: 14px; align-items: start;
-  animation: fadeUp 0.25s ease;
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  animation: fadeUp 0.2s ease;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
   box-shadow: var(--shadow);
 }
-.event-row:hover { border-color: var(--accent); box-shadow: var(--shadow-md); transform: translateY(-1px); }
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+.event-row:hover {
+  border-color: var(--border2);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+.event-row.has-error {
+  border-color: #fca5a5;
+  background: #fff5f5;
 }
 
-.event-bar { border-radius: 4px; align-self: stretch; min-height: 40px; }
-.bar-block { background: var(--accent); }
-.bar-allday { background: var(--blue); }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-.event-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.event-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.event-bar { border-radius: 3px; align-self: stretch; min-height: 36px; }
+.bar-block  { background: var(--accent); }
+.bar-allday { background: var(--blue); }
+.bar-error  { background: #ef4444; }
+
+.event-body { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.event-top  { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .event-title { font-size: 13px; font-weight: 600; color: var(--text); }
 
 .tag {
   font-size: 10px; font-weight: 500;
-  padding: 3px 9px; border-radius: 50px; white-space: nowrap;
+  padding: 2px 8px; border-radius: 4px; white-space: nowrap;
 }
 .tag-platform { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); }
-.tag-type { background: rgba(225,107,140,0.10); border: 1px solid var(--border); color: var(--accent); }
-.tag-allday { background: var(--blue-light); border: 1px solid var(--blue-border); color: var(--blue); }
-.tag-status-processing { background: #fff8e8; border: 1px solid #f0d890; color: #907020; }
-.tag-status-pending { background: #f5e8ff; border: 1px solid #d4a8f0; color: #6a28a0; }
-.tag-status-other { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); }
+.tag-type     { background: var(--accent-dim); border: 1px solid rgba(45,212,191,0.25); color: var(--accent-dark); }
+.tag-allday   { background: var(--blue-light); border: 1px solid var(--blue-border); color: var(--blue); }
+.tag-status-processing { background: var(--amber-light); border: 1px solid var(--amber-border); color: #92400e; }
+.tag-status-pending    { background: var(--purple-light); border: 1px solid var(--purple-border); color: #6b21a8; }
+.tag-status-other      { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); }
+.tag-urgent   { background: #fef2f2; border: 1px solid #fca5a5; color: #b91c1c; font-weight: 600; }
 
-.event-meta { font-size: 11px; font-weight: 300; color: var(--muted); display: flex; gap: 12px; flex-wrap: wrap; }
-.event-desc { font-size: 11px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+.event-meta {
+  font-size: 11px; font-weight: 400; color: var(--muted);
+  display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+}
+.meta-item { display: flex; align-items: center; gap: 4px; }
+.event-desc {
+  font-size: 11px; color: var(--muted); line-height: 1.6;
+  font-weight: 300; margin-top: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  max-width: 380px;
+}
 
+/* ── Event Controls ── */
 .event-controls { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
-.time-inputs { display: flex; align-items: center; gap: 5px; }
 
+.time-inputs { display: flex; align-items: center; gap: 4px; }
 .time-input {
   font-family: var(--sans); font-size: 11px; font-weight: 400;
-  padding: 5px 8px;
-  background: #ffffff;
-  border: 1.5px solid var(--border);
+  padding: 5px 7px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  color: var(--text); outline: none; width: 82px;
-  transition: border-color 0.2s;
+  color: var(--text); outline: none; width: 76px;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
-.time-input:focus { border-color: var(--accent); }
-
+.time-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
 .sep { color: var(--muted); font-size: 11px; }
 
 .icon-btns { display: flex; gap: 5px; }
 .icon-btn {
-  width: 30px; height: 30px;
+  width: 28px; height: 28px;
   border-radius: var(--radius-sm);
-  border: 1.5px solid var(--border);
+  border: 1px solid var(--border);
   background: transparent; cursor: pointer;
   color: var(--muted);
   display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-family: var(--sans);
-  transition: all 0.2s;
+  font-size: 12px; font-family: var(--sans);
+  transition: all 0.15s;
 }
-.icon-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
-.icon-btn.del:hover { border-color: #f0b0b0; color: #b03050; background: #fff0f2; }
+.icon-btn:hover { border-color: var(--border2); color: var(--text); background: var(--surface2); }
+.icon-btn.del:hover { border-color: #fca5a5; color: #ef4444; background: #fef2f2; }
 .icon-btn.sync-one:hover { border-color: var(--green-border); color: var(--green); background: var(--green-light); }
 .icon-btn.synced { border-color: var(--green-border); color: var(--green); background: var(--green-light); }
+.icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* Spinning animation for sync */
+.icon-btn.syncing { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* Setup banner */
 .setup-banner {
-  background: var(--surface2); border-bottom: 1px solid var(--border);
-  padding: 10px 28px; font-size: 12px; color: var(--accent);
+  background: #1a1208; border-bottom: 1px solid #2a2010;
+  padding: 9px 24px; font-size: 11.5px;
+  color: var(--amber);
   display: flex; align-items: center; gap: 8px; font-family: var(--sans);
+  flex-shrink: 0;
 }
-.setup-banner a { color: var(--accent-dark); font-weight: 600; text-decoration: underline; }
+.setup-banner a { color: var(--amber); font-weight: 600; text-decoration: underline; }
 
 /* Modal */
 .modal-overlay {
   display: none; position: fixed; inset: 0;
-  background: rgba(42,21,32,0.3); z-index: 100;
+  background: rgba(0,0,0,0.45); z-index: 100;
   align-items: center; justify-content: center;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(4px);
 }
 .modal-overlay.open { display: flex; }
 .modal {
-  background: var(--surface); border: 1.5px solid var(--border);
-  border-radius: 18px; padding: 32px; width: 420px; max-width: 90vw;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px; width: 420px; max-width: 90vw;
   box-shadow: var(--shadow-md);
+  animation: modalIn 0.2s ease;
 }
-.modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
-.modal p { font-size: 12px; color: var(--muted); line-height: 1.8; margin-bottom: 20px; font-weight: 300; }
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.97) translateY(6px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+.modal p { font-size: 12px; color: var(--muted); line-height: 1.8; margin-bottom: 18px; font-weight: 300; }
 .modal input {
-  width: 100%; margin-bottom: 16px; font-family: var(--sans); font-size: 13px;
-  padding: 11px 14px; background: #ffffff;
-  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-  color: var(--text); outline: none; transition: border-color 0.2s;
+  width: 100%; margin-bottom: 14px; font-family: var(--sans); font-size: 13px;
+  padding: 10px 13px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  color: var(--text); outline: none; transition: border-color 0.15s;
 }
-.modal input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(225,107,140,0.12); }
-.modal-actions { display: flex; gap: 10px; }
+.modal input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+.modal-actions { display: flex; gap: 8px; }
 .modal-actions .btn { width: auto; flex: 1; }
 
 /* Toast */
 .toast {
-  position: fixed; bottom: 24px; right: 24px;
-  padding: 11px 20px; background: var(--surface);
-  border: 1.5px solid var(--border); border-radius: var(--radius);
-  font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--text);
-  box-shadow: var(--shadow-md);
-  transform: translateY(14px); opacity: 0;
-  transition: all 0.25s; z-index: 200;
+  position: fixed; bottom: 20px; right: 20px;
+  padding: 10px 18px; background: var(--panel);
+  border: 1px solid var(--panel-border); border-radius: var(--radius);
+  font-family: var(--sans); font-size: 12.5px; font-weight: 500;
+  color: var(--panel-text);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  transform: translateY(16px); opacity: 0;
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 200;
+  display: flex; align-items: center; gap: 8px;
 }
 .toast.show { transform: translateY(0); opacity: 1; }
-.toast.ok { border-color: var(--green-border); color: var(--green); background: var(--green-light); }
-.toast.err { border-color: #f0b0b8; color: #b03050; background: #fff0f2; }
+.toast.ok { border-color: var(--green-border); }
+.toast.ok::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+.toast.err { border-color: #f87171; }
+.toast.err::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #ef4444; flex-shrink: 0; }
 
-::-webkit-scrollbar { width: 5px; }
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--border2); }
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  main { grid-template-columns: 1fr; }
+  .left { max-height: 50vh; }
+  .right { height: 50vh; }
+}
 </style>
 </head>
 <body>
@@ -312,28 +460,35 @@ textarea#paste-input::placeholder { color: #d0a0b0; }
     <div class="logo-mark">
       <svg viewBox="0 0 12 12"><rect x="1" y="1" width="4" height="4" rx="1"/><rect x="7" y="1" width="4" height="4" rx="1"/><rect x="1" y="7" width="4" height="4" rx="1"/><rect x="7" y="7" width="4" height="4" rx="1"/></svg>
     </div>
-    jessica · cal sync
+    jessica <span class="logo-dot">/</span> cal sync
   </div>
-  <button id="auth-btn" onclick="handleAuth()">⬤ 登入 Google</button>
+  <button id="auth-btn" onclick="handleAuth()">
+    <span class="status-dot"></span>
+    登入 Google
+  </button>
 </header>
 
 <main>
   <div class="left">
-    <div class="section-label">貼上 Google Sheets 資料</div>
+    <div class="panel-header">
+      <span class="panel-title">貼上 Sheets 資料</span>
+      <span class="panel-badge">owner = jessica</span>
+    </div>
     <div class="paste-area">
       <div class="paste-hint">
         從 Google Sheets 選取所有欄位（含標題列）→ <code>Ctrl+C</code> → 貼到下方<br>
         工具會自動篩出 <strong>Owner = Jessica</strong> 的任務並推送到 Calendar
       </div>
-      <textarea id="paste-input" placeholder="在此貼上複製的表格內容..."></textarea>
+      <textarea id="paste-input" placeholder="在此貼上複製的表格內容…"></textarea>
     </div>
     <div class="left-actions">
+      <div class="push-progress" id="push-progress">
+        <div class="push-progress-bar" id="push-progress-bar"></div>
+      </div>
       <button class="btn btn-primary" id="push-btn" onclick="handlePaste()" disabled>
         ↑ 解析並推送到 Calendar
       </button>
-      <button class="btn btn-ghost" onclick="document.getElementById('paste-input').value=''; updatePushBtn()">
-        清除
-      </button>
+      <button class="btn btn-ghost" onclick="clearInput()">清除</button>
     </div>
   </div>
 
@@ -349,6 +504,7 @@ textarea#paste-input::placeholder { color: #d0a0b0; }
     <div id="events-list">
       <div class="empty-state">
         <div class="empty-icon">📋</div>
+        <h3>尚無事件</h3>
         <p>從左側貼上 Sheets 資料<br>Jessica 的任務會自動出現在這裡</p>
       </div>
     </div>
@@ -380,7 +536,7 @@ textarea#paste-input::placeholder { color: #d0a0b0; }
     <h3>確認刪除？</h3>
     <p>事件將從 Google Calendar 中永久刪除，無法復原。</p>
     <div class="modal-actions">
-      <button class="btn btn-primary" style="background:#c03030" id="confirm-del-btn">確認刪除</button>
+      <button class="btn btn-primary" style="background:#ef4444; color:#fff;" id="confirm-del-btn">確認刪除</button>
       <button class="btn btn-ghost" onclick="document.getElementById('modal-delete').classList.remove('open')">取消</button>
     </div>
   </div>
@@ -397,7 +553,7 @@ const TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 let CLIENT_ID = localStorage.getItem(CLIENT_ID_KEY) || '';
 let gapiInited = false, gisInited = false, isSignedIn = false;
 let tokenClient;
-let events = {}; // id -> event obj + meta
+let events = {}; // id → event obj + meta
 
 // 時段 → 預設開始時間
 const SLOT_MAP = {
@@ -407,7 +563,8 @@ const SLOT_MAP = {
   '傍晚': '16:30',
 };
 
-function openSetup() { document.getElementById('modal-setup').classList.add('open'); }
+// ── Modal helpers ──
+function openSetup()  { document.getElementById('modal-setup').classList.add('open'); }
 function closeSetup() { document.getElementById('modal-setup').classList.remove('open'); }
 
 function saveClientId() {
@@ -416,15 +573,19 @@ function saveClientId() {
   localStorage.setItem(CLIENT_ID_KEY, v);
   CLIENT_ID = v;
   closeSetup();
-  showToast('已儲存，重新載入中...', 'ok');
+  showToast('已儲存，重新載入中…', 'ok');
   setTimeout(() => location.reload(), 1000);
 }
 
 // ── Google API ──
 async function initGapi() {
-  await gapi.client.init({ discoveryDocs: [DISCOVERY_DOC] });
-  gapiInited = true;
-  tryAutoLogin();
+  try {
+    await gapi.client.init({ discoveryDocs: [DISCOVERY_DOC] });
+    gapiInited = true;
+    tryAutoLogin();
+  } catch(e) {
+    showToast('Google API 初始化失敗', 'err');
+  }
 }
 
 function initGis() {
@@ -437,7 +598,7 @@ function initGis() {
 
 function tryAutoLogin() {
   if (!gapiInited || !gisInited) return;
-  const token = localStorage.getItem('gcal_jess_token');
+  const token  = localStorage.getItem('gcal_jess_token');
   const expiry = localStorage.getItem('gcal_jess_expiry');
   if (token && expiry && Date.now() < parseInt(expiry)) {
     gapi.client.setToken({ access_token: token });
@@ -462,7 +623,7 @@ function handleAuth() {
     localStorage.setItem('gcal_jess_token', token);
     localStorage.setItem('gcal_jess_expiry', String(Date.now() + resp.expires_in * 1000));
     setSignedIn(true);
-    showToast('✓ 登入成功', 'ok');
+    showToast('登入成功', 'ok');
   };
   tokenClient.requestAccessToken({ prompt: gapi.client.getToken() ? '' : 'consent' });
 }
@@ -470,8 +631,14 @@ function handleAuth() {
 function setSignedIn(v) {
   isSignedIn = v;
   const btn = document.getElementById('auth-btn');
-  btn.textContent = v ? '⬤ 登出' : '⬤ 登入 Google';
-  btn.className = v ? 'out' : '';
+  const dot = btn.querySelector('.status-dot');
+  if (v) {
+    btn.innerHTML = '<span class="status-dot"></span> 登出';
+    btn.classList.add('out');
+  } else {
+    btn.innerHTML = '<span class="status-dot"></span> 登入 Google';
+    btn.classList.remove('out');
+  }
   updatePushBtn();
 }
 
@@ -480,7 +647,7 @@ function parseTsv(text) {
   const lines = text.trim().split('\n').map(l => l.split('\t'));
   if (!lines.length) return [];
 
-  // 固定欄位順序（直接從 Sheets 複製，不需標題列）：
+  // 固定欄位順序（從 Sheets 複製）：
   // 0:星期  1:Owner  2:狀態  3:日期  4:時間  5:急  6:品牌/公司  7:平台  8:類型  9:細項  10:時段  11:備註
   const iOwner    = 1;
   const iStatus   = 2;
@@ -498,8 +665,8 @@ function parseTsv(text) {
     if (!cols || cols.length < 4) continue;
 
     const owner = (cols[iOwner] || '').trim();
-    // 跳過標題列（如果使用者不小心貼了）
-    if (owner.toLowerCase() === 'owner') continue;
+    // 跳過標題列（英文或中文）
+    if (/^(owner|負責人|擁有者)$/i.test(owner)) continue;
     if (!owner.toLowerCase().includes('jes')) continue;
 
     const dateRaw = (cols[iDate] || '').trim();
@@ -508,21 +675,21 @@ function parseTsv(text) {
     const date = parseDate(dateRaw);
     if (!date) continue;
 
-    const slot     = (cols[iSlot]     || '').trim();
-    const brand    = (cols[iBrand]    || '').trim();
-    const platform = (cols[iPlatform] || '').trim();
-    const type     = (cols[iType]     || '').trim();
-    const detail   = (cols[iDetail]   || '').trim();
-    const status   = (cols[iStatus]   || '').trim();
-    const urgent   = (cols[iUrgent]   || '').trim();
-
-    rows.push({ date, slot, brand, platform, type, detail, status, urgent });
+    rows.push({
+      date,
+      slot:     (cols[iSlot]     || '').trim(),
+      brand:    (cols[iBrand]    || '').trim(),
+      platform: (cols[iPlatform] || '').trim(),
+      type:     (cols[iType]     || '').trim(),
+      detail:   (cols[iDetail]   || '').trim(),
+      status:   (cols[iStatus]   || '').trim(),
+      urgent:   (cols[iUrgent]   || '').trim(),
+    });
   }
   return rows;
 }
 
 function parseDate(raw) {
-  // Try yyyy/m/d, yyyy-m-d, m/d
   const m1 = raw.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
   if (m1) return `${m1[1]}-${m1[2].padStart(2,'0')}-${m1[3].padStart(2,'0')}`;
   const m2 = raw.match(/(\d{1,2})[\/\-](\d{1,2})/);
@@ -540,28 +707,41 @@ function buildTitle(row) {
 
 function buildCalEvent(row) {
   const slotStart = SLOT_MAP[row.slot] || null;
-  const isAllDay = !slotStart;
+  const isAllDay  = !slotStart;
 
   if (isAllDay) {
+    // Google Calendar 全天事件：end.date 需為隔天（exclusive）
+    const nextDay = new Date(row.date + 'T00:00:00');
+    nextDay.setDate(nextDay.getDate() + 1);
+    const endDate = nextDay.toISOString().slice(0, 10);
     return {
       summary: buildTitle(row),
       description: row.detail || undefined,
       visibility: 'private',
       start: { date: row.date },
-      end: { date: row.date },
-    };
-  } else {
-      const startDt = new Date(`${row.date}T${slotStart}:00`);
-    const endDt   = new Date(startDt.getTime() + 30 * 60 * 1000);
-    const endTime = `${String(endDt.getHours()).padStart(2,'0')}:${String(endDt.getMinutes()).padStart(2,'0')}`;
-    return {
-      summary: buildTitle(row),
-      description: row.detail || undefined,
-      visibility: 'private',
-      start: { dateTime: `${row.date}T${slotStart}:00`, timeZone: TZ },
-      end:   { dateTime: `${row.date}T${endTime}:00`,   timeZone: TZ },
+      end:   { date: endDate },
     };
   }
+
+  const startDt = new Date(`${row.date}T${slotStart}:00`);
+  const endDt   = new Date(startDt.getTime() + 30 * 60 * 1000);
+  const endTime = `${String(endDt.getHours()).padStart(2,'0')}:${String(endDt.getMinutes()).padStart(2,'0')}`;
+  return {
+    summary: buildTitle(row),
+    description: row.detail || undefined,
+    visibility: 'private',
+    start: { dateTime: `${row.date}T${slotStart}:00`, timeZone: TZ },
+    end:   { dateTime: `${row.date}T${endTime}:00`,   timeZone: TZ },
+  };
+}
+
+// ── Duplicate check ──
+function isDuplicate(row) {
+  const title = buildTitle(row);
+  return Object.values(events).some(ev =>
+    ev.summary === title &&
+    (ev.start?.date === row.date || ev.start?.dateTime?.slice(0, 10) === row.date)
+  );
 }
 
 // ── Main handler ──
@@ -573,47 +753,87 @@ async function handlePaste() {
   const rows = parseTsv(text);
   if (!rows.length) { showToast('找不到 Jessica 的任務，請確認欄位格式', 'err'); return; }
 
-  const btn = document.getElementById('push-btn');
-  btn.disabled = true;
-  btn.textContent = `推送中 (0/${rows.length})...`;
+  // De-dup check
+  const newRows   = rows.filter(r => !isDuplicate(r));
+  const dupCount  = rows.length - newRows.length;
+  if (!newRows.length) {
+    showToast(`所有 ${rows.length} 筆已存在，未重複推送`, 'err');
+    return;
+  }
 
+  const btn = document.getElementById('push-btn');
+  const progress = document.getElementById('push-progress');
+  const progressBar = document.getElementById('push-progress-bar');
+  btn.disabled = true;
+  btn.textContent = `推送中 0 / ${newRows.length}`;
+  progress.classList.add('active');
+  progressBar.style.width = '0%';
+
+  // 並行推送（最多 5 個同時）
+  const CHUNK = 5;
   let successCount = 0;
-  for (let i = 0; i < rows.length; i++) {
-    const row = rows[i];
-    const calEvent = buildCalEvent(row);
-    try {
-      const res = await gapi.client.calendar.events.insert({ calendarId: 'primary', resource: calEvent });
-      const id = res.result.id;
-      events[id] = { ...res.result, _row: row, _synced: true };
-      successCount++;
-    } catch(e) {
-      console.error('Push error', e);
-    }
-    btn.textContent = `推送中 (${i+1}/${rows.length})...`;
+  let failCount = 0;
+
+  for (let i = 0; i < newRows.length; i += CHUNK) {
+    const chunk = newRows.slice(i, i + CHUNK);
+    const results = await Promise.allSettled(
+      chunk.map(row => gapi.client.calendar.events.insert({
+        calendarId: 'primary',
+        resource: buildCalEvent(row),
+      }).then(res => ({ res, row })))
+    );
+
+    results.forEach(r => {
+      if (r.status === 'fulfilled') {
+        const { res, row } = r.value;
+        const id = res.result.id;
+        events[id] = { ...res.result, _row: row, _synced: true };
+        successCount++;
+      } else {
+        console.error('Push error', r.reason);
+        failCount++;
+      }
+    });
+
+    const done = Math.min(i + CHUNK, newRows.length);
+    btn.textContent = `推送中 ${done} / ${newRows.length}`;
+    progressBar.style.width = `${(done / newRows.length) * 100}%`;
   }
 
   renderEvents();
   btn.disabled = false;
   btn.textContent = '↑ 解析並推送到 Calendar';
-  showToast(`✓ 已推送 ${successCount}/${rows.length} 筆`, 'ok');
+  progress.classList.remove('active');
+  progressBar.style.width = '0%';
+  updatePushBtn();
+
+  let msg = `已推送 ${successCount}/${newRows.length} 筆`;
+  if (dupCount)  msg += `，跳過 ${dupCount} 重複`;
+  if (failCount) msg += `，失敗 ${failCount} 筆`;
+  showToast(msg, successCount > 0 ? 'ok' : 'err');
 }
 
 // ── Render ──
 function renderEvents() {
   const list = document.getElementById('events-list');
-  const all = Object.values(events);
+  const all  = Object.values(events);
 
-  document.getElementById('stat-total').textContent = `${all.length} 筆`;
-  document.getElementById('stat-synced').textContent = `✓ ${all.filter(e=>e._synced).length} 已同步`;
-  document.getElementById('stat-allday').textContent = `◈ ${all.filter(e=>e.start?.date).length} 全天`;
+  document.getElementById('stat-total').textContent  = `${all.length} 筆`;
+  document.getElementById('stat-synced').textContent = `✓ ${all.filter(e => e._synced).length} 已同步`;
+  document.getElementById('stat-allday').textContent = `◈ ${all.filter(e => e.start?.date).length} 全天`;
 
   if (!all.length) {
-    list.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>從左側貼上 Sheets 資料<br>Jessica 的任務會自動出現在這裡</p></div>`;
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <h3>尚無事件</h3>
+        <p>從左側貼上 Sheets 資料<br>Jessica 的任務會自動出現在這裡</p>
+      </div>`;
     return;
   }
 
-  // Sort by date
-  all.sort((a,b) => {
+  // 按日期排序
+  all.sort((a, b) => {
     const ad = a.start?.dateTime || a.start?.date || '';
     const bd = b.start?.dateTime || b.start?.date || '';
     return ad.localeCompare(bd);
@@ -621,52 +841,65 @@ function renderEvents() {
 
   list.innerHTML = all.map(ev => {
     const isAllDay = !!ev.start?.date;
-    const row = ev._row || {};
+    const row   = ev._row || {};
     const title = ev.summary || '（無標題）';
-    const desc = ev.description || '';
+    const desc  = ev.description || '';
+    const id    = ev.id;
 
     let dateLabel = '', startVal = '', endVal = '';
     if (isAllDay) {
       dateLabel = formatDateLabel(ev.start.date);
     } else {
-      dateLabel = formatDateLabel(ev.start.dateTime?.slice(0,10));
-      startVal = ev.start.dateTime?.slice(11,16) || '';
-      endVal   = ev.end?.dateTime?.slice(11,16) || '';
+      dateLabel = formatDateLabel(ev.start.dateTime?.slice(0, 10));
+      startVal  = ev.start.dateTime?.slice(11, 16) || '';
+      endVal    = ev.end?.dateTime?.slice(11, 16)  || '';
     }
 
     const statusClass = getStatusClass(row.status);
+    const isUrgent    = row.urgent === 'TRUE' || row.urgent === '✓';
 
-    return `<div class="event-row" id="row-${ev.id}">
+    return `<div class="event-row" id="row-${esc(id)}" data-id="${esc(id)}">
       <div class="event-bar ${isAllDay ? 'bar-allday' : 'bar-block'}"></div>
       <div class="event-body">
         <div class="event-top">
           <span class="event-title">${esc(title)}</span>
           ${row.platform ? `<span class="tag tag-platform">${esc(row.platform)}</span>` : ''}
-          ${row.type ? `<span class="tag tag-type">${esc(row.type)}</span>` : ''}
-          ${isAllDay ? `<span class="tag tag-allday">全天</span>` : ''}
-          ${row.status ? `<span class="tag ${statusClass}">${esc(row.status)}</span>` : ''}
+          ${row.type     ? `<span class="tag tag-type">${esc(row.type)}</span>` : ''}
+          ${isAllDay     ? `<span class="tag tag-allday">全天</span>` : ''}
+          ${row.status   ? `<span class="tag ${statusClass}">${esc(row.status)}</span>` : ''}
+          ${isUrgent     ? `<span class="tag tag-urgent">急件</span>` : ''}
         </div>
         <div class="event-meta">
-          <span>📅 ${dateLabel}</span>
-          ${!isAllDay ? `<span>🕐 ${startVal} – ${endVal}</span>` : ''}
-          ${row.urgent === 'TRUE' || row.urgent === '✓' ? '<span>🔴 急件</span>' : ''}
+          <span class="meta-item">📅 ${dateLabel}</span>
+          ${!isAllDay ? `<span class="meta-item">🕐 ${startVal} – ${endVal}</span>` : ''}
         </div>
-        ${desc ? `<div class="event-desc">${esc(desc.slice(0,80))}${desc.length>80?'…':''}</div>` : ''}
+        ${desc ? `<div class="event-desc" title="${esc(desc)}">${esc(desc.slice(0, 90))}${desc.length > 90 ? '…' : ''}</div>` : ''}
       </div>
       <div class="event-controls">
         ${!isAllDay ? `
         <div class="time-inputs">
-          <input class="time-input" type="time" value="${startVal}" onchange="updateTime('${ev.id}','start',this.value)" title="開始時間">
+          <input class="time-input" type="time" value="${startVal}" data-id="${esc(id)}" data-which="start" title="開始時間">
           <span class="sep">–</span>
-          <input class="time-input" type="time" value="${endVal}" onchange="updateTime('${ev.id}','end',this.value)" title="結束時間">
+          <input class="time-input" type="time" value="${endVal}"   data-id="${esc(id)}" data-which="end"   title="結束時間">
         </div>` : ''}
         <div class="icon-btns">
-          <button class="icon-btn sync-one ${ev._synced?'synced':''}" title="重新同步" onclick="syncOne('${ev.id}')">↻</button>
-          <button class="icon-btn del" title="刪除" onclick="confirmDel('${ev.id}')">✕</button>
+          <button class="icon-btn sync-one ${ev._synced ? 'synced' : ''}" title="重新同步" data-id="${esc(id)}">↻</button>
+          <button class="icon-btn del" title="刪除" data-id="${esc(id)}">✕</button>
         </div>
       </div>
     </div>`;
   }).join('');
+
+  // 使用 event delegation 而非 inline onclick（避免 XSS）
+  list.querySelectorAll('.time-input').forEach(input => {
+    input.addEventListener('change', () => updateTime(input.dataset.id, input.dataset.which, input.value));
+  });
+  list.querySelectorAll('.sync-one').forEach(btn => {
+    btn.addEventListener('click', () => syncOne(btn.dataset.id));
+  });
+  list.querySelectorAll('.icon-btn.del').forEach(btn => {
+    btn.addEventListener('click', () => confirmDel(btn.dataset.id));
+  });
 }
 
 function getStatusClass(status) {
@@ -679,21 +912,31 @@ function getStatusClass(status) {
 function formatDateLabel(dateStr) {
   if (!dateStr) return '';
   const d = new Date(dateStr + 'T12:00:00');
-  const days = ['日','一','二','三','四','五','六'];
-  return `${d.getMonth()+1}/${d.getDate()} (${days[d.getDay()]})`;
+  const days = ['日', '一', '二', '三', '四', '五', '六'];
+  return `${d.getMonth() + 1}/${d.getDate()} (${days[d.getDay()]})`;
 }
 
 // ── Update time inline ──
 async function updateTime(id, which, val) {
   const ev = events[id];
   if (!ev) return;
-  const dateStr = ev.start.dateTime?.slice(0,10);
+  const dateStr = ev.start.dateTime?.slice(0, 10);
   if (!dateStr) return;
 
   if (which === 'start') {
-    const endDt = new Date(`${dateStr}T${val}:00`);
-    endDt.setMinutes(endDt.getMinutes() + 30);
-    const endStr = `${String(endDt.getHours()).padStart(2,'0')}:${String(endDt.getMinutes()).padStart(2,'0')}`;
+    // 保持原本的時長，而不是強制 +30 分鐘
+    const oldStart = ev.start.dateTime?.slice(11, 16) || '00:00';
+    const oldEnd   = ev.end?.dateTime?.slice(11, 16)  || '00:00';
+    const [os, oe] = [oldStart, oldEnd].map(t => {
+      const [h, m] = t.split(':').map(Number);
+      return h * 60 + m;
+    });
+    const duration = Math.max(oe - os, 30); // 最少 30 分鐘
+
+    const [nh, nm] = val.split(':').map(Number);
+    const endMin   = nh * 60 + nm + duration;
+    const endStr   = `${String(Math.floor(endMin / 60) % 24).padStart(2,'0')}:${String(endMin % 60).padStart(2,'0')}`;
+
     ev.start.dateTime = `${dateStr}T${val}:00`;
     ev.end.dateTime   = `${dateStr}T${endStr}:00`;
   } else {
@@ -706,16 +949,25 @@ async function updateTime(id, which, val) {
 async function syncOne(id) {
   const ev = events[id];
   if (!ev) return;
+
+  // 視覺 feedback：按鈕 spinning
+  const syncBtn = document.querySelector(`.sync-one[data-id="${CSS.escape(id)}"]`);
+  if (syncBtn) { syncBtn.classList.add('syncing'); syncBtn.disabled = true; }
+
   try {
     const res = await gapi.client.calendar.events.update({
       calendarId: 'primary', eventId: id,
-      resource: { summary: ev.summary, description: ev.description, visibility: 'private', start: ev.start, end: ev.end }
+      resource: {
+        summary: ev.summary, description: ev.description,
+        visibility: 'private', start: ev.start, end: ev.end,
+      },
     });
     events[id] = { ...res.result, _row: ev._row, _synced: true };
     renderEvents();
-    showToast('✓ 已同步', 'ok');
+    showToast('已同步', 'ok');
   } catch(e) {
     showToast('同步失敗：' + (e.result?.error?.message || e), 'err');
+    if (syncBtn) { syncBtn.classList.remove('syncing'); syncBtn.disabled = false; }
   }
 }
 
@@ -725,12 +977,14 @@ function confirmDel(id) {
   pendingDelId = id;
   document.getElementById('modal-delete').classList.add('open');
   document.getElementById('confirm-del-btn').onclick = async () => {
+    const delId = pendingDelId;
+    pendingDelId = null;
     document.getElementById('modal-delete').classList.remove('open');
     try {
-      await gapi.client.calendar.events.delete({ calendarId: 'primary', eventId: pendingDelId });
-      delete events[pendingDelId];
+      await gapi.client.calendar.events.delete({ calendarId: 'primary', eventId: delId });
+      delete events[delId];
       renderEvents();
-      showToast('✓ 已刪除', 'ok');
+      showToast('已刪除', 'ok');
     } catch(e) {
       showToast('刪除失敗', 'err');
     }
@@ -738,7 +992,19 @@ function confirmDel(id) {
 }
 
 // ── Utils ──
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function clearInput() {
+  document.getElementById('paste-input').value = '';
+  updatePushBtn();
+}
 
 function updatePushBtn() {
   const hasText = document.getElementById('paste-input').value.trim().length > 0;
@@ -746,11 +1012,12 @@ function updatePushBtn() {
 }
 
 let toastTimer;
-function showToast(msg, type='') {
+function showToast(msg, type = '') {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'toast show ' + type;
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
 }
 
 // ── Init ──
@@ -759,23 +1026,18 @@ window.addEventListener('load', () => {
 
   if (!CLIENT_ID) {
     document.getElementById('setup-banner').style.display = 'flex';
-    // 尚無 Client ID，等使用者設定後會重新載入頁面，屆時再初始化
     return;
   }
 
   const s1 = document.createElement('script');
   s1.src = 'https://apis.google.com/js/api.js';
-  s1.onload = () => gapi.load('client', () => gapi.client.init({ discoveryDocs: [DISCOVERY_DOC] }).then(() => { gapiInited = true; tryAutoLogin(); }).catch(e => showToast('Google API 初始化失敗', 'err')));
+  s1.onload = () => gapi.load('client', initGapi);
   s1.onerror = () => showToast('無法載入 Google API，請確認網路連線', 'err');
   document.body.appendChild(s1);
 
   const s2 = document.createElement('script');
   s2.src = 'https://accounts.google.com/gsi/client';
-  s2.onload = () => {
-    tokenClient = google.accounts.oauth2.initTokenClient({ client_id: CLIENT_ID, scope: SCOPES, callback: '' });
-    gisInited = true;
-    tryAutoLogin();
-  };
+  s2.onload = initGis;
   s2.onerror = () => showToast('無法載入 Google 登入服務', 'err');
   document.body.appendChild(s2);
 });
