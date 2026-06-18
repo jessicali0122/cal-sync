@@ -773,11 +773,11 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
     </div>
     <div style="padding:24px;overflow-y:auto;height:calc(100% - 64px)">
       <div id="dashboard-today" style="margin-bottom:24px">
-        <h3 style="font-size:14px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">今日事件</h3>
+        <h3 style="font-size:14px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">今日事件</h3>
         <div id="dashboard-today-list" style="display:flex;flex-direction:column;gap:8px"></div>
       </div>
       <div id="dashboard-upcoming">
-        <h3 style="font-size:14px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">接下來 7 天</h3>
+        <h3 style="font-size:14px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">接下來 7 天</h3>
         <div id="dashboard-upcoming-list" style="display:flex;flex-direction:column;gap:8px"></div>
       </div>
     </div>
@@ -790,11 +790,11 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
     </div>
     <div style="padding:24px;overflow-y:auto;height:calc(100% - 64px)">
       <div id="analytics-by-cal" style="margin-bottom:32px">
-        <h3 style="font-size:14px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px">各日曆事件數（本月）</h3>
+        <h3 style="font-size:14px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px">各日曆事件數（本月）</h3>
         <div id="analytics-cal-rows" style="display:flex;flex-direction:column;gap:10px"></div>
       </div>
       <div id="analytics-busiest">
-        <h3 style="font-size:14px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px">本週最忙碌的天</h3>
+        <h3 style="font-size:14px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px">本週最忙碌的天</h3>
         <div id="analytics-busy-rows" style="display:flex;flex-direction:column;gap:8px"></div>
       </div>
     </div>
@@ -1132,7 +1132,7 @@ function renderCalendarCategories() {
     const color = cal.backgroundColor || '#6366f1';
     return `<div class="category-item">
       <div class="cat-checkbox" style="background:${color}"></div>
-      <span class="cat-name" style="font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(cal.summary||cal.id)}">${esc(cal.summary||cal.id)}</span>
+      <span class="cat-name" style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(cal.summary||cal.id)}">${esc(cal.summary||cal.id)}</span>
     </div>`;
   }).join('');
 }
@@ -1232,16 +1232,16 @@ function renderDashboard() {
     return `<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:${bg};border-left:4px solid ${color};border-radius:8px;cursor:pointer" onclick="openEditModal('${ev.id}','${ev._calId||'primary'}')">
       <div style="font-size:12px;color:${color};font-weight:600;min-width:40px">${timeStr}</div>
       <div style="flex:1">
-        <div style="font-size:14px;font-weight:500;color:var(--text-main)">${ev.summary||'（無標題）'}</div>
-        <div style="font-size:12px;color:var(--text-muted)">${ev._calName||''} ${dateStr !== today ? '· '+dateStr : ''}</div>
+        <div style="font-size:14px;font-weight:500;color:var(--text)">${ev.summary||'（無標題）'}</div>
+        <div style="font-size:12px;color:var(--muted)">${ev._calName||''} ${dateStr !== today ? '· '+dateStr : ''}</div>
       </div>
     </div>`;
   }
 
   const tl = document.getElementById('dashboard-today-list');
-  tl.innerHTML = todayEvs.length ? todayEvs.map(evCard).join('') : '<div style="color:var(--text-muted);font-size:14px">今天沒有事件</div>';
+  tl.innerHTML = todayEvs.length ? todayEvs.map(evCard).join('') : '<div style="color:var(--muted);font-size:14px">今天沒有事件</div>';
   const ul = document.getElementById('dashboard-upcoming-list');
-  ul.innerHTML = upcomingEvs.length ? upcomingEvs.map(evCard).join('') : '<div style="color:var(--text-muted);font-size:14px">未來 7 天無事件</div>';
+  ul.innerHTML = upcomingEvs.length ? upcomingEvs.map(evCard).join('') : '<div style="color:var(--muted);font-size:14px">未來 7 天無事件</div>';
 }
 
 function renderAnalytics() {
@@ -1266,12 +1266,12 @@ function renderAnalytics() {
   const calRows = document.getElementById('analytics-cal-rows');
   calRows.innerHTML = Object.entries(byCalMap).sort((a,b)=>b[1].count-a[1].count).map(([name, v]) => `
     <div style="display:flex;align-items:center;gap:12px">
-      <div style="width:120px;font-size:13px;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${name}">${name}</div>
-      <div style="flex:1;height:12px;background:var(--border-color);border-radius:6px;overflow:hidden">
+      <div style="width:120px;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${name}">${name}</div>
+      <div style="flex:1;height:12px;background:var(--border);border-radius:6px;overflow:hidden">
         <div style="height:100%;width:${Math.round(v.count/maxCount*100)}%;background:${v.color};border-radius:6px;transition:width .4s"></div>
       </div>
-      <div style="font-size:13px;font-weight:600;color:var(--text-main);min-width:24px;text-align:right">${v.count}</div>
-    </div>`).join('') || '<div style="color:var(--text-muted);font-size:14px">本月無資料</div>';
+      <div style="font-size:14px;font-weight:600;color:var(--text);min-width:24px;text-align:right">${v.count}</div>
+    </div>`).join('') || '<div style="color:var(--muted);font-size:14px">本月無資料</div>';
 
   const weekStart = new Date(now); weekStart.setDate(now.getDate() - now.getDay());
   const weekEvs = calEvents.filter(e => {
@@ -1290,12 +1290,12 @@ function renderAnalytics() {
   const busyRows = document.getElementById('analytics-busy-rows');
   busyRows.innerHTML = Object.entries(byDay).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([dow, cnt]) => `
     <div style="display:flex;align-items:center;gap:12px">
-      <div style="width:60px;font-size:13px;color:var(--text-main)">週${dayNames[dow]}</div>
-      <div style="flex:1;height:12px;background:var(--border-color);border-radius:6px;overflow:hidden">
+      <div style="width:60px;font-size:14px;color:var(--text)">週${dayNames[dow]}</div>
+      <div style="flex:1;height:12px;background:var(--border);border-radius:6px;overflow:hidden">
         <div style="height:100%;width:${Math.round(cnt/maxDay*100)}%;background:var(--accent);border-radius:6px"></div>
       </div>
-      <div style="font-size:13px;font-weight:600;color:var(--text-main);min-width:24px;text-align:right">${cnt}</div>
-    </div>`).join('') || '<div style="color:var(--text-muted);font-size:14px">本週無資料</div>';
+      <div style="font-size:14px;font-weight:600;color:var(--text);min-width:24px;text-align:right">${cnt}</div>
+    </div>`).join('') || '<div style="color:var(--muted);font-size:14px">本週無資料</div>';
 }
 
 function goToday() {
