@@ -958,6 +958,12 @@ function tryAutoLogin() {
   if (token && expiry && Date.now() < parseInt(expiry)) {
     gapi.client.setToken({ access_token: token });
     setSignedIn(true);
+    loadCalendarEvents(); // 自動載入日曆資料
+  } else {
+    // token 不存在或已過期，確保登出狀態正確
+    localStorage.removeItem('gcal_jess_token');
+    localStorage.removeItem('gcal_jess_expiry');
+    setSignedIn(false);
   }
 }
 
