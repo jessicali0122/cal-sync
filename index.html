@@ -785,7 +785,7 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
 
         <button class="refresh-btn" id="refresh-btn" onclick="refreshCalendar()" title="重新載入">↻</button>
 
-        <button class="create-btn" onclick="document.getElementById('paste-input').focus();document.getElementById('paste-input').scrollIntoView({behavior:'smooth'})">
+        <button class="create-btn" onclick="openCreateModal(toDateStr(new Date()), '09:00')">
           + Create
         </button>
       </div>
@@ -826,6 +826,56 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
   </div>
 </div>
 
+<!-- Event Edit / Create Modal -->
+<div class="modal-overlay" id="modal-event" onclick="if(event.target===this)closeEventModal()">
+  <div class="modal" style="width:480px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <h3 id="modal-event-title" style="margin:0">新增事件</h3>
+      <button onclick="closeEventModal()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:20px;line-height:1;padding:0">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div>
+        <label style="font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;display:block;margin-bottom:6px">標題</label>
+        <input type="text" id="ev-title" placeholder="事件標題" style="width:100%;font-family:var(--sans);font-size:14px;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 0 4px var(--accent-dim)'" onblur="this.style.borderColor='';this.style.boxShadow=''">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <label style="font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;display:block;margin-bottom:6px">日期</label>
+          <input type="date" id="ev-date" style="width:100%;font-family:var(--sans);font-size:14px;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor=''">
+        </div>
+        <div id="ev-allday-wrap">
+          <label style="font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;display:block;margin-bottom:6px">全天事件</label>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer">
+            <input type="checkbox" id="ev-allday" onchange="toggleAlldayFields()" style="width:16px;height:16px;accent-color:var(--accent)">
+            <span style="font-size:14px;color:var(--text)">全天</span>
+          </label>
+        </div>
+      </div>
+      <div id="ev-time-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <label style="font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;display:block;margin-bottom:6px">開始時間</label>
+          <input type="time" id="ev-start" style="width:100%;font-family:var(--sans);font-size:14px;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor=''">
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;display:block;margin-bottom:6px">結束時間</label>
+          <input type="time" id="ev-end" style="width:100%;font-family:var(--sans);font-size:14px;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor=''">
+        </div>
+      </div>
+      <div>
+        <label style="font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;display:block;margin-bottom:6px">描述（選填）</label>
+        <textarea id="ev-desc" placeholder="新增描述…" rows="3" style="width:100%;resize:none;font-family:var(--sans);font-size:14px;line-height:1.6;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor=''"></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:20px;justify-content:space-between;align-items:center">
+      <button id="ev-delete-btn" onclick="deleteCurrentEvent()" style="display:none;background:none;border:1px solid #fca5a5;color:#ef4444;font-family:var(--sans);font-size:14px;padding:8px 16px;border-radius:8px;cursor:pointer">刪除事件</button>
+      <div style="display:flex;gap:8px;margin-left:auto">
+        <button class="btn btn-ghost" onclick="closeEventModal()" style="width:auto;padding:8px 18px">取消</button>
+        <button class="btn btn-primary" id="ev-save-btn" onclick="saveEvent()" style="width:auto;padding:8px 22px">儲存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -839,8 +889,9 @@ let CLIENT_ID = localStorage.getItem(CLIENT_ID_KEY) || '';
 let gapiInited = false, gisInited = false, isSignedIn = false;
 let tokenClient;
 
-let events = {};
-let calEvents = [];
+let events = {};      // pushed from sheets (keyed by gcal id)
+let calEvents = [];   // all events from gcal API
+let editingEventId = null; // currently editing event id (null = create)
 
 let currentView = 'week';
 let viewDate = new Date();
@@ -1215,8 +1266,8 @@ function renderMonth() {
 }
 
 function monthCellClick(dateStr) {
-  viewDate = new Date(dateStr + 'T12:00:00');
-  switchView('week');
+  if (!isSignedIn) { viewDate = new Date(dateStr + 'T12:00:00'); switchView('week'); return; }
+  openCreateModal(dateStr, null);
 }
 
 // ── Week View ──
@@ -1262,7 +1313,7 @@ function renderWeek() {
     const isToday = sameDay(d, today);
     const evs = getEventsOnDate(toDateStr(d)).filter(e => !!e.start?.dateTime);
     gridHtml += `<div class="week-col ${isToday?'today':''}" style="position:relative">`;
-    for (let h = 0; h < 24; h++) gridHtml += `<div class="week-hour-cell"></div>`;
+    for (let h = 0; h < 24; h++) gridHtml += `<div class="week-hour-cell" onclick="weekSlotClick(event,'${toDateStr(d)}',${h})"></div>`;
     if (isToday) {
       const now = new Date();
       const pct = (now.getHours()*60+now.getMinutes()) / (24*60) * 100;
@@ -1295,14 +1346,20 @@ function renderWeek() {
 }
 
 function weekDayClick(dateStr) {
-  viewDate = new Date(dateStr + 'T12:00:00');
-  switchView('list');
+  if (!isSignedIn) { viewDate = new Date(dateStr + 'T12:00:00'); switchView('list'); return; }
+  openCreateModal(dateStr, '09:00');
+}
+
+function weekSlotClick(e, dateStr, hour) {
+  e.stopPropagation();
+  if (!isSignedIn) return;
+  const h = String(hour).padStart(2,'0');
+  openCreateModal(dateStr, `${h}:00`);
 }
 
 function weekEvClick(e, id) {
   e.stopPropagation();
-  if (currentView === 'list') return;
-  switchView('list');
+  openEditModal(id);
 }
 
 // ── List View ──
@@ -1344,7 +1401,6 @@ function renderList() {
   body.querySelectorAll('.time-input').forEach(inp => {
     inp.addEventListener('change', () => updateTime(inp.dataset.id, inp.dataset.which, inp.value));
   });
-  body.querySelectorAll('.sync-one').forEach(btn => btn.addEventListener('click', () => syncOne(btn.dataset.id)));
   body.querySelectorAll('.icon-btn.del').forEach(btn => btn.addEventListener('click', () => confirmDel(btn.dataset.id)));
 }
 
@@ -1384,15 +1440,15 @@ function buildEventRowHTML(ev) {
       ${desc?`<div class="event-desc" title="${esc(desc)}">${esc(desc.slice(0,90))}${desc.length>90?'…':''}</div>`:''}
     </div>
     <div class="event-controls">
-      ${!isAllDay&&isPushed?`<div class="time-inputs">
+      ${!isAllDay?`<div class="time-inputs">
         <input class="time-input" type="time" value="${startVal}" data-id="${esc(id)}" data-which="start">
         <span class="sep">–</span>
         <input class="time-input" type="time" value="${endVal}"   data-id="${esc(id)}" data-which="end">
       </div>`:''}
-      ${isPushed?`<div class="icon-btns">
-        <button class="icon-btn sync-one ${ev._synced?'synced':''}" title="重新同步" data-id="${esc(id)}">↻</button>
+      <div class="icon-btns">
+        <button class="icon-btn" title="編輯" data-id="${esc(id)}" onclick="openEditModal('${esc(id)}')">✎</button>
         <button class="icon-btn del" title="刪除" data-id="${esc(id)}">✕</button>
-      </div>`:''}
+      </div>
     </div>
   </div>`;
 }
@@ -1564,6 +1620,11 @@ async function handlePaste() {
 
 // ── Time update ──
 async function updateTime(id, which, val) {
+  // ensure event is in the local events map
+  if (!events[id]) {
+    const gcalEv = calEvents.find(e => e.id === id);
+    if (gcalEv) events[id] = { ...gcalEv, _synced: true };
+  }
   const ev = events[id]; if (!ev) return;
   const dateStr = ev.start.dateTime?.slice(0,10); if (!dateStr) return;
   if (which==='start') {
@@ -1602,6 +1663,115 @@ async function syncOne(id) {
   }
 }
 
+// ── Get any event by ID ──
+function getEventById(id) {
+  return events[id] || calEvents.find(e => e.id === id) || null;
+}
+
+// ── Event Modal ──
+function openCreateModal(dateStr, startTime) {
+  editingEventId = null;
+  document.getElementById('modal-event-title').textContent = '新增事件';
+  document.getElementById('ev-title').value = '';
+  document.getElementById('ev-date').value = dateStr || toDateStr(new Date());
+  document.getElementById('ev-allday').checked = !startTime;
+  document.getElementById('ev-desc').value = '';
+  document.getElementById('ev-delete-btn').style.display = 'none';
+  if (startTime) {
+    document.getElementById('ev-start').value = startTime;
+    const [h, m] = startTime.split(':').map(Number);
+    const endMin = h * 60 + m + 60;
+    document.getElementById('ev-end').value =
+      `${String(Math.floor(endMin/60)).padStart(2,'0')}:${String(endMin%60).padStart(2,'0')}`;
+  } else {
+    document.getElementById('ev-start').value = '09:00';
+    document.getElementById('ev-end').value = '10:00';
+  }
+  toggleAlldayFields();
+  document.getElementById('modal-event').classList.add('open');
+  setTimeout(() => document.getElementById('ev-title').focus(), 100);
+}
+
+function openEditModal(id) {
+  const ev = getEventById(id);
+  if (!ev) return;
+  editingEventId = id;
+  const isAllDay = !!ev.start?.date;
+  document.getElementById('modal-event-title').textContent = '編輯事件';
+  document.getElementById('ev-title').value = ev.summary || '';
+  document.getElementById('ev-date').value = ev.start?.dateTime?.slice(0,10) || ev.start?.date || '';
+  document.getElementById('ev-allday').checked = isAllDay;
+  document.getElementById('ev-start').value = ev.start?.dateTime?.slice(11,16) || '09:00';
+  document.getElementById('ev-end').value = ev.end?.dateTime?.slice(11,16) || '10:00';
+  document.getElementById('ev-desc').value = ev.description || '';
+  document.getElementById('ev-delete-btn').style.display = '';
+  toggleAlldayFields();
+  document.getElementById('modal-event').classList.add('open');
+  setTimeout(() => document.getElementById('ev-title').focus(), 100);
+}
+
+function closeEventModal() {
+  document.getElementById('modal-event').classList.remove('open');
+  editingEventId = null;
+}
+
+function toggleAlldayFields() {
+  const allday = document.getElementById('ev-allday').checked;
+  document.getElementById('ev-time-row').style.display = allday ? 'none' : '';
+}
+
+async function saveEvent() {
+  if (!isSignedIn) { showToast('請先登入 Google', 'err'); return; }
+  if (!await ensureToken()) return;
+  const title   = document.getElementById('ev-title').value.trim();
+  const dateStr = document.getElementById('ev-date').value;
+  const allday  = document.getElementById('ev-allday').checked;
+  const start   = document.getElementById('ev-start').value;
+  const end     = document.getElementById('ev-end').value;
+  const desc    = document.getElementById('ev-desc').value.trim();
+  if (!title) { document.getElementById('ev-title').focus(); showToast('請輸入標題', 'err'); return; }
+  if (!dateStr) { showToast('請選擇日期', 'err'); return; }
+  if (!allday && start >= end) { showToast('結束時間必須晚於開始時間', 'err'); return; }
+
+  let resource;
+  if (allday) {
+    const next = new Date(dateStr + 'T12:00:00');
+    next.setDate(next.getDate() + 1);
+    resource = { summary: title, description: desc || undefined, visibility: 'private',
+      start: { date: dateStr }, end: { date: toDateStr(next) } };
+  } else {
+    resource = { summary: title, description: desc || undefined, visibility: 'private',
+      start: { dateTime: `${dateStr}T${start}:00`, timeZone: TZ },
+      end:   { dateTime: `${dateStr}T${end}:00`,   timeZone: TZ } };
+  }
+
+  const saveBtn = document.getElementById('ev-save-btn');
+  saveBtn.disabled = true; saveBtn.textContent = '儲存中…';
+  try {
+    let res;
+    if (editingEventId) {
+      res = await gapi.client.calendar.events.update({ calendarId: 'primary', eventId: editingEventId, resource });
+    } else {
+      res = await gapi.client.calendar.events.insert({ calendarId: 'primary', resource });
+    }
+    events[res.result.id] = { ...res.result, _synced: true };
+    closeEventModal();
+    await loadCalendarEvents(false);
+    renderView();
+    showToast(editingEventId ? '已更新' : '已建立', 'ok');
+  } catch(e) {
+    showToast('儲存失敗：' + (e.result?.error?.message || e), 'err');
+  } finally {
+    saveBtn.disabled = false; saveBtn.textContent = '儲存';
+  }
+}
+
+async function deleteCurrentEvent() {
+  if (!editingEventId) return;
+  confirmDel(editingEventId);
+  closeEventModal();
+}
+
 let pendingDelId = null;
 function confirmDel(id) {
   pendingDelId = id;
@@ -1612,7 +1782,9 @@ function confirmDel(id) {
     if (!await ensureToken()) return;
     try {
       await gapi.client.calendar.events.delete({ calendarId:'primary', eventId:delId });
-      delete events[delId]; calEvents = calEvents.filter(e => e.id !== delId);
+      delete events[delId];
+      calEvents = calEvents.filter(e => e.id !== delId);
+      await loadCalendarEvents(false);
       renderView(); showToast('已刪除','ok');
     } catch(e) { showToast('刪除失敗','err'); }
   };
@@ -1674,6 +1846,8 @@ window.addEventListener('load', () => {
   s2.onerror = () => showToast('無法載入 Google 登入服務','err');
   document.body.appendChild(s2);
   setInterval(() => { if (currentView==='week') renderWeek(); }, 60000);
+  // Auto-refresh GCal every 5 minutes when signed in
+  setInterval(() => { if (isSignedIn) loadCalendarEvents(false); }, 5 * 60 * 1000);
 });
 </script>
 </body>
