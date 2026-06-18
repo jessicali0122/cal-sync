@@ -1419,9 +1419,9 @@ function updateStats() {
   };
   const pushedIds = new Set(Object.keys(events));
   const gcalOnly = calEvents.filter(e => !pushedIds.has(e.id));
-  document.getElementById('cat-total-time').textContent = calcHours([...pushed, ...gcalOnly]);
-  document.getElementById('cat-synced-time').textContent = calcHours(pushed);
-  document.getElementById('cat-gcal-time').textContent = calcHours(gcalOnly);
+  const elT = document.getElementById('cat-total-time');  if (elT) elT.textContent = calcHours([...pushed, ...gcalOnly]);
+  const elS = document.getElementById('cat-synced-time'); if (elS) elS.textContent = calcHours(pushed);
+  const elG = document.getElementById('cat-gcal-time');   if (elG) elG.textContent = calcHours(gcalOnly);
 }
 
 // ── Month View ──
