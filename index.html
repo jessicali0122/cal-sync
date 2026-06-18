@@ -1500,7 +1500,7 @@ function renderMiniCal() {
     const isMiniWeekend = cur.getDay() === 0 || cur.getDay() === 6;
     const isMiniHol = !isToday && !isSelected && (isMiniWeekend || hasHolidayOnDate(dateStr));
     html += `<div class="mini-cal-day ${isToday?'today':''} ${isOther?'other-month':''} ${isSelected&&!isToday?'selected':''}" style="${isMiniHol?'background:#f1f3f4;border-radius:4px;':''}"
-      onclick="miniCalSelectDay('${dateStr}')">${cur.getDate()}${hasDot ? '<span class="mini-day-dot"></span>' : ''}</div>`;
+      onclick="miniCalSelectDay('${dateStr}')">${cur.getDate()}</div>`;
     cur.setDate(cur.getDate() + 1);
   }
   document.getElementById('mini-cal-days').innerHTML = html;
