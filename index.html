@@ -1528,8 +1528,24 @@ function parseTsv(text) {
     const date = parseDate(dateRaw);
     if (!date) continue;
     const g = (idx) => idx !== -1 ? (cols[idx]||'').trim() : '';
-    rows.push({ date, status:g(colMap.status), urgent:g(colMap.urgent), brand:g(colMap.brand),
-      platform:g(colMap.platform), type:g(colMap.type), detail:g(colMap.detail), slot:g(colMap.slot) });
+    // Extract time embedded in date cell (e.g. "6/18 15:00 測試")
+    const dateRaw2 = (cols[colMap.date] || '').trim();
+    const timeFromDate = parseTimeFromStr(dateRaw2);
+    const titleFromDate = parseTitleFromCell(dateRaw2);
+
+    const slotRaw = g(colMap.slot);
+    // Merge: slot col takes priority; fallback to time embedded in date cell
+    const resolvedSlot = slotRaw || (timeFromDate ? `__time__${timeFromDate}` : '');
+
+    // Fallback title: use text found in date cell if no brand/platform/type
+    const brand    = g(colMap.brand);
+    const platform = g(colMap.platform);
+    const type     = g(colMap.type);
+    const fallbackTitle = (!brand && !platform && !type) ? titleFromDate : '';
+
+    rows.push({ date, status:g(colMap.status), urgent:g(colMap.urgent),
+      brand, platform, type,
+      detail:g(colMap.detail), slot:resolvedSlot, _fallbackTitle: fallbackTitle });
   }
   return rows;
 }
@@ -1546,12 +1562,44 @@ function parseDate(raw) {
   return null;
 }
 
+// Extract HH:MM from a string (returns null if not found)
+function parseTimeFromStr(str) {
+  if (!str) return null;
+  const m = str.match(/\b(\d{1,2}):(\d{2})\b/);
+  if (!m) return null;
+  const h = parseInt(m[1]), mn = m[2];
+  if (h < 0 || h > 23) return null;
+  return `${String(h).padStart(2,'0')}:${mn}`;
+}
+
+// Extract any non-date, non-time text from a cell as a title candidate
+function parseTitleFromCell(raw) {
+  if (!raw) return '';
+  // Remove date patterns
+  let s = raw.replace(/\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}/, '')
+             .replace(/\d{1,2}月\d{1,2}[日号]/, '')
+             .replace(/\d{1,2}[\/\-]\d{1,2}/, '');
+  // Remove time patterns
+  s = s.replace(/\b\d{1,2}:\d{2}\b/, '');
+  return s.trim();
+}
+
 function buildTitle(row) {
-  return [row.brand, row.platform, row.type].filter(Boolean).join(' · ') || '（無標題）';
+  return [row.brand, row.platform, row.type].filter(Boolean).join(' · ')
+    || row._fallbackTitle
+    || '（無標題）';
 }
 
 function buildCalEvent(row) {
-  const slotStart = SLOT_MAP[row.slot] || null;
+  // Priority: SLOT_MAP keyword → embedded __time__ → direct HH:MM in slot → null (all-day)
+  let slotStart = SLOT_MAP[row.slot] || null;
+  if (!slotStart && row.slot) {
+    if (row.slot.startsWith('__time__')) {
+      slotStart = row.slot.replace('__time__', '');
+    } else {
+      slotStart = parseTimeFromStr(row.slot);
+    }
+  }
   const isAllDay = !slotStart;
   if (isAllDay) {
     const [y,m,d] = row.date.split('-').map(Number);
