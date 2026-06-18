@@ -6,15 +6,12 @@
 <title>Cal Sync</title>
 <style>
 :root {
-  /* Left panel – warm white with blush tint */
   --panel: #ffffff;
   --panel2: #fdf6f8;
   --panel-border: #f0d6dc;
   --panel-text: #1a0a0f;
   --panel-muted: #9a6070;
   --panel-hint: #faeef1;
-
-  /* Right content */
   --bg: #fdf6f8;
   --surface: #ffffff;
   --surface2: #fdf0f3;
@@ -22,14 +19,10 @@
   --border2: #e8a8b8;
   --text: #1a0a0f;
   --muted: #9a6070;
-
-  /* Accent – deep rose */
   --accent: #e16b8c;
   --accent-dark: #c85070;
   --accent-dim: rgba(225,107,140,0.10);
   --accent-glow: rgba(225,107,140,0.22);
-
-  /* Status */
   --green: #16a34a;
   --green-light: #f0fdf4;
   --green-border: #86efac;
@@ -42,7 +35,6 @@
   --purple: #c85070;
   --purple-light: #fdf0f3;
   --purple-border: #f8c3cd;
-
   --sans: 'Calibri', 'Noto Sans TC', sans-serif;
   --radius: 12px;
   --radius-sm: 8px;
@@ -70,7 +62,6 @@ header {
   position: relative; z-index: 10;
   flex-shrink: 0;
 }
-
 .logo {
   font-size: 14px; font-weight: 600;
   color: var(--panel-text);
@@ -84,7 +75,6 @@ header {
   display: flex; align-items: center; justify-content: center;
 }
 .logo-mark svg { width: 13px; height: 13px; fill: #ffffff; }
-.logo-dot { color: var(--border2); }
 
 #auth-btn {
   font-family: var(--sans); font-size: 14px; font-weight: 500;
@@ -96,12 +86,10 @@ header {
   cursor: pointer;
   transition: all 0.18s;
   display: flex; align-items: center; gap: 6px;
-  letter-spacing: 0.1px;
 }
 #auth-btn:hover { border-color: var(--accent); color: var(--accent-dark); }
 #auth-btn.out { border-color: var(--border2); color: var(--accent-dark); }
 #auth-btn.out:hover { border-color: #ef4444; color: #ef4444; }
-
 .status-dot {
   width: 6px; height: 6px; border-radius: 50%;
   background: var(--border2);
@@ -118,14 +106,13 @@ main {
   overflow: hidden;
 }
 
-/* ── LEFT PANEL (dark) ── */
+/* ── LEFT PANEL ── */
 .left {
   background: #ffffff;
   border-right: 1px solid var(--border);
   display: flex; flex-direction: column;
   overflow: hidden;
 }
-
 .panel-header {
   padding: 18px 22px 16px;
   border-bottom: 1px solid var(--border);
@@ -141,15 +128,12 @@ main {
   padding: 3px 8px; border-radius: 4px;
   background: var(--accent-dim);
   color: var(--accent-dark);
-  letter-spacing: 0.3px;
 }
-
 .paste-area {
   padding: 16px 20px; flex: 1;
   display: flex; flex-direction: column; gap: 12px;
   overflow: hidden;
 }
-
 .paste-hint {
   font-size: 14px; font-weight: 400; color: var(--muted);
   line-height: 1.8; padding: 12px 14px;
@@ -164,7 +148,6 @@ main {
   padding: 1px 6px; border-radius: 4px;
   border: 1px solid rgba(225,107,140,0.2);
 }
-
 textarea#paste-input {
   flex: 1; min-height: 200px; resize: none;
   font-family: var(--sans); font-size: 14px; line-height: 1.75;
@@ -180,14 +163,12 @@ textarea#paste-input:focus {
   box-shadow: 0 0 0 3px var(--accent-dim);
 }
 textarea#paste-input::placeholder { color: var(--muted); opacity: 0.5; }
-
 .left-actions {
   padding: 14px 20px;
   border-top: 1px solid var(--border);
   display: flex; flex-direction: column; gap: 8px;
   flex-shrink: 0;
 }
-
 .btn {
   width: 100%; padding: 11px;
   border-radius: var(--radius-sm);
@@ -195,13 +176,8 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.5; }
   cursor: pointer;
   display: flex; align-items: center; justify-content: center; gap: 7px;
   transition: all 0.18s; border: none;
-  letter-spacing: 0.15px;
 }
-.btn-primary {
-  background: var(--accent);
-  color: var(--panel);
-  font-weight: 600;
-}
+.btn-primary { background: var(--accent); color: var(--panel); font-weight: 600; }
 .btn-primary:hover { background: var(--accent-dark); }
 .btn-primary:active { transform: scale(0.99); }
 .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
@@ -211,8 +187,6 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.5; }
   color: var(--muted); font-weight: 400;
 }
 .btn-ghost:hover { border-color: var(--accent); color: var(--accent-dark); }
-
-/* Push progress bar */
 .push-progress {
   height: 3px;
   background: var(--border);
@@ -232,51 +206,276 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.5; }
 /* ── RIGHT PANEL ── */
 .right { display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
 
-.right-header {
-  padding: 14px 24px;
+/* ── Calendar Header ── */
+.cal-header {
+  padding: 12px 20px;
   border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
   background: var(--surface);
   flex-shrink: 0;
+  display: flex; align-items: center; gap: 12px;
 }
-.right-title {
-  font-size: 14px; font-weight: 600;
-  letter-spacing: 1.2px; text-transform: uppercase;
+
+/* View Tabs */
+.view-tabs {
+  display: flex;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+.view-tab {
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  padding: 5px 14px;
+  border-radius: 6px;
+  border: none; cursor: pointer;
   color: var(--muted);
+  background: transparent;
+  transition: all 0.15s;
 }
-.right-stats { display: flex; gap: 6px; }
+.view-tab.active {
+  background: var(--surface);
+  color: var(--accent-dark);
+  box-shadow: 0 1px 4px rgba(180,80,110,0.10);
+  font-weight: 600;
+}
+.view-tab:hover:not(.active) { color: var(--text); }
+
+/* Nav controls */
+.cal-nav {
+  display: flex; align-items: center; gap: 6px;
+  margin-left: auto;
+}
+.nav-btn {
+  width: 30px; height: 30px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: transparent; cursor: pointer;
+  color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-family: var(--sans);
+  transition: all 0.15s;
+}
+.nav-btn:hover { border-color: var(--border2); color: var(--accent-dark); background: var(--surface2); }
+.cal-label {
+  font-size: 14px; font-weight: 600; color: var(--text);
+  min-width: 100px; text-align: center;
+}
+.today-btn {
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface2); cursor: pointer;
+  color: var(--muted);
+  transition: all 0.15s;
+}
+.today-btn:hover { border-color: var(--border2); color: var(--accent-dark); }
+
+/* Refresh + stats */
+.cal-right {
+  display: flex; align-items: center; gap: 8px;
+}
 .stat-pill {
-  font-size: 14px; font-weight: 500;
-  padding: 4px 11px; border-radius: 6px;
+  font-size: 13px; font-weight: 500;
+  padding: 4px 10px; border-radius: 6px;
   display: flex; align-items: center; gap: 5px;
 }
 .stat-synced { background: var(--green-light); border: 1px solid var(--green-border); color: var(--green); }
-.stat-allday { background: var(--blue-light); border: 1px solid var(--blue-border); color: var(--blue); }
 .stat-total { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); }
 
-#events-list {
+.refresh-btn {
+  width: 30px; height: 30px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: transparent; cursor: pointer;
+  color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  transition: all 0.15s;
+}
+.refresh-btn:hover { border-color: var(--border2); color: var(--accent-dark); background: var(--surface2); }
+.refresh-btn.spinning { animation: spin 0.8s linear infinite; }
+
+/* ── Calendar Body ── */
+.cal-body {
+  flex: 1; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+
+/* ── Month View ── */
+.month-grid {
+  flex: 1;
+  display: flex; flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+.month-weekdays {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.month-weekday {
+  padding: 8px 0;
+  font-size: 12px; font-weight: 600; color: var(--muted);
+  text-align: center; letter-spacing: 0.5px;
+}
+.month-cells {
+  flex: 1; overflow-y: auto;
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: minmax(90px, 1fr);
+  gap: 0;
+}
+.month-cell {
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 6px;
+  display: flex; flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+  background: var(--surface);
+  cursor: pointer;
+  transition: background 0.1s;
+  min-height: 90px;
+}
+.month-cell:hover { background: var(--panel2); }
+.month-cell.other-month { background: var(--bg); }
+.month-cell.other-month .cell-day { opacity: 0.35; }
+.month-cell.today { background: var(--surface2); }
+.month-cell.today .cell-day {
+  background: var(--accent);
+  color: white;
+  border-radius: 50%;
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+}
+.cell-day {
+  font-size: 12px; font-weight: 500;
+  color: var(--text);
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.cell-events { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
+.cell-ev {
+  font-size: 11px; font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  line-height: 1.4;
+}
+.cell-ev.ev-block { background: var(--accent-dim); color: var(--accent-dark); border-left: 2px solid var(--accent); }
+.cell-ev.ev-allday { background: var(--blue-light); color: var(--blue); border-left: 2px solid var(--blue); }
+.cell-ev.ev-gcal { background: #e8f5e9; color: #2e7d32; border-left: 2px solid #66bb6a; }
+.cell-more { font-size: 11px; color: var(--muted); padding: 1px 6px; }
+
+/* ── Week View ── */
+.week-grid {
+  flex: 1; display: flex; flex-direction: column; overflow: hidden;
+}
+.week-header-row {
+  display: grid; grid-template-columns: 48px repeat(7, 1fr);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.week-time-gutter { border-right: 1px solid var(--border); }
+.week-day-head {
+  padding: 8px 4px; text-align: center;
+  border-right: 1px solid var(--border);
+  cursor: pointer;
+}
+.week-day-head:hover .wdh-num { background: var(--surface2); }
+.wdh-name { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.4px; }
+.wdh-num {
+  font-size: 20px; font-weight: 300; color: var(--text);
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 2px auto 0;
+  transition: background 0.1s;
+}
+.week-day-head.today .wdh-num {
+  background: var(--accent); color: white; font-weight: 600;
+}
+.week-scroll {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  display: grid; grid-template-columns: 48px repeat(7, 1fr);
+  position: relative;
+}
+.week-times {
+  display: flex; flex-direction: column;
+  border-right: 1px solid var(--border);
+}
+.week-hour-label {
+  height: 52px; flex-shrink: 0;
+  font-size: 11px; color: var(--muted);
+  padding: 4px 6px 0;
+  text-align: right;
+  line-height: 1;
+  border-top: 1px solid transparent;
+}
+.week-col {
+  border-right: 1px solid var(--border);
+  position: relative;
+}
+.week-col.today { background: rgba(225,107,140,0.03); }
+.week-hour-cell {
+  height: 52px;
+  border-top: 1px solid var(--border);
+}
+.week-ev {
+  position: absolute; left: 3px; right: 3px;
+  border-radius: 6px;
+  padding: 3px 7px;
+  font-size: 12px; font-weight: 500;
+  overflow: hidden;
+  cursor: pointer;
+  transition: opacity 0.15s, box-shadow 0.15s;
+  z-index: 2;
+}
+.week-ev:hover { opacity: 0.88; box-shadow: 0 2px 8px rgba(0,0,0,0.10); }
+.week-ev.ev-block { background: var(--accent); color: white; }
+.week-ev.ev-allday-bar { background: var(--blue-light); border: 1px solid var(--border2); color: var(--blue); }
+.week-ev.ev-gcal { background: #e8f5e9; border: 1px solid #a5d6a7; color: #2e7d32; }
+.week-allday-row {
+  display: grid; grid-template-columns: 48px repeat(7, 1fr);
+  border-bottom: 1px solid var(--border2);
+  background: var(--panel2);
+  flex-shrink: 0;
+  min-height: 28px;
+}
+.week-allday-gutter { border-right: 1px solid var(--border); font-size: 10px; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+.week-allday-col {
+  border-right: 1px solid var(--border);
+  padding: 3px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.allday-chip {
+  font-size: 11px; font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.allday-chip.ev-block { background: var(--accent-dim); color: var(--accent-dark); }
+.allday-chip.ev-gcal { background: #e8f5e9; color: #2e7d32; }
+
+/* ── List View ── */
+.list-view {
   flex: 1; overflow-y: auto;
   padding: 18px 24px;
   display: flex; flex-direction: column; gap: 8px;
 }
-
-.empty-state {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 10px; padding: 80px 40px; color: var(--muted); text-align: center;
-  height: 100%;
+.list-date-group { margin-bottom: 4px; }
+.list-date-label {
+  font-size: 12px; font-weight: 600; color: var(--muted);
+  letter-spacing: 0.8px; text-transform: uppercase;
+  padding: 8px 0 4px;
+  border-top: 1px solid var(--border);
+  margin-bottom: 4px;
 }
-.empty-icon {
-  width: 48px; height: 48px;
-  border-radius: 14px;
-  background: var(--surface2);
-  border: 1.5px dashed var(--border2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px;
-}
-.empty-state h3 { font-size: 14px; font-weight: 500; color: var(--text); opacity: 0.5; }
-.empty-state p { font-size: 14px; line-height: 1.8; font-weight: 300; opacity: 0.7; }
-
-/* ── Event Row ── */
+.list-date-label:first-child { border-top: none; }
 .event-row {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -294,55 +493,44 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.5; }
   box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
-.event-row.has-error {
-  border-color: #fca5a5;
-  background: #fff5f5;
-}
-
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
 .event-bar { border-radius: 3px; align-self: stretch; min-height: 36px; }
 .bar-block  { background: var(--accent); }
 .bar-allday { background: var(--blue); }
-.bar-error  { background: #ef4444; }
-
+.bar-gcal   { background: #66bb6a; }
 .event-body { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
 .event-top  { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .event-title { font-size: 14px; font-weight: 600; color: var(--text); }
-
 .tag {
-  font-size: 14px; font-weight: 500;
+  font-size: 12px; font-weight: 500;
   padding: 2px 8px; border-radius: 4px; white-space: nowrap;
 }
 .tag-platform { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); }
 .tag-type     { background: var(--accent-dim); border: 1px solid rgba(225,107,140,0.25); color: var(--accent-dark); }
 .tag-allday   { background: var(--blue-light); border: 1px solid var(--blue-border); color: var(--blue); }
+.tag-gcal     { background: #e8f5e9; border: 1px solid #a5d6a7; color: #2e7d32; }
 .tag-status-processing { background: var(--amber-light); border: 1px solid var(--amber-border); color: #92400e; }
 .tag-status-pending    { background: var(--purple-light); border: 1px solid var(--purple-border); color: #6b21a8; }
 .tag-status-other      { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); }
 .tag-urgent   { background: #fef2f2; border: 1px solid #fca5a5; color: #b91c1c; font-weight: 600; }
-
 .event-meta {
-  font-size: 14px; font-weight: 400; color: var(--muted);
+  font-size: 13px; font-weight: 400; color: var(--muted);
   display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
 }
 .meta-item { display: flex; align-items: center; gap: 4px; }
 .event-desc {
-  font-size: 14px; color: var(--muted); line-height: 1.6;
+  font-size: 13px; color: var(--muted); line-height: 1.6;
   font-weight: 300; margin-top: 2px;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   max-width: 380px;
 }
-
-/* ── Event Controls ── */
 .event-controls { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
-
 .time-inputs { display: flex; align-items: center; gap: 4px; }
 .time-input {
-  font-family: var(--sans); font-size: 14px; font-weight: 400;
+  font-family: var(--sans); font-size: 13px; font-weight: 400;
   padding: 5px 7px;
   background: var(--surface2);
   border: 1px solid var(--border);
@@ -351,8 +539,7 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.5; }
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 .time-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
-.sep { color: var(--muted); font-size: 14px; }
-
+.sep { color: var(--muted); font-size: 13px; }
 .icon-btns { display: flex; gap: 5px; }
 .icon-btn {
   width: 28px; height: 28px;
@@ -361,7 +548,7 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.5; }
   background: transparent; cursor: pointer;
   color: var(--muted);
   display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-family: var(--sans);
+  font-size: 13px; font-family: var(--sans);
   transition: all 0.15s;
 }
 .icon-btn:hover { border-color: var(--border2); color: var(--text); background: var(--surface2); }
@@ -369,17 +556,32 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.5; }
 .icon-btn.sync-one:hover { border-color: var(--green-border); color: var(--green); background: var(--green-light); }
 .icon-btn.synced { border-color: var(--green-border); color: var(--green); background: var(--green-light); }
 .icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-
-/* Spinning animation for sync */
 .icon-btn.syncing { animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* Empty state */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; padding: 80px 40px; color: var(--muted); text-align: center;
+  height: 100%;
+}
+.empty-icon {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  background: var(--surface2);
+  border: 1.5px dashed var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.empty-state h3 { font-size: 14px; font-weight: 500; color: var(--text); opacity: 0.5; }
+.empty-state p { font-size: 13px; line-height: 1.8; font-weight: 300; opacity: 0.7; }
 
 /* Setup banner */
 .setup-banner {
   background: #fdf0f3; border-bottom: 1px solid var(--border);
-  padding: 9px 24px; font-size: 14px;
+  padding: 9px 24px; font-size: 13px;
   color: var(--accent-dark);
-  display: flex; align-items: center; gap: 8px; font-family: var(--sans);
+  display: flex; align-items: center; gap: 8px;
   flex-shrink: 0;
 }
 .setup-banner a { color: var(--accent-dark); font-weight: 600; text-decoration: underline; }
@@ -419,7 +621,7 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.5; }
   position: fixed; bottom: 20px; right: 20px;
   padding: 10px 18px; background: #1a0a0f;
   border: 1px solid #3a1828; border-radius: var(--radius);
-  font-family: var(--sans); font-size: 14px; font-weight: 500;
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
   color: #ffffff;
   box-shadow: 0 8px 32px rgba(0,0,0,0.25);
   transform: translateY(16px); opacity: 0;
@@ -438,11 +640,38 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.5; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--border2); }
 
-/* ── Responsive ── */
+/* Current time line */
+.time-now-line {
+  position: absolute; left: 0; right: 0; height: 2px;
+  background: #ef4444; z-index: 5; pointer-events: none;
+}
+.time-now-line::before {
+  content: '';
+  position: absolute; left: -4px; top: -4px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: #ef4444;
+}
+
+/* loading overlay */
+.cal-loading {
+  position: absolute; inset: 0;
+  background: rgba(253,246,248,0.75);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 10; backdrop-filter: blur(2px);
+}
+.cal-loading-spinner {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  animation: spin 0.7s linear infinite;
+}
+
+/* Responsive */
 @media (max-width: 860px) {
-  main { grid-template-columns: 1fr; }
-  .left { max-height: 50vh; }
-  .right { height: 50vh; }
+  body { height: 100dvh; overflow: hidden; }
+  main { grid-template-columns: 1fr; height: calc(100dvh - 58px); overflow: hidden; }
+  .left { max-height: 45dvh; overflow: hidden; }
+  .right { flex: 1; min-height: 0; overflow: hidden; }
 }
 </style>
 </head>
@@ -467,15 +696,17 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.5; }
 </header>
 
 <main>
+  <!-- LEFT: Paste panel -->
   <div class="left">
     <div class="panel-header">
       <span class="panel-title">貼上 Sheets 資料</span>
-      <span class="panel-badge">owner = jessica</span>
+      <span class="panel-badge">auto detect</span>
     </div>
     <div class="paste-area">
       <div class="paste-hint">
-        從 Google Sheets 選取所有欄位（含標題列）→ <code>Ctrl+C</code> → 貼到下方<br>
-        工具會自動篩出 <strong>Owner = Jessica</strong> 的任務並推送到 Calendar
+        從 Google Sheets 選取後 <code>Ctrl+C</code> 貼到下方即可<br>
+        工具會<strong>自動判讀欄位</strong>，將所有任務推送到你的 Google Calendar<br>
+        <span style="font-size:12px;opacity:0.75;">✓ 含或不含標題列均可　✓ 欄位順序不限　✓ 多餘欄位自動忽略</span>
       </div>
       <textarea id="paste-input" placeholder="在此貼上複製的表格內容…"></textarea>
     </div>
@@ -490,21 +721,33 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.5; }
     </div>
   </div>
 
+  <!-- RIGHT: Calendar view -->
   <div class="right">
-    <div class="right-header">
-      <span class="right-title">已推送事件</span>
-      <div class="right-stats">
-        <span class="stat-pill stat-synced" id="stat-synced">✓ 0 已同步</span>
-        <span class="stat-pill stat-allday" id="stat-allday">◈ 0 全天</span>
-        <span class="stat-pill stat-total" id="stat-total">0 筆</span>
+    <!-- Calendar header: tabs + nav -->
+    <div class="cal-header">
+      <div class="view-tabs">
+        <button class="view-tab active" id="tab-month" onclick="switchView('month')">月</button>
+        <button class="view-tab" id="tab-week" onclick="switchView('week')">週</button>
+        <button class="view-tab" id="tab-list" onclick="switchView('list')">清單</button>
+      </div>
+
+      <div class="cal-nav">
+        <button class="nav-btn" onclick="navPrev()" title="上一期">&#8249;</button>
+        <span class="cal-label" id="cal-label">—</span>
+        <button class="nav-btn" onclick="navNext()" title="下一期">&#8250;</button>
+        <button class="today-btn" onclick="goToday()">今天</button>
+      </div>
+
+      <div class="cal-right">
+        <span class="stat-pill stat-synced" id="stat-synced" style="display:none">✓ 0 已推</span>
+        <span class="stat-pill stat-total" id="stat-total" style="display:none">0 筆</span>
+        <button class="refresh-btn" id="refresh-btn" onclick="refreshCalendar()" title="重新載入日曆">↻</button>
       </div>
     </div>
-    <div id="events-list">
-      <div class="empty-state">
-        <div class="empty-icon">📋</div>
-        <h3>尚無事件</h3>
-        <p>從左側貼上 Sheets 資料<br>Jessica 的任務會自動出現在這裡</p>
-      </div>
+
+    <!-- Calendar body -->
+    <div class="cal-body" id="cal-body" style="position:relative">
+      <!-- Views are injected here -->
     </div>
   </div>
 </main>
@@ -543,6 +786,7 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.5; }
 <div class="toast" id="toast"></div>
 
 <script>
+// ── Constants ──
 const SCOPES = 'https://www.googleapis.com/auth/calendar';
 const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
 const CLIENT_ID_KEY = 'gcal_jess_client_id';
@@ -551,9 +795,17 @@ const TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 let CLIENT_ID = localStorage.getItem(CLIENT_ID_KEY) || '';
 let gapiInited = false, gisInited = false, isSignedIn = false;
 let tokenClient;
+
+// Pushed events (session)
 let events = {}; // id → event obj + meta
 
-// 時段 → 預設開始時間
+// All calendar events (from API)
+let calEvents = []; // array of GCal event objects
+
+// View state
+let currentView = 'month'; // month | week | list
+let viewDate = new Date(); // anchor date for current view
+
 const SLOT_MAP = {
   '早間': '09:00',
   '上午': '10:00',
@@ -612,16 +864,19 @@ function handleAuth() {
     localStorage.removeItem('gcal_jess_token');
     localStorage.removeItem('gcal_jess_expiry');
     setSignedIn(false);
+    calEvents = [];
+    renderView();
     showToast('已登出', 'ok');
     return;
   }
-  tokenClient.callback = (resp) => {
+  tokenClient.callback = async (resp) => {
     if (resp.error) { showToast('授權失敗', 'err'); return; }
     const token = gapi.client.getToken().access_token;
     localStorage.setItem('gcal_jess_token', token);
     localStorage.setItem('gcal_jess_expiry', String(Date.now() + resp.expires_in * 1000));
     setSignedIn(true);
     showToast('登入成功', 'ok');
+    await loadCalendarEvents();
   };
   tokenClient.requestAccessToken({ prompt: gapi.client.getToken() ? '' : 'consent' });
 }
@@ -629,7 +884,6 @@ function handleAuth() {
 function setSignedIn(v) {
   isSignedIn = v;
   const btn = document.getElementById('auth-btn');
-  const dot = btn.querySelector('.status-dot');
   if (v) {
     btn.innerHTML = '<span class="status-dot"></span> 登出';
     btn.classList.add('out');
@@ -640,57 +894,603 @@ function setSignedIn(v) {
   updatePushBtn();
 }
 
+// ── Token ──
+function isTokenExpired() {
+  const expiry = localStorage.getItem('gcal_jess_expiry');
+  return !expiry || Date.now() >= parseInt(expiry) - 60000;
+}
+
+async function ensureToken() {
+  if (!isSignedIn) return false;
+  if (!isTokenExpired()) return true;
+  showToast('登入已過期，請重新登入', 'err');
+  gapi.client.setToken('');
+  localStorage.removeItem('gcal_jess_token');
+  localStorage.removeItem('gcal_jess_expiry');
+  setSignedIn(false);
+  return false;
+}
+
+// ── Load Google Calendar Events ──
+async function loadCalendarEvents(showLoad = true) {
+  if (!isSignedIn) return;
+  if (!await ensureToken()) return;
+
+  if (showLoad) showCalLoading(true);
+  const btn = document.getElementById('refresh-btn');
+  btn.classList.add('spinning');
+
+  try {
+    // Load 2 months range around viewDate
+    const rangeStart = getViewRangeStart();
+    const rangeEnd   = getViewRangeEnd();
+
+    const res = await gapi.client.calendar.events.list({
+      calendarId: 'primary',
+      timeMin: rangeStart.toISOString(),
+      timeMax: rangeEnd.toISOString(),
+      singleEvents: true,
+      orderBy: 'startTime',
+      maxResults: 500,
+    });
+    calEvents = res.result.items || [];
+    renderView();
+    updateStats();
+  } catch(e) {
+    showToast('載入日曆失敗：' + (e.result?.error?.message || e), 'err');
+  } finally {
+    btn.classList.remove('spinning');
+    showCalLoading(false);
+  }
+}
+
+function getViewRangeStart() {
+  const d = new Date(viewDate);
+  if (currentView === 'month') {
+    d.setDate(1);
+    d.setDate(1 - d.getDay()); // go to Sunday of first week
+  } else if (currentView === 'week') {
+    d.setDate(d.getDate() - d.getDay());
+  } else {
+    d.setDate(1);
+  }
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+function getViewRangeEnd() {
+  const d = new Date(viewDate);
+  if (currentView === 'month') {
+    d.setMonth(d.getMonth() + 1, 0); // last day of month
+    d.setDate(d.getDate() + (6 - d.getDay())); // end of last week row
+  } else if (currentView === 'week') {
+    d.setDate(d.getDate() - d.getDay() + 7);
+  } else {
+    d.setMonth(d.getMonth() + 2, 0);
+  }
+  d.setHours(23,59,59,999);
+  return d;
+}
+
+function showCalLoading(on) {
+  let el = document.getElementById('cal-loading-overlay');
+  if (on) {
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'cal-loading-overlay';
+      el.className = 'cal-loading';
+      el.innerHTML = '<div class="cal-loading-spinner"></div>';
+      document.getElementById('cal-body').appendChild(el);
+    }
+  } else {
+    if (el) el.remove();
+  }
+}
+
+async function refreshCalendar() {
+  await loadCalendarEvents(true);
+}
+
+// ── View switching ──
+function switchView(v) {
+  currentView = v;
+  ['month','week','list'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('active', t === v);
+  });
+  renderView();
+  if (isSignedIn) loadCalendarEvents(false);
+}
+
+function navPrev() {
+  if (currentView === 'month') viewDate.setMonth(viewDate.getMonth() - 1);
+  else if (currentView === 'week') viewDate.setDate(viewDate.getDate() - 7);
+  else viewDate.setMonth(viewDate.getMonth() - 1);
+  renderView();
+  if (isSignedIn) loadCalendarEvents(false);
+}
+
+function navNext() {
+  if (currentView === 'month') viewDate.setMonth(viewDate.getMonth() + 1);
+  else if (currentView === 'week') viewDate.setDate(viewDate.getDate() + 7);
+  else viewDate.setMonth(viewDate.getMonth() + 1);
+  renderView();
+  if (isSignedIn) loadCalendarEvents(false);
+}
+
+function goToday() {
+  viewDate = new Date();
+  renderView();
+  if (isSignedIn) loadCalendarEvents(false);
+}
+
+// ── Merge events (pushed + gcal) ──
+function getAllEventsInRange(start, end) {
+  const all = [];
+
+  // From push session
+  Object.values(events).forEach(ev => {
+    const s = ev.start?.dateTime || ev.start?.date;
+    if (!s) return;
+    const d = new Date(s);
+    if (d >= start && d <= end) {
+      all.push({ ...ev, _source: 'pushed' });
+    }
+  });
+
+  // From Google Calendar (exclude duplicates already in pushed)
+  const pushedIds = new Set(Object.keys(events));
+  calEvents.forEach(ev => {
+    if (pushedIds.has(ev.id)) return;
+    const s = ev.start?.dateTime || ev.start?.date;
+    if (!s) return;
+    const d = new Date(s);
+    if (d >= start && d <= end) {
+      all.push({ ...ev, _source: 'gcal' });
+    }
+  });
+
+  // allday events: check date range
+  const pushedAllday = Object.values(events).filter(e => e.start?.date);
+  const gcalAllday   = calEvents.filter(e => e.start?.date && !pushedIds.has(e.id));
+
+  [...pushedAllday, ...gcalAllday].forEach(ev => {
+    if (all.find(x => x.id === ev.id)) return;
+    const d = new Date(ev.start.date + 'T12:00:00');
+    if (d >= start && d <= end) {
+      all.push({ ...ev, _source: pushedIds.has(ev.id) ? 'pushed' : 'gcal' });
+    }
+  });
+
+  return all;
+}
+
+function getEventsOnDate(dateStr) {
+  const all = [];
+  const pushedIds = new Set(Object.keys(events));
+
+  [...Object.values(events), ...calEvents.filter(e => !pushedIds.has(e.id))].forEach(ev => {
+    const s = ev.start?.dateTime?.slice(0,10) || ev.start?.date;
+    if (s === dateStr) {
+      all.push({ ...ev, _source: pushedIds.has(ev.id) ? 'pushed' : 'gcal' });
+    }
+  });
+  return all;
+}
+
+// ── Render dispatcher ──
+function renderView() {
+  updateLabel();
+  if (currentView === 'month') renderMonth();
+  else if (currentView === 'week') renderWeek();
+  else renderList();
+}
+
+function updateLabel() {
+  const label = document.getElementById('cal-label');
+  const y = viewDate.getFullYear(), m = viewDate.getMonth();
+  if (currentView === 'month') {
+    label.textContent = `${y} 年 ${m+1} 月`;
+  } else if (currentView === 'week') {
+    const sun = new Date(viewDate);
+    sun.setDate(sun.getDate() - sun.getDay());
+    const sat = new Date(sun);
+    sat.setDate(sat.getDate() + 6);
+    const fmt = d => `${d.getMonth()+1}/${d.getDate()}`;
+    label.textContent = `${fmt(sun)} – ${fmt(sat)}`;
+  } else {
+    label.textContent = `${y} 年 ${m+1} 月`;
+  }
+}
+
+function updateStats() {
+  const pushed = Object.values(events);
+  const synced = pushed.filter(e => e._synced).length;
+  const total  = calEvents.length + pushed.filter(e => !calEvents.find(c => c.id === e.id)).length;
+
+  const ss = document.getElementById('stat-synced');
+  const st = document.getElementById('stat-total');
+  if (pushed.length > 0 || isSignedIn) {
+    ss.style.display = ''; ss.textContent = `✓ ${synced} 已推`;
+    st.style.display = ''; st.textContent = `${total} 筆`;
+  }
+}
+
+// ── Month View ──
+function renderMonth() {
+  const body = document.getElementById('cal-body');
+  const today = new Date();
+  const y = viewDate.getFullYear(), mo = viewDate.getMonth();
+
+  const firstDay = new Date(y, mo, 1);
+  const startSun = new Date(firstDay);
+  startSun.setDate(1 - firstDay.getDay());
+
+  const lastDay = new Date(y, mo + 1, 0);
+  const endSat  = new Date(lastDay);
+  endSat.setDate(lastDay.getDate() + (6 - lastDay.getDay()));
+
+  const DAYS = ['日','一','二','三','四','五','六'];
+
+  let html = `<div class="month-grid">
+    <div class="month-weekdays">
+      ${DAYS.map(d => `<div class="month-weekday">${d}</div>`).join('')}
+    </div>
+    <div class="month-cells" id="month-cells">`;
+
+  const cur = new Date(startSun);
+  while (cur <= endSat) {
+    const dateStr = toDateStr(cur);
+    const isToday = sameDay(cur, today);
+    const isOther = cur.getMonth() !== mo;
+    const evs = getEventsOnDate(dateStr).sort((a,b) => {
+      const at = a.start?.dateTime || a.start?.date || '';
+      const bt = b.start?.dateTime || b.start?.date || '';
+      return at.localeCompare(bt);
+    });
+
+    html += `<div class="month-cell ${isToday ? 'today' : ''} ${isOther ? 'other-month' : ''}" data-date="${dateStr}">
+      <div class="cell-day">${cur.getDate()}</div>
+      <div class="cell-events">`;
+
+    const show = evs.slice(0, 3);
+    const more = evs.length - show.length;
+    show.forEach(ev => {
+      const title = ev.summary || '（無標題）';
+      const isAllday = !!ev.start?.date;
+      const cls = isAllday ? (ev._source==='gcal'?'ev-gcal':'ev-allday') : (ev._source==='gcal'?'ev-gcal':'ev-block');
+      const time = ev.start?.dateTime ? ev.start.dateTime.slice(11,16)+' ' : '';
+      html += `<div class="cell-ev ${cls}" title="${esc(title)}">${time}${esc(title.length>14?title.slice(0,14)+'…':title)}</div>`;
+    });
+    if (more > 0) html += `<div class="cell-more">+${more} 筆</div>`;
+
+    html += `</div></div>`;
+    cur.setDate(cur.getDate() + 1);
+  }
+
+  html += `</div></div>`;
+  body.innerHTML = html;
+}
+
+// ── Week View ──
+function renderWeek() {
+  const body = document.getElementById('cal-body');
+  const today = new Date();
+  const sun = new Date(viewDate);
+  sun.setDate(sun.getDate() - sun.getDay());
+
+  const DAYS = ['日','一','二','三','四','五','六'];
+
+  // Build 7 day columns
+  const cols = Array.from({length:7}, (_,i) => {
+    const d = new Date(sun); d.setDate(sun.getDate() + i);
+    return d;
+  });
+
+  // All-day row
+  let alldayHtml = `<div class="week-allday-row">
+    <div class="week-allday-gutter">全天</div>`;
+  cols.forEach(d => {
+    const dateStr = toDateStr(d);
+    const evs = getEventsOnDate(dateStr).filter(e => !!e.start?.date);
+    alldayHtml += `<div class="week-allday-col">`;
+    evs.forEach(ev => {
+      const cls = ev._source === 'gcal' ? 'ev-gcal' : 'ev-block';
+      alldayHtml += `<div class="allday-chip ${cls}" title="${esc(ev.summary||'')}">${esc((ev.summary||'（無標題）').slice(0,12))}</div>`;
+    });
+    alldayHtml += `</div>`;
+  });
+  alldayHtml += `</div>`;
+
+  // Day header row
+  let headHtml = `<div class="week-header-row"><div class="week-time-gutter"></div>`;
+  cols.forEach(d => {
+    const isToday = sameDay(d, today);
+    headHtml += `<div class="week-day-head ${isToday ? 'today' : ''}">
+      <div class="wdh-name">${DAYS[d.getDay()]}</div>
+      <div class="wdh-num">${d.getDate()}</div>
+    </div>`;
+  });
+  headHtml += `</div>`;
+
+  // Hour grid
+  let gridHtml = `<div class="week-scroll" id="week-scroll">
+    <div class="week-times">`;
+  for (let h = 0; h < 24; h++) {
+    gridHtml += `<div class="week-hour-label">${h === 0 ? '' : (h < 10 ? '0'+h : h)+':00'}</div>`;
+  }
+  gridHtml += `</div>`;
+
+  cols.forEach((d, ci) => {
+    const isToday = sameDay(d, today);
+    const dateStr = toDateStr(d);
+    const evs = getEventsOnDate(dateStr).filter(e => !!e.start?.dateTime);
+
+    gridHtml += `<div class="week-col ${isToday ? 'today' : ''}" style="position:relative">`;
+    for (let h = 0; h < 24; h++) {
+      gridHtml += `<div class="week-hour-cell"></div>`;
+    }
+
+    // Current time line
+    if (isToday) {
+      const now = new Date();
+      const pct = (now.getHours() * 60 + now.getMinutes()) / (24 * 60) * 100;
+      gridHtml += `<div class="time-now-line" style="top:${pct}%"></div>`;
+    }
+
+    evs.forEach(ev => {
+      const startDt = new Date(ev.start.dateTime);
+      const endDt   = new Date(ev.end?.dateTime || ev.start.dateTime);
+      const startMin = startDt.getHours() * 60 + startDt.getMinutes();
+      const endMin   = endDt.getHours() * 60 + endDt.getMinutes();
+      const top  = (startMin / (24*60) * 100).toFixed(2);
+      const height = Math.max(((endMin - startMin) / (24*60) * 100), 1.5).toFixed(2);
+      const cls = ev._source === 'gcal' ? 'ev-gcal' : 'ev-block';
+      const timeLabel = `${String(startDt.getHours()).padStart(2,'0')}:${String(startDt.getMinutes()).padStart(2,'0')}`;
+      gridHtml += `<div class="week-ev ${cls}" style="top:${top}%;height:${height}%" title="${esc(ev.summary||'')}">
+        <div style="font-size:10px;opacity:0.8">${timeLabel}</div>
+        <div>${esc((ev.summary||'（無標題）').slice(0,16))}</div>
+      </div>`;
+    });
+
+    gridHtml += `</div>`;
+  });
+  gridHtml += `</div>`;
+
+  body.innerHTML = headHtml + alldayHtml + `<div class="week-grid" style="flex:1;display:flex;flex-direction:column;overflow:hidden">${gridHtml}</div>`;
+
+  // Scroll to 8am
+  setTimeout(() => {
+    const sc = document.getElementById('week-scroll');
+    if (sc) sc.scrollTop = (8/24) * sc.scrollHeight;
+  }, 50);
+}
+
+// ── List View ──
+function renderList() {
+  const body = document.getElementById('cal-body');
+  const pushedIds = new Set(Object.keys(events));
+
+  // Gather all in view range (this month + next)
+  const all = [];
+  const rangeStart = getViewRangeStart();
+  const rangeEnd   = getViewRangeEnd();
+
+  [...Object.values(events), ...calEvents.filter(e => !pushedIds.has(e.id))].forEach(ev => {
+    const s = ev.start?.dateTime || ev.start?.date;
+    if (!s) return;
+    const d = new Date(s);
+    if (d >= rangeStart && d <= rangeEnd) {
+      all.push({ ...ev, _source: pushedIds.has(ev.id) ? 'pushed' : 'gcal' });
+    }
+  });
+
+  all.sort((a,b) => {
+    const ad = a.start?.dateTime || a.start?.date || '';
+    const bd = b.start?.dateTime || b.start?.date || '';
+    return ad.localeCompare(bd);
+  });
+
+  if (!all.length) {
+    body.innerHTML = `<div class="list-view"><div class="empty-state">
+      <div class="empty-icon">${isSignedIn ? '📅' : '🔒'}</div>
+      <h3>${isSignedIn ? '此期間沒有事件' : '尚未登入'}</h3>
+      <p>${isSignedIn ? '切換月份或從左側推送任務' : '登入 Google 後可看到你的日曆'}</p>
+    </div></div>`;
+    return;
+  }
+
+  // Group by date
+  const groups = {};
+  all.forEach(ev => {
+    const dateStr = ev.start?.dateTime?.slice(0,10) || ev.start?.date || '';
+    if (!groups[dateStr]) groups[dateStr] = [];
+    groups[dateStr].push(ev);
+  });
+
+  let html = `<div class="list-view">`;
+  Object.keys(groups).sort().forEach(dateStr => {
+    const evs = groups[dateStr];
+    html += `<div class="list-date-label">${formatDateLabel(dateStr)}</div>`;
+    evs.forEach(ev => {
+      html += buildEventRowHTML(ev);
+    });
+  });
+  html += `</div>`;
+  body.innerHTML = html;
+
+  // Bind events
+  body.querySelectorAll('.time-input').forEach(input => {
+    input.addEventListener('change', () => updateTime(input.dataset.id, input.dataset.which, input.value));
+  });
+  body.querySelectorAll('.sync-one').forEach(btn => {
+    btn.addEventListener('click', () => syncOne(btn.dataset.id));
+  });
+  body.querySelectorAll('.icon-btn.del').forEach(btn => {
+    btn.addEventListener('click', () => confirmDel(btn.dataset.id));
+  });
+}
+
+function buildEventRowHTML(ev) {
+  const isAllDay = !!ev.start?.date;
+  const isPushed = ev._source === 'pushed';
+  const row   = ev._row || {};
+  const title = ev.summary || '（無標題）';
+  const desc  = ev.description || '';
+  const id    = ev.id;
+
+  let dateLabel = '', startVal = '', endVal = '';
+  if (isAllDay) {
+    dateLabel = formatDateLabel(ev.start.date);
+  } else {
+    dateLabel = formatDateLabel(ev.start.dateTime?.slice(0, 10));
+    startVal  = ev.start.dateTime?.slice(11, 16) || '';
+    endVal    = ev.end?.dateTime?.slice(11, 16)  || '';
+  }
+
+  const barClass = isAllDay ? (isPushed ? 'bar-allday' : 'bar-gcal') : (isPushed ? 'bar-block' : 'bar-gcal');
+  const statusClass = getStatusClass(row.status);
+  const isUrgent    = /^(true|是|yes|✓|v|✔)$/i.test((row.urgent || '').trim());
+
+  return `<div class="event-row" id="row-${esc(id)}" data-id="${esc(id)}">
+    <div class="event-bar ${barClass}"></div>
+    <div class="event-body">
+      <div class="event-top">
+        <span class="event-title">${esc(title)}</span>
+        ${!isPushed ? `<span class="tag tag-gcal">Google Calendar</span>` : ''}
+        ${row.platform ? `<span class="tag tag-platform">${esc(row.platform)}</span>` : ''}
+        ${row.type     ? `<span class="tag tag-type">${esc(row.type)}</span>` : ''}
+        ${isAllDay     ? `<span class="tag tag-allday">全天</span>` : ''}
+        ${row.status   ? `<span class="tag ${statusClass}">${esc(row.status)}</span>` : ''}
+        ${isUrgent     ? `<span class="tag tag-urgent">急件</span>` : ''}
+      </div>
+      <div class="event-meta">
+        <span class="meta-item">📅 ${dateLabel}</span>
+        ${!isAllDay ? `<span class="meta-item">🕐 ${startVal} – ${endVal}</span>` : ''}
+      </div>
+      ${desc ? `<div class="event-desc" title="${esc(desc)}">${esc(desc.slice(0, 90))}${desc.length > 90 ? '…' : ''}</div>` : ''}
+    </div>
+    <div class="event-controls">
+      ${!isAllDay && isPushed ? `
+      <div class="time-inputs">
+        <input class="time-input" type="time" value="${startVal}" data-id="${esc(id)}" data-which="start" title="開始時間">
+        <span class="sep">–</span>
+        <input class="time-input" type="time" value="${endVal}"   data-id="${esc(id)}" data-which="end"   title="結束時間">
+      </div>` : ''}
+      ${isPushed ? `<div class="icon-btns">
+        <button class="icon-btn sync-one ${ev._synced ? 'synced' : ''}" title="重新同步" data-id="${esc(id)}">↻</button>
+        <button class="icon-btn del" title="刪除" data-id="${esc(id)}">✕</button>
+      </div>` : ''}
+    </div>
+  </div>`;
+}
+
 // ── Parse ──
+const COL_KEYWORDS = {
+  date:     ['date','日期','時間','schedule','when','日'],
+  status:   ['status','狀態','進度','state'],
+  urgent:   ['urgent','急','priority','緊急','急件'],
+  brand:    ['brand','品牌','客戶','client','公司','company','廠商'],
+  platform: ['platform','平台','channel','渠道','媒體'],
+  type:     ['type','類型','種類','format','格式'],
+  detail:   ['detail','細項','說明','備註','note','remark','content','內容','工作內容'],
+  slot:     ['slot','時段','時間段','period','block'],
+};
+
+function detectColumns(headerRow) {
+  const result = {};
+  for (const [key, keywords] of Object.entries(COL_KEYWORDS)) {
+    result[key] = -1;
+    for (let ci = 0; ci < headerRow.length; ci++) {
+      const cell = (headerRow[ci] || '').trim().toLowerCase();
+      if (!cell) continue;
+      if (keywords.some(kw => cell.includes(kw))) {
+        result[key] = ci;
+        break;
+      }
+    }
+  }
+  return result;
+}
+
+function isHeaderRow(cols) {
+  let matches = 0;
+  const allKws = Object.values(COL_KEYWORDS).flat();
+  for (const cell of cols) {
+    const c = (cell || '').trim().toLowerCase();
+    if (c && allKws.some(kw => c.includes(kw))) matches++;
+  }
+  return matches >= 2;
+}
+
+function findDateCol(cols) {
+  for (let i = 0; i < cols.length; i++) {
+    if (parseDate((cols[i] || '').trim())) return i;
+  }
+  return -1;
+}
+
 function parseTsv(text) {
   const lines = text.trim().split('\n').map(l => l.split('\t'));
   if (!lines.length) return [];
 
-  // 固定欄位順序（從 Sheets 複製）：
-  // 0:星期  1:Owner  2:狀態  3:日期  4:時間  5:急  6:品牌/公司  7:平台  8:類型  9:細項  10:時段  11:備註
-  const iOwner    = 1;
-  const iStatus   = 2;
-  const iDate     = 3;
-  const iUrgent   = 5;
-  const iBrand    = 6;
-  const iPlatform = 7;
-  const iType     = 8;
-  const iDetail   = 9;
-  const iSlot     = 10;
+  let headerIdx = -1;
+  let colMap = {};
+
+  for (let i = 0; i < Math.min(lines.length, 5); i++) {
+    if (lines[i].length >= 2 && isHeaderRow(lines[i])) {
+      headerIdx = i;
+      colMap = detectColumns(lines[i]);
+      break;
+    }
+  }
+
+  const noHeader = headerIdx === -1;
+  if (noHeader) {
+    const sampleRow = lines[0] || [];
+    colMap.date = findDateCol(sampleRow);
+    for (const k of ['status','urgent','brand','platform','type','detail','slot']) {
+      if (colMap[k] === undefined) colMap[k] = -1;
+    }
+  }
+
+  if (colMap.date === -1) return [];
 
   const rows = [];
-  for (let i = 0; i < lines.length; i++) {
+  const dataStart = noHeader ? 0 : headerIdx + 1;
+
+  for (let i = dataStart; i < lines.length; i++) {
     const cols = lines[i];
-    if (!cols || cols.length < 4) continue;
-
-    const owner = (cols[iOwner] || '').trim();
-    // 跳過標題列（英文或中文）
-    if (/^(owner|負責人|擁有者)$/i.test(owner)) continue;
-    if (!owner.toLowerCase().includes('jes')) continue;
-
-    const dateRaw = (cols[iDate] || '').trim();
+    if (!cols || cols.every(c => !c.trim())) continue;
+    const dateRaw = (cols[colMap.date] || '').trim();
     if (!dateRaw) continue;
-
     const date = parseDate(dateRaw);
     if (!date) continue;
-
+    const g = (idx) => idx !== -1 ? (cols[idx] || '').trim() : '';
     rows.push({
       date,
-      slot:     (cols[iSlot]     || '').trim(),
-      brand:    (cols[iBrand]    || '').trim(),
-      platform: (cols[iPlatform] || '').trim(),
-      type:     (cols[iType]     || '').trim(),
-      detail:   (cols[iDetail]   || '').trim(),
-      status:   (cols[iStatus]   || '').trim(),
-      urgent:   (cols[iUrgent]   || '').trim(),
+      status:   g(colMap.status),
+      urgent:   g(colMap.urgent),
+      brand:    g(colMap.brand),
+      platform: g(colMap.platform),
+      type:     g(colMap.type),
+      detail:   g(colMap.detail),
+      slot:     g(colMap.slot),
     });
   }
   return rows;
 }
 
 function parseDate(raw) {
-  const m1 = raw.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+  if (!raw) return null;
+  const s = raw.trim();
+  const m1 = s.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
   if (m1) return `${m1[1]}-${m1[2].padStart(2,'0')}-${m1[3].padStart(2,'0')}`;
-  const m2 = raw.match(/(\d{1,2})[\/\-](\d{1,2})/);
+  const m3 = s.match(/(\d{1,2})月(\d{1,2})[日号]/);
+  if (m3) {
+    const y = new Date().getFullYear();
+    return `${y}-${m3[1].padStart(2,'0')}-${m3[2].padStart(2,'0')}`;
+  }
+  const m2 = s.match(/^(\d{1,2})[\/\-](\d{1,2})/);
   if (m2) {
     const y = new Date().getFullYear();
     return `${y}-${m2[1].padStart(2,'0')}-${m2[2].padStart(2,'0')}`;
@@ -708,10 +1508,9 @@ function buildCalEvent(row) {
   const isAllDay  = !slotStart;
 
   if (isAllDay) {
-    // Google Calendar 全天事件：end.date 需為隔天（exclusive）
-    const nextDay = new Date(row.date + 'T00:00:00');
-    nextDay.setDate(nextDay.getDate() + 1);
-    const endDate = nextDay.toISOString().slice(0, 10);
+    const [y, m, d] = row.date.split('-').map(Number);
+    const next = new Date(y, m - 1, d + 1);
+    const endDate = `${next.getFullYear()}-${String(next.getMonth()+1).padStart(2,'0')}-${String(next.getDate()).padStart(2,'0')}`;
     return {
       summary: buildTitle(row),
       description: row.detail || undefined,
@@ -733,8 +1532,7 @@ function buildCalEvent(row) {
   };
 }
 
-// ── Duplicate check ──
-function isDuplicate(row) {
+function isDuplicateLocal(row) {
   const title = buildTitle(row);
   return Object.values(events).some(ev =>
     ev.summary === title &&
@@ -742,17 +1540,47 @@ function isDuplicate(row) {
   );
 }
 
-// ── Main handler ──
+async function fetchExistingTitlesOnDate(date) {
+  try {
+    const dayStart = date + 'T00:00:00Z';
+    const dayEnd   = date + 'T23:59:59Z';
+    const res = await gapi.client.calendar.events.list({
+      calendarId: 'primary',
+      timeMin: dayStart,
+      timeMax: dayEnd,
+      singleEvents: true,
+      fields: 'items(summary,start)',
+    });
+    return (res.result.items || []).map(e => e.summary || '');
+  } catch(e) {
+    return [];
+  }
+}
+
+// ── Main push handler ──
 async function handlePaste() {
   if (!isSignedIn) { showToast('請先登入 Google', 'err'); return; }
+  if (!await ensureToken()) return;
   const text = document.getElementById('paste-input').value;
   if (!text.trim()) { showToast('請先貼上資料', 'err'); return; }
 
   const rows = parseTsv(text);
-  if (!rows.length) { showToast('找不到 Jessica 的任務，請確認欄位格式', 'err'); return; }
+  if (!rows.length) { showToast('找不到可解析的任務，請確認資料中有日期欄', 'err'); return; }
 
-  // De-dup check
-  const newRows   = rows.filter(r => !isDuplicate(r));
+  showToast('檢查重複中…', '');
+  const uniqueDates = [...new Set(rows.map(r => r.date))];
+  const calTitlesMap = {};
+  await Promise.all(uniqueDates.map(async date => {
+    const titles = await fetchExistingTitlesOnDate(date);
+    calTitlesMap[date] = new Set(titles);
+  }));
+
+  const newRows = rows.filter(r => {
+    if (isDuplicateLocal(r)) return false;
+    const title = buildTitle(r);
+    if (calTitlesMap[r.date]?.has(title)) return false;
+    return true;
+  });
   const dupCount  = rows.length - newRows.length;
   if (!newRows.length) {
     showToast(`所有 ${rows.length} 筆已存在，未重複推送`, 'err');
@@ -767,10 +1595,8 @@ async function handlePaste() {
   progress.classList.add('active');
   progressBar.style.width = '0%';
 
-  // 並行推送（最多 5 個同時）
   const CHUNK = 5;
-  let successCount = 0;
-  let failCount = 0;
+  let successCount = 0, failCount = 0;
 
   for (let i = 0; i < newRows.length; i += CHUNK) {
     const chunk = newRows.slice(i, i + CHUNK);
@@ -798,12 +1624,16 @@ async function handlePaste() {
     progressBar.style.width = `${(done / newRows.length) * 100}%`;
   }
 
-  renderEvents();
   btn.disabled = false;
   btn.textContent = '↑ 解析並推送到 Calendar';
   progress.classList.remove('active');
   progressBar.style.width = '0%';
   updatePushBtn();
+
+  // Refresh the calendar view
+  await loadCalendarEvents(false);
+  renderView();
+  updateStats();
 
   let msg = `已推送 ${successCount}/${newRows.length} 筆`;
   if (dupCount)  msg += `，跳過 ${dupCount} 重複`;
@@ -811,110 +1641,7 @@ async function handlePaste() {
   showToast(msg, successCount > 0 ? 'ok' : 'err');
 }
 
-// ── Render ──
-function renderEvents() {
-  const list = document.getElementById('events-list');
-  const all  = Object.values(events);
-
-  document.getElementById('stat-total').textContent  = `${all.length} 筆`;
-  document.getElementById('stat-synced').textContent = `✓ ${all.filter(e => e._synced).length} 已同步`;
-  document.getElementById('stat-allday').textContent = `◈ ${all.filter(e => e.start?.date).length} 全天`;
-
-  if (!all.length) {
-    list.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">📋</div>
-        <h3>尚無事件</h3>
-        <p>從左側貼上 Sheets 資料<br>Jessica 的任務會自動出現在這裡</p>
-      </div>`;
-    return;
-  }
-
-  // 按日期排序
-  all.sort((a, b) => {
-    const ad = a.start?.dateTime || a.start?.date || '';
-    const bd = b.start?.dateTime || b.start?.date || '';
-    return ad.localeCompare(bd);
-  });
-
-  list.innerHTML = all.map(ev => {
-    const isAllDay = !!ev.start?.date;
-    const row   = ev._row || {};
-    const title = ev.summary || '（無標題）';
-    const desc  = ev.description || '';
-    const id    = ev.id;
-
-    let dateLabel = '', startVal = '', endVal = '';
-    if (isAllDay) {
-      dateLabel = formatDateLabel(ev.start.date);
-    } else {
-      dateLabel = formatDateLabel(ev.start.dateTime?.slice(0, 10));
-      startVal  = ev.start.dateTime?.slice(11, 16) || '';
-      endVal    = ev.end?.dateTime?.slice(11, 16)  || '';
-    }
-
-    const statusClass = getStatusClass(row.status);
-    const isUrgent    = row.urgent === 'TRUE' || row.urgent === '✓';
-
-    return `<div class="event-row" id="row-${esc(id)}" data-id="${esc(id)}">
-      <div class="event-bar ${isAllDay ? 'bar-allday' : 'bar-block'}"></div>
-      <div class="event-body">
-        <div class="event-top">
-          <span class="event-title">${esc(title)}</span>
-          ${row.platform ? `<span class="tag tag-platform">${esc(row.platform)}</span>` : ''}
-          ${row.type     ? `<span class="tag tag-type">${esc(row.type)}</span>` : ''}
-          ${isAllDay     ? `<span class="tag tag-allday">全天</span>` : ''}
-          ${row.status   ? `<span class="tag ${statusClass}">${esc(row.status)}</span>` : ''}
-          ${isUrgent     ? `<span class="tag tag-urgent">急件</span>` : ''}
-        </div>
-        <div class="event-meta">
-          <span class="meta-item">📅 ${dateLabel}</span>
-          ${!isAllDay ? `<span class="meta-item">🕐 ${startVal} – ${endVal}</span>` : ''}
-        </div>
-        ${desc ? `<div class="event-desc" title="${esc(desc)}">${esc(desc.slice(0, 90))}${desc.length > 90 ? '…' : ''}</div>` : ''}
-      </div>
-      <div class="event-controls">
-        ${!isAllDay ? `
-        <div class="time-inputs">
-          <input class="time-input" type="time" value="${startVal}" data-id="${esc(id)}" data-which="start" title="開始時間">
-          <span class="sep">–</span>
-          <input class="time-input" type="time" value="${endVal}"   data-id="${esc(id)}" data-which="end"   title="結束時間">
-        </div>` : ''}
-        <div class="icon-btns">
-          <button class="icon-btn sync-one ${ev._synced ? 'synced' : ''}" title="重新同步" data-id="${esc(id)}">↻</button>
-          <button class="icon-btn del" title="刪除" data-id="${esc(id)}">✕</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-
-  // 使用 event delegation 而非 inline onclick（避免 XSS）
-  list.querySelectorAll('.time-input').forEach(input => {
-    input.addEventListener('change', () => updateTime(input.dataset.id, input.dataset.which, input.value));
-  });
-  list.querySelectorAll('.sync-one').forEach(btn => {
-    btn.addEventListener('click', () => syncOne(btn.dataset.id));
-  });
-  list.querySelectorAll('.icon-btn.del').forEach(btn => {
-    btn.addEventListener('click', () => confirmDel(btn.dataset.id));
-  });
-}
-
-function getStatusClass(status) {
-  if (!status) return 'tag-status-other';
-  if (status.includes('處理')) return 'tag-status-processing';
-  if (status.toLowerCase().includes('pending')) return 'tag-status-pending';
-  return 'tag-status-other';
-}
-
-function formatDateLabel(dateStr) {
-  if (!dateStr) return '';
-  const d = new Date(dateStr + 'T12:00:00');
-  const days = ['日', '一', '二', '三', '四', '五', '六'];
-  return `${d.getMonth() + 1}/${d.getDate()} (${days[d.getDay()]})`;
-}
-
-// ── Update time inline ──
+// ── Time update (for list view) ──
 async function updateTime(id, which, val) {
   const ev = events[id];
   if (!ev) return;
@@ -922,22 +1649,25 @@ async function updateTime(id, which, val) {
   if (!dateStr) return;
 
   if (which === 'start') {
-    // 保持原本的時長，而不是強制 +30 分鐘
     const oldStart = ev.start.dateTime?.slice(11, 16) || '00:00';
     const oldEnd   = ev.end?.dateTime?.slice(11, 16)  || '00:00';
     const [os, oe] = [oldStart, oldEnd].map(t => {
       const [h, m] = t.split(':').map(Number);
       return h * 60 + m;
     });
-    const duration = Math.max(oe - os, 30); // 最少 30 分鐘
-
+    const duration = Math.max(oe - os, 30);
     const [nh, nm] = val.split(':').map(Number);
     const endMin   = nh * 60 + nm + duration;
-    const endStr   = `${String(Math.floor(endMin / 60) % 24).padStart(2,'0')}:${String(endMin % 60).padStart(2,'0')}`;
-
+    const clampedEnd = Math.min(endMin, 23 * 60 + 59);
+    const endStr   = `${String(Math.floor(clampedEnd / 60)).padStart(2,'0')}:${String(clampedEnd % 60).padStart(2,'0')}`;
     ev.start.dateTime = `${dateStr}T${val}:00`;
     ev.end.dateTime   = `${dateStr}T${endStr}:00`;
   } else {
+    const [eh, em] = val.split(':').map(Number);
+    const endMin2 = eh * 60 + em;
+    const [sh2, sm2] = (ev.start.dateTime?.slice(11, 16) || '00:00').split(':').map(Number);
+    const startMin2 = sh2 * 60 + sm2;
+    if (endMin2 <= startMin2) { showToast('結束時間必須晚於開始時間', 'err'); return; }
     ev.end.dateTime = `${dateStr}T${val}:00`;
   }
 
@@ -947,8 +1677,8 @@ async function updateTime(id, which, val) {
 async function syncOne(id) {
   const ev = events[id];
   if (!ev) return;
+  if (!await ensureToken()) return;
 
-  // 視覺 feedback：按鈕 spinning
   const syncBtn = document.querySelector(`.sync-one[data-id="${CSS.escape(id)}"]`);
   if (syncBtn) { syncBtn.classList.add('syncing'); syncBtn.disabled = true; }
 
@@ -961,7 +1691,7 @@ async function syncOne(id) {
       },
     });
     events[id] = { ...res.result, _row: ev._row, _synced: true };
-    renderEvents();
+    renderView();
     showToast('已同步', 'ok');
   } catch(e) {
     showToast('同步失敗：' + (e.result?.error?.message || e), 'err');
@@ -969,7 +1699,6 @@ async function syncOne(id) {
   }
 }
 
-// ── Delete ──
 let pendingDelId = null;
 function confirmDel(id) {
   pendingDelId = id;
@@ -978,10 +1707,12 @@ function confirmDel(id) {
     const delId = pendingDelId;
     pendingDelId = null;
     document.getElementById('modal-delete').classList.remove('open');
+    if (!await ensureToken()) return;
     try {
       await gapi.client.calendar.events.delete({ calendarId: 'primary', eventId: delId });
       delete events[delId];
-      renderEvents();
+      calEvents = calEvents.filter(e => e.id !== delId);
+      renderView();
       showToast('已刪除', 'ok');
     } catch(e) {
       showToast('刪除失敗', 'err');
@@ -997,6 +1728,30 @@ function esc(s) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+function toDateStr(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function sameDay(a, b) {
+  return a.getFullYear() === b.getFullYear() &&
+         a.getMonth() === b.getMonth() &&
+         a.getDate() === b.getDate();
+}
+
+function formatDateLabel(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr + 'T12:00:00');
+  const days = ['日', '一', '二', '三', '四', '五', '六'];
+  return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} (${days[d.getDay()]})`;
+}
+
+function getStatusClass(status) {
+  if (!status) return 'tag-status-other';
+  if (status.includes('處理')) return 'tag-status-processing';
+  if (status.toLowerCase().includes('pending')) return 'tag-status-pending';
+  return 'tag-status-other';
 }
 
 function clearInput() {
@@ -1022,6 +1777,9 @@ function showToast(msg, type = '') {
 window.addEventListener('load', () => {
   document.getElementById('paste-input').addEventListener('input', updatePushBtn);
 
+  // Initial render (no login)
+  renderView();
+
   if (!CLIENT_ID) {
     document.getElementById('setup-banner').style.display = 'flex';
     return;
@@ -1038,6 +1796,11 @@ window.addEventListener('load', () => {
   s2.onload = initGis;
   s2.onerror = () => showToast('無法載入 Google 登入服務', 'err');
   document.body.appendChild(s2);
+
+  // Update current time line every minute
+  setInterval(() => {
+    if (currentView === 'week') renderWeek();
+  }, 60000);
 });
 </script>
 </body>
