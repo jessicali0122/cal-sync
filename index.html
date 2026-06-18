@@ -909,6 +909,16 @@ function getColorIdx(ev) {
   for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0;
   return Math.abs(h) % 5;
 }
+// Returns color CSS class for event blocks: 'c0'–'c4' or 'gcal'
+function colorClass(ev) {
+  const idx = getColorIdx(ev);
+  return idx === 'gcal' ? 'gcal' : `c${idx}`;
+}
+// Returns bar CSS class for list view: 'bar-0'–'bar-4' or 'bar-gcal'
+function barClass(ev) {
+  const idx = getColorIdx(ev);
+  return idx === 'gcal' ? 'bar-gcal' : `bar-${idx}`;
+}
 
 // ── Modal helpers ──
 function openSetup()  { document.getElementById('modal-setup').classList.add('open'); }
@@ -1089,7 +1099,7 @@ function navNext() {
 
 function goToday() {
   viewDate = new Date();
-  miniCalDate = new Date();
+  miniCalDate2 = new Date();
   renderView(); renderMiniCal();
   if (isSignedIn) loadCalendarEvents(false);
 }
@@ -1255,7 +1265,8 @@ function renderMonth() {
       const idx = getColorIdx(ev);
       const title = ev.summary || '（無標題）';
       const time = ev.start?.dateTime ? ev.start.dateTime.slice(11,16)+' ' : '';
-      html += `<div class="cell-ev c${idx}" title="${esc(title)}">${time}${esc(title.length>14?title.slice(0,14)+'…':title)}</div>`;
+      const evCls = colorClass(ev);
+      html += `<div class="cell-ev ${evCls}" title="${esc(title)}" onclick="event.stopPropagation();openEditModal('${esc(ev.id||'')}')">${time}${esc(title.length>14?title.slice(0,14)+'…':title)}</div>`;
     });
     if (more > 0) html += `<div class="cell-more">+${more} 筆</div>`;
     html += `</div></div>`;
@@ -1285,7 +1296,7 @@ function renderWeek() {
     alldayHtml += `<div class="week-allday-col">`;
     evs.forEach(ev => {
       const idx = getColorIdx(ev);
-      alldayHtml += `<div class="allday-chip c${idx}" title="${esc(ev.summary||'')}">${esc((ev.summary||'（無標題）').slice(0,12))}</div>`;
+      alldayHtml += `<div class="allday-chip ${colorClass(ev)}" title="${esc(ev.summary||'')}" onclick="openEditModal('${esc(ev.id||'')}')">${esc((ev.summary||'（無標題）').slice(0,12))}</div>`;
     });
     alldayHtml += `</div>`;
   });
@@ -1328,7 +1339,7 @@ function renderWeek() {
       const tl  = `${String(s.getHours()).padStart(2,'0')}:${String(s.getMinutes()).padStart(2,'0')}`;
       const title = ev.summary || '（無標題）';
       const tlEnd = `${String(e2.getHours()).padStart(2,'0')}:${String(e2.getMinutes()).padStart(2,'0')}`;
-      gridHtml += `<div class="week-ev c${idx}" style="top:${top}%;height:${ht}%" title="${esc(title)}"
+      gridHtml += `<div class="week-ev ${colorClass(ev)}" style="top:${top}%;height:${ht}%" title="${esc(title)}"
         onclick="weekEvClick(event,'${esc(ev.id||'')}')">
         <div class="ev-time">${tl} – ${tlEnd}</div>
         <div class="ev-title">${esc(title.length>20?title.slice(0,20)+'…':title)}</div>
@@ -1422,7 +1433,7 @@ function buildEventRowHTML(ev) {
   const isUrgent = /^(true|是|yes|✓|v|✔)$/i.test((row.urgent||'').trim());
 
   return `<div class="event-row" id="row-${esc(id)}" data-id="${esc(id)}">
-    <div class="event-bar bar-${idx}"></div>
+    <div class="event-bar ${barClass(ev)}"></div>
     <div class="event-body">
       <div class="event-top">
         <span class="event-title">${esc(title)}</span>
