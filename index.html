@@ -1463,7 +1463,6 @@ function renderMonth() {
       <div class="cell-events">`;
     const show = evs.slice(0, 3); const more = evs.length - show.length;
     show.forEach(ev => {
-      const idx = getColorIdx(ev);
       const title = ev.summary || '（無標題）';
       const time = ev.start?.dateTime ? ev.start.dateTime.slice(11,16)+' ' : '';
       const evColor = getEvColor(ev), evBg = getEvBg(ev);
@@ -1496,7 +1495,6 @@ function renderWeek() {
     const evs = getEventsOnDate(toDateStr(d)).filter(e => !!e.start?.date);
     alldayHtml += `<div class="week-allday-col">`;
     evs.forEach(ev => {
-      const idx = getColorIdx(ev);
       const adColor = getEvColor(ev);
       alldayHtml += `<div class="allday-chip" style="background:${getEvBg(ev)};color:${adColor}" title="${esc(ev.summary||'')}" onclick="openEditModal('${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">${esc((ev.summary||'（無標題）').slice(0,12))}</div>`;
     });
@@ -1537,7 +1535,6 @@ function renderWeek() {
       const sm = s.getHours()*60+s.getMinutes(), em = e2.getHours()*60+e2.getMinutes();
       const top = (sm/(24*60)*100).toFixed(2);
       const ht  = Math.max(((em-sm)/(24*60)*100),1.8).toFixed(2);
-      const idx = getColorIdx(ev);
       const tl  = `${String(s.getHours()).padStart(2,'0')}:${String(s.getMinutes()).padStart(2,'0')}`;
       const title = ev.summary || '（無標題）';
       const tlEnd = `${String(e2.getHours()).padStart(2,'0')}:${String(e2.getMinutes()).padStart(2,'0')}`;
