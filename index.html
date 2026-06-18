@@ -834,6 +834,12 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
       <button onclick="closeEventModal()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:20px;line-height:1;padding:0">✕</button>
     </div>
     <div style="display:flex;flex-direction:column;gap:14px">
+      <div id="ev-cal-wrap">
+        <label style="font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;display:block;margin-bottom:6px">日曆</label>
+        <select id="ev-calendar" style="width:100%;font-family:var(--sans);font-size:14px;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);outline:none;cursor:pointer">
+          <option value="primary">主日曆</option>
+        </select>
+      </div>
       <div>
         <label style="font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;display:block;margin-bottom:6px">標題</label>
         <input type="text" id="ev-title" placeholder="事件標題" style="width:100%;font-family:var(--sans);font-size:14px;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 0 4px var(--accent-dim)'" onblur="this.style.borderColor='';this.style.boxShadow=''">
@@ -889,9 +895,11 @@ let CLIENT_ID = localStorage.getItem(CLIENT_ID_KEY) || '';
 let gapiInited = false, gisInited = false, isSignedIn = false;
 let tokenClient;
 
-let events = {};      // pushed from sheets (keyed by gcal id)
-let calEvents = [];   // all events from gcal API
-let editingEventId = null; // currently editing event id (null = create)
+let events = {};        // pushed from sheets (keyed by gcal id)
+let calEvents = [];     // all events from all calendars
+let calendarList = [];  // all user calendars with metadata
+let editingEventId = null;
+let editingCalendarId = 'primary';
 
 let currentView = 'week';
 let viewDate = new Date();
@@ -901,24 +909,25 @@ const SLOT_MAP = {
   '早間': '09:00', '上午': '10:00', '下午': '14:00', '傍晚': '16:30',
 };
 
-// ── Color assignment ──
-function getColorIdx(ev) {
-  if (ev._source === 'gcal') return 'gcal';
+// ── Color helpers ──
+// Returns hex color for an event (uses calendar color if available)
+function getEvColor(ev) {
+  if (ev._calColor) return ev._calColor;
+  if (ev._source === 'gcal') return '#22c55e';
   const str = ev.summary || '';
   let h = 0;
   for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0;
-  return Math.abs(h) % 5;
+  const COLORS = ['#7c3aed','#15803d','#1d4ed8','#9d174d','#0f766e'];
+  return COLORS[Math.abs(h) % 5];
 }
-// Returns color CSS class for event blocks: 'c0'–'c4' or 'gcal'
-function colorClass(ev) {
-  const idx = getColorIdx(ev);
-  return idx === 'gcal' ? 'gcal' : `c${idx}`;
+// Returns lightened bg color (hex → rgba with opacity)
+function getEvBg(ev) {
+  const c = getEvColor(ev);
+  return c + '22'; // ~13% opacity via hex alpha
 }
-// Returns bar CSS class for list view: 'bar-0'–'bar-4' or 'bar-gcal'
-function barClass(ev) {
-  const idx = getColorIdx(ev);
-  return idx === 'gcal' ? 'bar-gcal' : `bar-${idx}`;
-}
+// colorClass / barClass kept for compatibility but now use inline styles
+function colorClass(ev) { return '_ev'; }
+function barClass(ev) { return '_bar'; }
 
 // ── Modal helpers ──
 function openSetup()  { document.getElementById('modal-setup').classList.add('open'); }
@@ -976,6 +985,8 @@ function handleAuth() {
     localStorage.removeItem('gcal_jess_expiry');
     setSignedIn(false);
     calEvents = [];
+    calendarList = [];
+    document.getElementById('category-list').innerHTML = '';
     renderView();
     showToast('已登出', 'ok');
     return;
@@ -1022,7 +1033,7 @@ async function ensureToken() {
   return false;
 }
 
-// ── Load Google Calendar Events ──
+// ── Load all user calendars then their events ──
 async function loadCalendarEvents(showLoad = true) {
   if (!isSignedIn) return;
   if (!await ensureToken()) return;
@@ -1030,13 +1041,39 @@ async function loadCalendarEvents(showLoad = true) {
   const btn = document.getElementById('refresh-btn');
   btn.classList.add('spinning');
   try {
-    const res = await gapi.client.calendar.events.list({
-      calendarId: 'primary',
-      timeMin: getViewRangeStart().toISOString(),
-      timeMax: getViewRangeEnd().toISOString(),
-      singleEvents: true, orderBy: 'startTime', maxResults: 500,
-    });
-    calEvents = res.result.items || [];
+    // 1. Fetch calendar list (only once per session if already loaded)
+    if (!calendarList.length) {
+      const clRes = await gapi.client.calendar.calendarList.list({ minAccessRole: 'reader' });
+      calendarList = (clRes.result.items || []).filter(c => c.selected !== false);
+      renderCalendarCategories();
+    }
+
+    // 2. Fetch events from ALL calendars in parallel
+    const rangeStart = getViewRangeStart().toISOString();
+    const rangeEnd   = getViewRangeEnd().toISOString();
+
+    const results = await Promise.allSettled(
+      calendarList.map(cal =>
+        gapi.client.calendar.events.list({
+          calendarId: cal.id,
+          timeMin: rangeStart,
+          timeMax: rangeEnd,
+          singleEvents: true,
+          orderBy: 'startTime',
+          maxResults: 500,
+        }).then(res => (res.result.items || []).map(ev => ({
+          ...ev,
+          _calId: cal.id,
+          _calColor: cal.backgroundColor || '#6366f1',
+          _calName: cal.summary || cal.id,
+        })))
+      )
+    );
+
+    calEvents = results
+      .filter(r => r.status === 'fulfilled')
+      .flatMap(r => r.value);
+
     renderView();
     updateStats();
   } catch(e) {
@@ -1045,6 +1082,19 @@ async function loadCalendarEvents(showLoad = true) {
     btn.classList.remove('spinning');
     showCalLoading(false);
   }
+}
+
+// ── Render calendar list in sidebar ──
+function renderCalendarCategories() {
+  const el = document.getElementById('category-list');
+  if (!el || !calendarList.length) return;
+  el.innerHTML = calendarList.map(cal => {
+    const color = cal.backgroundColor || '#6366f1';
+    return `<div class="category-item">
+      <div class="cat-checkbox" style="background:${color}"></div>
+      <span class="cat-name" style="font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(cal.summary||cal.id)}">${esc(cal.summary||cal.id)}</span>
+    </div>`;
+  }).join('');
 }
 
 function getViewRangeStart() {
@@ -1271,8 +1321,8 @@ function renderMonth() {
       const idx = getColorIdx(ev);
       const title = ev.summary || '（無標題）';
       const time = ev.start?.dateTime ? ev.start.dateTime.slice(11,16)+' ' : '';
-      const evCls = colorClass(ev);
-      html += `<div class="cell-ev ${evCls}" title="${esc(title)}" onclick="event.stopPropagation();openEditModal('${esc(ev.id||'')}')">${time}${esc(title.length>14?title.slice(0,14)+'…':title)}</div>`;
+      const evColor = getEvColor(ev), evBg = getEvBg(ev);
+      html += `<div class="cell-ev" style="background:${evBg};color:${evColor};border-left:2px solid ${evColor}" title="${esc(title)}" onclick="event.stopPropagation();openEditModal('${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">${time}${esc(title.length>14?title.slice(0,14)+'…':title)}</div>`;
     });
     if (more > 0) html += `<div class="cell-more">+${more} 筆</div>`;
     html += `</div></div>`;
@@ -1302,7 +1352,8 @@ function renderWeek() {
     alldayHtml += `<div class="week-allday-col">`;
     evs.forEach(ev => {
       const idx = getColorIdx(ev);
-      alldayHtml += `<div class="allday-chip ${colorClass(ev)}" title="${esc(ev.summary||'')}" onclick="openEditModal('${esc(ev.id||'')}')">${esc((ev.summary||'（無標題）').slice(0,12))}</div>`;
+      const adColor = getEvColor(ev);
+      alldayHtml += `<div class="allday-chip" style="background:${getEvBg(ev)};color:${adColor}" title="${esc(ev.summary||'')}" onclick="openEditModal('${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">${esc((ev.summary||'（無標題）').slice(0,12))}</div>`;
     });
     alldayHtml += `</div>`;
   });
@@ -1345,8 +1396,9 @@ function renderWeek() {
       const tl  = `${String(s.getHours()).padStart(2,'0')}:${String(s.getMinutes()).padStart(2,'0')}`;
       const title = ev.summary || '（無標題）';
       const tlEnd = `${String(e2.getHours()).padStart(2,'0')}:${String(e2.getMinutes()).padStart(2,'0')}`;
-      gridHtml += `<div class="week-ev ${colorClass(ev)}" style="top:${top}%;height:${ht}%" title="${esc(title)}"
-        onclick="weekEvClick(event,'${esc(ev.id||'')}')">
+      const wColor = getEvColor(ev);
+      gridHtml += `<div class="week-ev" style="top:${top}%;height:${ht}%;background:${getEvBg(ev)};color:${wColor};border-left-color:${wColor}" title="${esc(title)}"
+        onclick="weekEvClick(event,'${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">
         <div class="ev-time">${tl} – ${tlEnd}</div>
         <div class="ev-title">${esc(title.length>20?title.slice(0,20)+'…':title)}</div>
       </div>`;
@@ -1374,9 +1426,9 @@ function weekSlotClick(e, dateStr, hour) {
   openCreateModal(dateStr, `${h}:00`);
 }
 
-function weekEvClick(e, id) {
+function weekEvClick(e, id, calId) {
   e.stopPropagation();
-  openEditModal(id);
+  openEditModal(id, calId);
 }
 
 // ── List View ──
@@ -1439,7 +1491,7 @@ function buildEventRowHTML(ev) {
   const isUrgent = /^(true|是|yes|✓|v|✔)$/i.test((row.urgent||'').trim());
 
   return `<div class="event-row" id="row-${esc(id)}" data-id="${esc(id)}">
-    <div class="event-bar ${barClass(ev)}"></div>
+    <div class="event-bar" style="background:${getEvColor(ev)}"></div>
     <div class="event-body">
       <div class="event-top">
         <span class="event-title">${esc(title)}</span>
@@ -1755,14 +1807,25 @@ function getEventById(id) {
 }
 
 // ── Event Modal ──
+function populateCalendarSelect(selectedId) {
+  const sel = document.getElementById('ev-calendar');
+  if (!calendarList.length) { sel.innerHTML = '<option value="primary">主日曆</option>'; return; }
+  sel.innerHTML = calendarList
+    .filter(c => c.accessRole === 'owner' || c.accessRole === 'writer')
+    .map(c => `<option value="${esc(c.id)}" ${c.id===selectedId?'selected':''}>${esc(c.summary||c.id)}</option>`)
+    .join('');
+}
+
 function openCreateModal(dateStr, startTime) {
   editingEventId = null;
+  editingCalendarId = 'primary';
   document.getElementById('modal-event-title').textContent = '新增事件';
   document.getElementById('ev-title').value = '';
   document.getElementById('ev-date').value = dateStr || toDateStr(new Date());
   document.getElementById('ev-allday').checked = !startTime;
   document.getElementById('ev-desc').value = '';
   document.getElementById('ev-delete-btn').style.display = 'none';
+  populateCalendarSelect('primary');
   if (startTime) {
     document.getElementById('ev-start').value = startTime;
     const [h, m] = startTime.split(':').map(Number);
@@ -1778,10 +1841,11 @@ function openCreateModal(dateStr, startTime) {
   setTimeout(() => document.getElementById('ev-title').focus(), 100);
 }
 
-function openEditModal(id) {
+function openEditModal(id, calId) {
   const ev = getEventById(id);
   if (!ev) return;
   editingEventId = id;
+  editingCalendarId = calId || ev._calId || 'primary';
   const isAllDay = !!ev.start?.date;
   document.getElementById('modal-event-title').textContent = '編輯事件';
   document.getElementById('ev-title').value = ev.summary || '';
@@ -1791,6 +1855,7 @@ function openEditModal(id) {
   document.getElementById('ev-end').value = ev.end?.dateTime?.slice(11,16) || '10:00';
   document.getElementById('ev-desc').value = ev.description || '';
   document.getElementById('ev-delete-btn').style.display = '';
+  populateCalendarSelect(editingCalendarId);
   toggleAlldayFields();
   document.getElementById('modal-event').classList.add('open');
   setTimeout(() => document.getElementById('ev-title').focus(), 100);
@@ -1831,14 +1896,15 @@ async function saveEvent() {
       end:   { dateTime: `${dateStr}T${end}:00`,   timeZone: TZ } };
   }
 
+  const targetCalId = document.getElementById('ev-calendar').value || editingCalendarId;
   const saveBtn = document.getElementById('ev-save-btn');
   saveBtn.disabled = true; saveBtn.textContent = '儲存中…';
   try {
     let res;
     if (editingEventId) {
-      res = await gapi.client.calendar.events.update({ calendarId: 'primary', eventId: editingEventId, resource });
+      res = await gapi.client.calendar.events.update({ calendarId: targetCalId, eventId: editingEventId, resource });
     } else {
-      res = await gapi.client.calendar.events.insert({ calendarId: 'primary', resource });
+      res = await gapi.client.calendar.events.insert({ calendarId: targetCalId, resource });
     }
     events[res.result.id] = { ...res.result, _synced: true };
     closeEventModal();
@@ -1867,7 +1933,9 @@ function confirmDel(id) {
     document.getElementById('modal-delete').classList.remove('open');
     if (!await ensureToken()) return;
     try {
-      await gapi.client.calendar.events.delete({ calendarId:'primary', eventId:delId });
+      const delEv = getEventById(delId);
+      const delCalId = delEv?._calId || 'primary';
+      await gapi.client.calendar.events.delete({ calendarId: delCalId, eventId: delId });
       delete events[delId];
       calEvents = calEvents.filter(e => e.id !== delId);
       await loadCalendarEvents(false);
