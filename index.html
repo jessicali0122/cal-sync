@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cal Sync</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #eef2ff;
@@ -18,7 +21,7 @@
   --accent-glow: rgba(99,102,241,0.22);
   --sidebar-w: 264px;
   --header-h: 64px;
-  --sans: 'Segoe UI', 'Noto Sans TC', sans-serif;
+  --sans: 'Noto Sans TC', 'Segoe UI', sans-serif;
   --radius: 12px;
   --radius-sm: 8px;
   --shadow: 0 2px 6px rgba(15,23,42,0.06);
@@ -111,6 +114,7 @@ header {
   border-right: 1px solid var(--border);
   display: flex; flex-direction: column;
   overflow-y: auto; overflow-x: hidden;
+  padding-bottom: 24px;
 }
 
 /* Mini Calendar */
@@ -668,7 +672,7 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
       <span class="status-dot"></span>
       登入 Google
     </button>
-    <div class="avatar">J</div>
+    <div class="avatar" id="user-avatar" style="display:none">J</div>
   </div>
 </header>
 
@@ -931,6 +935,7 @@ function setSignedIn(v) {
     btn.innerHTML = '<span class="status-dot"></span> 登入 Google';
     btn.classList.remove('out');
   }
+  document.getElementById('user-avatar').style.display = v ? '' : 'none';
   updatePushBtn();
 }
 
