@@ -1749,22 +1749,14 @@ function renderWeek() {
       const wColor = getEvColor(ev);
       const colIdx = evMeta[i].col;
       const totalCols = evMeta[i].totalCols;
-      // Cap at 3 visible columns (Google Calendar style): events beyond col 2 stack on the last column with z-index offset
-      const MAX_COLS = 3;
-      const cappedTotal = Math.min(totalCols, MAX_COLS);
-      const cappedCol   = Math.min(colIdx, MAX_COLS - 1);
-      const stackOffset = colIdx >= MAX_COLS ? (colIdx - MAX_COLS + 1) * 4 : 0; // px nudge for stacked events
+      // Google Calendar style: left = col/total, right = (total-col-1)/total * 100% - gap
+      // This makes each event fill its column slot; the rightmost event fills to the edge
       const zIdx = 10 + colIdx;
-      let w, left;
-      if (cappedTotal === 1) {
-        w = 'calc(100% - 8px)'; left = '4px';
-      } else {
-        // First col expands slightly right (like Google Calendar)
-        const pct = cappedCol === 0 ? Math.min(100/cappedTotal + 8, 100) : 100/cappedTotal;
-        w = `${pct.toFixed(1)}%`;
-        left = `calc(${(cappedCol*100/cappedTotal).toFixed(1)}% + ${stackOffset}px)`;
-      }
-      gridHtml += `<div class="week-ev" style="top:${top}%;height:${ht}%;left:${left};right:auto;width:${w};z-index:${zIdx};background:${getEvBg(ev)};color:${wColor};border-left-color:${wColor}" title="${esc(title)}"
+      const leftPct  = (colIdx / totalCols * 100).toFixed(2);
+      const rightPct = ((totalCols - colIdx - 1) / totalCols * 100).toFixed(2);
+      const evLeft  = totalCols > 1 ? `${leftPct}%`        : '2px';
+      const evRight = totalCols > 1 ? `calc(${rightPct}% + 2px)` : '2px';
+      gridHtml += `<div class="week-ev" style="top:${top}%;height:${ht}%;left:${evLeft};right:${evRight};width:auto;z-index:${zIdx};background:${getEvBg(ev)};color:${wColor};border-left-color:${wColor}" title="${esc(title)}"
         onclick="weekEvClick(event,'${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">
         <div class="ev-time">${tl} – ${tlEnd}</div>
         <div class="ev-title">${esc(title.length>20?title.slice(0,20)+'…':title)}</div>
