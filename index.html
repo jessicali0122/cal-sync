@@ -1746,9 +1746,22 @@ function renderWeek() {
       const wColor = getEvColor(ev);
       const colIdx = evMeta[i].col;
       const totalCols = evMeta[i].totalCols;
-      const w = totalCols > 1 ? `${(100/totalCols).toFixed(1)}%` : 'calc(100% - 8px)';
-      const left = totalCols > 1 ? `${(colIdx*100/totalCols).toFixed(1)}%` : '4px';
-      gridHtml += `<div class="week-ev" style="top:${top}%;height:${ht}%;left:${left};right:auto;width:${w};background:${getEvBg(ev)};color:${wColor};border-left-color:${wColor}" title="${esc(title)}"
+      // Cap at 3 visible columns (Google Calendar style): events beyond col 2 stack on the last column with z-index offset
+      const MAX_COLS = 3;
+      const cappedTotal = Math.min(totalCols, MAX_COLS);
+      const cappedCol   = Math.min(colIdx, MAX_COLS - 1);
+      const stackOffset = colIdx >= MAX_COLS ? (colIdx - MAX_COLS + 1) * 4 : 0; // px nudge for stacked events
+      const zIdx = 10 + colIdx;
+      let w, left;
+      if (cappedTotal === 1) {
+        w = 'calc(100% - 8px)'; left = '4px';
+      } else {
+        // First col expands slightly right (like Google Calendar)
+        const pct = cappedCol === 0 ? Math.min(100/cappedTotal + 8, 100) : 100/cappedTotal;
+        w = `${pct.toFixed(1)}%`;
+        left = `calc(${(cappedCol*100/cappedTotal).toFixed(1)}% + ${stackOffset}px)`;
+      }
+      gridHtml += `<div class="week-ev" style="top:${top}%;height:${ht}%;left:${left};right:auto;width:${w};z-index:${zIdx};background:${getEvBg(ev)};color:${wColor};border-left-color:${wColor}" title="${esc(title)}"
         onclick="weekEvClick(event,'${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">
         <div class="ev-time">${tl} – ${tlEnd}</div>
         <div class="ev-title">${esc(title.length>20?title.slice(0,20)+'…':title)}</div>
