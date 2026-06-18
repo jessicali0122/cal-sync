@@ -945,6 +945,7 @@ let tokenClient;
 let events = {};        // pushed from sheets (keyed by gcal id)
 let calEvents = [];     // all events from all calendars
 let calendarList = [];  // all user calendars with metadata
+let hiddenCalendars = new Set(); // calendarIds that are unchecked
 let editingEventId = null;
 let editingCalendarId = 'primary';
 
@@ -1154,11 +1155,19 @@ function renderCalendarCategories() {
   if (!el || !calendarList.length) return;
   el.innerHTML = calendarList.map(cal => {
     const color = cal.backgroundColor || '#6366f1';
-    return `<div class="category-item">
-      <div class="cat-checkbox" style="background:${color}"></div>
-      <span class="cat-name" style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(cal.summary||cal.id)}">${esc(cal.summary||cal.id)}</span>
+    const hidden = hiddenCalendars.has(cal.id);
+    return `<div class="category-item" onclick="toggleCalendar('${esc(cal.id)}')" style="cursor:pointer">
+      <div class="cat-checkbox" style="background:${hidden ? 'transparent' : color};border:2px solid ${color};transition:background .15s"></div>
+      <span class="cat-name" style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:${hidden ? 0.4 : 1};transition:opacity .15s" title="${esc(cal.summary||cal.id)}">${esc(cal.summary||cal.id)}</span>
     </div>`;
   }).join('');
+}
+
+function toggleCalendar(calId) {
+  if (hiddenCalendars.has(calId)) hiddenCalendars.delete(calId);
+  else hiddenCalendars.add(calId);
+  renderCalendarCategories();
+  renderView();
 }
 
 function getViewRangeStart() {
@@ -1392,6 +1401,7 @@ function getEventsOnDate(dateStr) {
   const all = [];
   const pushedIds = new Set(Object.keys(events));
   [...Object.values(events), ...calEvents.filter(e => !pushedIds.has(e.id))].forEach(ev => {
+    if (hiddenCalendars.has(ev._calId)) return;
     const s = ev.start?.dateTime?.slice(0,10) || ev.start?.date;
     if (s === dateStr) {
       all.push({ ...ev, _source: pushedIds.has(ev.id) ? 'pushed' : 'gcal' });
