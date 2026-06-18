@@ -90,12 +90,31 @@ header {
   background: var(--border); transition: background 0.2s;
 }
 #auth-btn.out .status-dot { background: var(--accent); }
+.avatar-wrap {
+  position: relative; cursor: pointer; flex-shrink: 0;
+}
+.avatar-wrap:hover .avatar { opacity: 0.88; }
+.avatar-wrap:hover .avatar-tip { opacity: 1; pointer-events: none; }
 .avatar {
   width: 36px; height: 36px; border-radius: 50%;
   background: linear-gradient(135deg, #818cf8, #6366f1);
   display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-weight: 700; color: white; cursor: pointer;
-  overflow: hidden; flex-shrink: 0;
+  font-size: 14px; font-weight: 700; color: white;
+  overflow: hidden; flex-shrink: 0; transition: opacity 0.16s;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.avatar-tip {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  background: #1e293b; color: white;
+  font-size: 12px; font-weight: 500; white-space: nowrap;
+  padding: 6px 12px; border-radius: 8px;
+  opacity: 0; transition: opacity 0.16s; pointer-events: none;
+  z-index: 100;
+}
+.avatar-tip::before {
+  content: ''; position: absolute; top: -4px; right: 12px;
+  width: 8px; height: 8px; background: #1e293b;
+  transform: rotate(45deg);
 }
 
 /* ── Body Layout ── */
@@ -676,11 +695,12 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
   </nav>
 
   <div class="header-right">
-    <button id="auth-btn" onclick="handleAuth()">
-      <span class="status-dot"></span>
-      登入 Google
-    </button>
-    <div class="avatar" id="user-avatar" style="display:none">J</div>
+    <div class="avatar-wrap" id="avatar-wrap" onclick="handleAuth()">
+      <div class="avatar" id="user-avatar">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+      </div>
+      <div class="avatar-tip" id="avatar-tip">登入 Google</div>
+    </div>
   </div>
 </header>
 
@@ -1032,16 +1052,33 @@ function handleAuth() {
 
 function setSignedIn(v) {
   isSignedIn = v;
-  const btn = document.getElementById('auth-btn');
+  const tip = document.getElementById('avatar-tip');
+  const av  = document.getElementById('user-avatar');
   if (v) {
-    btn.innerHTML = '<span class="status-dot"></span> 登出';
-    btn.classList.add('out');
+    tip.textContent = '登出';
+    fetchGoogleAvatar();
   } else {
-    btn.innerHTML = '<span class="status-dot"></span> 登入 Google';
-    btn.classList.remove('out');
+    tip.textContent = '登入 Google';
+    av.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>';
   }
-  document.getElementById('user-avatar').style.display = v ? '' : 'none';
   updatePushBtn();
+}
+
+async function fetchGoogleAvatar() {
+  try {
+    const token = gapi.client.getToken()?.access_token;
+    if (!token) return;
+    const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    const info = await res.json();
+    const av = document.getElementById('user-avatar');
+    if (info.picture) {
+      av.innerHTML = `<img src="${info.picture}" referrerpolicy="no-referrer">`;
+    } else if (info.name) {
+      av.textContent = info.name[0].toUpperCase();
+    }
+  } catch(e) {}
 }
 
 function isTokenExpired() {
