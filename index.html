@@ -778,14 +778,14 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
     <!-- Import -->
     <div class="sidebar-section">
       <div class="sidebar-section-title">
-        貼上 Sheets 資料
+        快速新增行程
         <span class="sidebar-badge">auto detect</span>
       </div>
       <div class="paste-hint">
-        從 Google Sheets <strong>Ctrl+C</strong> 複製後貼到下方<br>
-        <span style="font-size:12px;opacity:0.8">✓ 自動判讀欄位　✓ 不限順序與標題</span>
+        直接輸入 <strong>日期、時間、事件</strong> 就好<br>
+        <span style="font-size:12px;opacity:0.8">✓ 自動判讀格式　✓ 支援貼上試算表</span>
       </div>
-      <textarea id="paste-input" placeholder="在此貼上複製的表格內容…"></textarea>
+      <textarea id="paste-input" placeholder="例如：6/20 14:00 團隊會議&#10;或直接貼上試算表內容…"></textarea>
       <div class="push-progress" id="push-progress">
         <div class="push-progress-bar" id="push-progress-bar"></div>
       </div>
@@ -1366,7 +1366,23 @@ function renderDashboard() {
   const tl = document.getElementById('dashboard-today-list');
   tl.innerHTML = todayEvs.length ? todayEvs.map(evCard).join('') : '<div style="color:var(--muted);font-size:14px">今天沒有事件</div>';
   const ul = document.getElementById('dashboard-upcoming-list');
-  ul.innerHTML = upcomingEvs.length ? upcomingEvs.map(evCard).join('') : '<div style="color:var(--muted);font-size:14px">未來 7 天無事件</div>';
+  if (!upcomingEvs.length) {
+    ul.innerHTML = '<div style="color:var(--muted);font-size:14px">未來 7 天無事件</div>';
+  } else {
+    const groups = {};
+    upcomingEvs.forEach(ev => {
+      const d = ev.start?.date || ev.start?.dateTime?.slice(0,10);
+      if (!groups[d]) groups[d] = [];
+      groups[d].push(ev);
+    });
+    const days = ['日','一','二','三','四','五','六'];
+    ul.innerHTML = Object.keys(groups).sort().map(dateStr => {
+      const d = new Date(dateStr + 'T12:00:00');
+      const label = `${d.getMonth()+1}/${d.getDate()} (${days[d.getDay()]})`;
+      return `<div style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.6px;margin:12px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--border)">${label}</div>` +
+        groups[dateStr].map(evCard).join('');
+    }).join('');
+  }
 }
 
 function renderAnalytics() {
@@ -1488,6 +1504,18 @@ function miniCalSelectDay(dateStr) {
   if (isSignedIn) loadCalendarEvents(false);
 }
 
+// ── Holiday detection ──
+function isHolidayEvent(ev) {
+  const calName = (ev._calName || '').toLowerCase();
+  const summary = (ev.summary || '').toLowerCase();
+  return calName.includes('假日') || calName.includes('節慶') || calName.includes('holiday') ||
+    summary.includes('國定假日') || summary.includes('補假') ||
+    (!!ev.start?.date && (summary.includes('節') || summary.includes('假')));
+}
+function hasHolidayOnDate(dateStr) {
+  return getEventsOnDate(dateStr).some(isHolidayEvent);
+}
+
 // ── Merge events ──
 function getEventsOnDate(dateStr) {
   const all = [];
@@ -1523,11 +1551,8 @@ function updateLabel() {
   const badge = document.getElementById('week-badge');
   const y = viewDate.getFullYear(), m = viewDate.getMonth();
   if (currentView === 'week') {
-    const sun = new Date(viewDate); sun.setDate(sun.getDate() - sun.getDay());
-    const sat = new Date(sun); sat.setDate(sat.getDate() + 6);
-    const fmt = d => `${d.getMonth()+1}/${d.getDate()}`;
-    label.textContent = `${fmt(sun)} – ${fmt(sat)}, ${y}`;
-    badge.textContent = `Week ${getWeekNum(viewDate)}`;
+    label.textContent = `${y} 年 ${m+1} 月`;
+    badge.textContent = `第 ${getWeekNum(viewDate)} 週`;
     badge.style.display = '';
   } else {
     label.textContent = `${y} 年 ${m+1} 月`;
@@ -1584,7 +1609,8 @@ function renderMonth() {
     const evs = getEventsOnDate(dateStr).sort((a,b) => {
       return (a.start?.dateTime||a.start?.date||'').localeCompare(b.start?.dateTime||b.start?.date||'');
     });
-    html += `<div class="month-cell ${isToday?'today':''} ${isOther?'other-month':''}" data-date="${dateStr}" onclick="monthCellClick('${dateStr}')">
+    const isHoliday = !isToday && hasHolidayOnDate(dateStr);
+    html += `<div class="month-cell ${isToday?'today':''} ${isOther?'other-month':''}" style="${isHoliday?'background:#fffbeb;':''}" data-date="${dateStr}" onclick="monthCellClick('${dateStr}')">`
       <div class="cell-day">${cur.getDate()}</div>
       <div class="cell-events">`;
     const show = evs.slice(0, 3); const more = evs.length - show.length;
@@ -1632,7 +1658,8 @@ function renderWeek() {
   let headHtml = `<div class="week-header-row"><div class="week-time-gutter"></div>`;
   cols.forEach(d => {
     const isToday = sameDay(d, today);
-    headHtml += `<div class="week-day-head ${isToday?'today':''}" onclick="weekDayClick('${toDateStr(d)}')">
+    const isHol = !isToday && hasHolidayOnDate(toDateStr(d));
+    headHtml += `<div class="week-day-head ${isToday?'today':''}" style="${isHol?'background:#fffbeb;':''}" onclick="weekDayClick('${toDateStr(d)}')">
       <div class="wdh-name">${DAYS[d.getDay()]}</div>
       <div class="wdh-num">${d.getDate()}</div>
     </div>`;
@@ -1648,15 +1675,28 @@ function renderWeek() {
 
   cols.forEach((d) => {
     const isToday = sameDay(d, today);
+    const isHolCol = !isToday && hasHolidayOnDate(toDateStr(d));
     const evs = getEventsOnDate(toDateStr(d)).filter(e => !!e.start?.dateTime);
-    gridHtml += `<div class="week-col ${isToday?'today':''}" style="position:relative">`;
+    gridHtml += `<div class="week-col ${isToday?'today':''}" style="position:relative${isHolCol?';background:rgba(255,251,235,0.5)':''}">`;
     for (let h = 0; h < 24; h++) gridHtml += `<div class="week-hour-cell" onclick="weekSlotClick(event,'${toDateStr(d)}',${h})"></div>`;
     if (isToday) {
       const now = new Date();
       const pct = (now.getHours()*60+now.getMinutes()) / (24*60) * 100;
       gridHtml += `<div class="time-now-line" style="top:${pct.toFixed(2)}%"></div>`;
     }
-    evs.forEach(ev => {
+    // Collision detection: assign column slots to overlapping events
+    const sorted = evs.slice().sort((a,b) => new Date(a.start.dateTime)-new Date(b.start.dateTime));
+    const slots = []; // each slot: {end, col}
+    const evCols = sorted.map(ev => {
+      const s = new Date(ev.start.dateTime).getTime();
+      const e2 = new Date(ev.end?.dateTime||ev.start.dateTime).getTime();
+      let col = 0;
+      while (slots[col] && slots[col] > s) col++;
+      slots[col] = e2;
+      return col;
+    });
+    const maxCol = evCols.length ? Math.max(...evCols) + 1 : 1;
+    sorted.forEach((ev, i) => {
       const s = new Date(ev.start.dateTime), e2 = new Date(ev.end?.dateTime||ev.start.dateTime);
       const sm = s.getHours()*60+s.getMinutes(), em = e2.getHours()*60+e2.getMinutes();
       const top = (sm/(24*60)*100).toFixed(2);
@@ -1665,7 +1705,10 @@ function renderWeek() {
       const title = ev.summary || '（無標題）';
       const tlEnd = `${String(e2.getHours()).padStart(2,'0')}:${String(e2.getMinutes()).padStart(2,'0')}`;
       const wColor = getEvColor(ev);
-      gridHtml += `<div class="week-ev" style="top:${top}%;height:${ht}%;background:${getEvBg(ev)};color:${wColor};border-left-color:${wColor}" title="${esc(title)}"
+      const colIdx = evCols[i];
+      const w = maxCol > 1 ? `${(100/maxCol).toFixed(1)}%` : 'calc(100% - 8px)';
+      const left = maxCol > 1 ? `${(colIdx*100/maxCol).toFixed(1)}%` : '4px';
+      gridHtml += `<div class="week-ev" style="top:${top}%;height:${ht}%;left:${left};right:auto;width:${w};background:${getEvBg(ev)};color:${wColor};border-left-color:${wColor}" title="${esc(title)}"
         onclick="weekEvClick(event,'${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">
         <div class="ev-time">${tl} – ${tlEnd}</div>
         <div class="ev-title">${esc(title.length>20?title.slice(0,20)+'…':title)}</div>
