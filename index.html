@@ -1656,7 +1656,6 @@ function buildEventRowHTML(ev) {
   const title = ev.summary || '（無標題）';
   const desc  = ev.description || '';
   const id    = ev.id;
-  const idx = getColorIdx(ev);
   let startVal = '', endVal = '';
   if (!isAllDay) {
     startVal = ev.start.dateTime?.slice(11,16) || '';
@@ -1987,7 +1986,7 @@ function populateCalendarSelect(selectedId) {
   const sel = document.getElementById('ev-calendar');
   if (!calendarList.length) { sel.innerHTML = '<option value="primary">主日曆</option>'; return; }
   sel.innerHTML = calendarList
-    .filter(c => c.accessRole === 'owner' || c.accessRole === 'writer')
+    .filter(c => c.accessRole !== 'freeBusyReader' && c.accessRole !== 'reader')
     .map(c => `<option value="${esc(c.id)}" ${c.id===selectedId?'selected':''}>${esc(c.summary||c.id)}</option>`)
     .join('');
 }
