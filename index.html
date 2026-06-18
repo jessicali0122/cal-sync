@@ -1696,16 +1696,26 @@ function renderWeek() {
     }
     // Collision detection: assign column slots to overlapping events
     const sorted = evs.slice().sort((a,b) => new Date(a.start.dateTime)-new Date(b.start.dateTime));
-    const slots = []; // each slot: {end, col}
-    const evCols = sorted.map(ev => {
-      const s = new Date(ev.start.dateTime).getTime();
-      const e2 = new Date(ev.end?.dateTime||ev.start.dateTime).getTime();
+    const evMeta = sorted.map(ev => ({
+      s: new Date(ev.start.dateTime).getTime(),
+      e: new Date(ev.end?.dateTime || ev.start.dateTime).getTime(),
+      col: 0, localMax: 1
+    }));
+    const slots = [];
+    evMeta.forEach((ev, i) => {
       let col = 0;
-      while (slots[col] && slots[col] > s) col++;
-      slots[col] = e2;
-      return col;
+      while (slots[col] && slots[col] > ev.s) col++;
+      slots[col] = ev.e;
+      evMeta[i].col = col;
     });
-    const maxCol = evCols.length ? Math.max(...evCols) + 1 : 1;
+    // For each event, localMax = max column among all events overlapping with it + 1
+    evMeta.forEach((ev, i) => {
+      let localMax = 0;
+      evMeta.forEach(other => {
+        if (other.s < ev.e && other.e > ev.s) localMax = Math.max(localMax, other.col);
+      });
+      evMeta[i].localMax = localMax + 1;
+    });
     sorted.forEach((ev, i) => {
       const s = new Date(ev.start.dateTime), e2 = new Date(ev.end?.dateTime||ev.start.dateTime);
       const sm = s.getHours()*60+s.getMinutes(), em = e2.getHours()*60+e2.getMinutes();
@@ -1715,9 +1725,10 @@ function renderWeek() {
       const title = ev.summary || '（無標題）';
       const tlEnd = `${String(e2.getHours()).padStart(2,'0')}:${String(e2.getMinutes()).padStart(2,'0')}`;
       const wColor = getEvColor(ev);
-      const colIdx = evCols[i];
-      const w = maxCol > 1 ? `${(100/maxCol).toFixed(1)}%` : 'calc(100% - 8px)';
-      const left = maxCol > 1 ? `${(colIdx*100/maxCol).toFixed(1)}%` : '4px';
+      const colIdx = evMeta[i].col;
+      const localMax = evMeta[i].localMax;
+      const w = localMax > 1 ? `${(100/localMax).toFixed(1)}%` : 'calc(100% - 8px)';
+      const left = localMax > 1 ? `${(colIdx*100/localMax).toFixed(1)}%` : '4px';
       gridHtml += `<div class="week-ev" style="top:${top}%;height:${ht}%;left:${left};right:auto;width:${w};background:${getEvBg(ev)};color:${wColor};border-left-color:${wColor}" title="${esc(title)}"
         onclick="weekEvClick(event,'${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">
         <div class="ev-time">${tl} – ${tlEnd}</div>
