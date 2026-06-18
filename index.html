@@ -117,6 +117,8 @@ header {
 .mini-cal-wrap {
   padding: 20px 16px 16px;
   border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 5;
+  background: var(--surface);
 }
 .mini-cal-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -720,7 +722,7 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
     <!-- Categories -->
     <div class="sidebar-section">
       <div class="sidebar-section-title">Categories</div>
-      <div class="category-list">
+      <div class="category-list" id="category-list">
         <div class="category-item">
           <div class="cat-checkbox" style="background:#22c55e"></div>
           <span class="cat-name">所有事件</span>
@@ -748,22 +750,6 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
       </div>
     </div>
 
-    <!-- Prioritize -->
-    <div class="sidebar-section">
-      <div class="sidebar-section-title">Prioritize</div>
-      <div class="prioritize-list">
-        <div class="prioritize-item">
-          <div class="prioritize-icon"></div>
-          Eisenhower Matrix
-          <span class="prioritize-arrow">›</span>
-        </div>
-        <div class="prioritize-item">
-          <div class="prioritize-icon"></div>
-          Eat The Frog First
-          <span class="prioritize-arrow">›</span>
-        </div>
-      </div>
-    </div>
   </aside>
 
   <!-- ── Dashboard Panel ── -->
