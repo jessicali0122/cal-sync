@@ -1519,10 +1519,8 @@ function miniCalSelectDay(dateStr) {
 // ── Holiday detection ──
 function isHolidayEvent(ev) {
   const calName = (ev._calName || '').toLowerCase();
-  const summary = (ev.summary || '').toLowerCase();
-  return calName.includes('假日') || calName.includes('節慶') || calName.includes('holiday') ||
-    summary.includes('國定假日') || summary.includes('補假') ||
-    (!!ev.start?.date && (summary.includes('節') || summary.includes('假')));
+  // Only trust dedicated holiday calendars (e.g. 台灣的節慶假日)
+  return calName.includes('節慶假日') || calName.includes('holidays in taiwan') || calName.includes('taiwan holiday');
 }
 function hasHolidayOnDate(dateStr) {
   return getEventsOnDate(dateStr).some(isHolidayEvent);
