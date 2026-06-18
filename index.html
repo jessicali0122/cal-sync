@@ -116,6 +116,25 @@ header {
   width: 8px; height: 8px; background: #1e293b;
   transform: rotate(45deg);
 }
+.avatar-menu {
+  display: none; position: absolute; top: calc(100% + 8px); right: 0;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; box-shadow: var(--shadow-md);
+  min-width: 200px; padding: 6px; z-index: 101;
+}
+.avatar-menu.open { display: block; }
+.avatar-menu-email {
+  font-size: 12px; color: var(--muted); padding: 8px 10px 6px;
+  border-bottom: 1px solid var(--border); margin-bottom: 4px;
+  word-break: break-all;
+}
+.avatar-menu-item {
+  width: 100%; text-align: left; font-family: var(--sans);
+  font-size: 13px; font-weight: 500; color: var(--text);
+  background: transparent; border: none; border-radius: 6px;
+  padding: 8px 10px; cursor: pointer; transition: background 0.12s;
+}
+.avatar-menu-item:hover { background: var(--accent-dim); color: var(--accent-dark); }
 
 /* ── Body Layout ── */
 .app-body {
@@ -298,10 +317,8 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
 .cal-nav-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 .cal-title-label { font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.4px; }
 .week-badge {
-  font-size: 12px; font-weight: 500; color: var(--muted);
-  background: var(--bg); border: 1px solid var(--border);
-  border-radius: 6px; padding: 0 10px; height: 32px;
-  display: flex; align-items: center;
+  font-size: 13px; font-weight: 500; color: var(--muted);
+  height: 32px; padding: 0 2px; display: flex; align-items: center;
 }
 .today-btn {
   font-family: var(--sans); font-size: 14px; font-weight: 500;
@@ -453,7 +470,7 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
 }
 .week-time-gutter { border-right: 1px solid var(--border); }
 .week-day-head {
-  padding: 10px 4px; text-align: center;
+  padding: 6px 4px 8px; text-align: center;
   border-right: 1px solid var(--border); cursor: pointer;
   transition: background 0.12s;
 }
@@ -461,10 +478,10 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
 .week-day-head:hover .wdh-num { background: var(--bg); }
 .wdh-name { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.8px; text-transform: uppercase; }
 .wdh-num {
-  font-size: 22px; font-weight: 300; color: var(--text);
-  width: 38px; height: 38px; border-radius: 50%;
+  font-size: 18px; font-weight: 400; color: var(--text);
+  width: 30px; height: 30px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  margin: 4px auto 0; transition: background 0.12s;
+  margin: 2px auto 0; transition: background 0.12s;
 }
 .week-day-head.today .wdh-num { background: var(--accent); color: white; font-weight: 700; }
 .week-allday-row {
@@ -729,11 +746,15 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
   </nav>
 
   <div class="header-right">
-    <div class="avatar-wrap" id="avatar-wrap" onclick="handleAuth()">
+    <div class="avatar-wrap" id="avatar-wrap" onclick="onAvatarClick(event)">
       <div class="avatar" id="user-avatar">
         <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
       </div>
       <div class="avatar-tip" id="avatar-tip">登入 Google</div>
+      <div class="avatar-menu" id="avatar-menu">
+        <div class="avatar-menu-email" id="avatar-menu-email"></div>
+        <button class="avatar-menu-item" id="avatar-menu-logout" onclick="doLogout(event)">登出</button>
+      </div>
     </div>
   </div>
 </header>
@@ -986,7 +1007,7 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
 
 <script>
 // ── Constants ──
-const SCOPES = 'https://www.googleapis.com/auth/calendar';
+const SCOPES = 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
 const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
 const CLIENT_ID_KEY = 'gcal_jess_client_id';
 const TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -1077,21 +1098,20 @@ function tryAutoLogin() {
   }
 }
 
+function onAvatarClick(e) {
+  e.stopPropagation();
+  if (!isSignedIn) { handleAuth(); return; }
+  document.getElementById('avatar-menu').classList.toggle('open');
+}
+
+document.addEventListener('click', (e) => {
+  const wrap = document.getElementById('avatar-wrap');
+  const menu = document.getElementById('avatar-menu');
+  if (menu && wrap && !wrap.contains(e.target)) menu.classList.remove('open');
+});
+
 function handleAuth() {
   if (!CLIENT_ID) { openSetup(); return; }
-  if (isSignedIn) {
-    google.accounts.oauth2.revoke(gapi.client.getToken()?.access_token || '');
-    gapi.client.setToken('');
-    localStorage.removeItem('gcal_jess_token');
-    localStorage.removeItem('gcal_jess_expiry');
-    setSignedIn(false);
-    calEvents = [];
-    calendarList = [];
-    document.getElementById('category-list').innerHTML = '';
-    renderView();
-    showToast('已登出', 'ok');
-    return;
-  }
   tokenClient.callback = async (resp) => {
     if (resp.error) { showToast('授權失敗', 'err'); return; }
     const token = gapi.client.getToken().access_token;
@@ -1104,16 +1124,32 @@ function handleAuth() {
   tokenClient.requestAccessToken({ prompt: gapi.client.getToken() ? '' : 'consent' });
 }
 
+function doLogout(e) {
+  if (e) e.stopPropagation();
+  google.accounts.oauth2.revoke(gapi.client.getToken()?.access_token || '');
+  gapi.client.setToken('');
+  localStorage.removeItem('gcal_jess_token');
+  localStorage.removeItem('gcal_jess_expiry');
+  setSignedIn(false);
+  calEvents = [];
+  calendarList = [];
+  document.getElementById('category-list').innerHTML = '';
+  document.getElementById('avatar-menu').classList.remove('open');
+  renderView();
+  showToast('已登出', 'ok');
+}
+
 function setSignedIn(v) {
   isSignedIn = v;
   const tip = document.getElementById('avatar-tip');
   const av  = document.getElementById('user-avatar');
   if (v) {
-    tip.textContent = '登出';
+    tip.textContent = '帳戶選項';
     fetchGoogleAvatar();
   } else {
     tip.textContent = '登入 Google';
     av.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>';
+    document.getElementById('avatar-menu-email').textContent = '';
   }
   updatePushBtn();
 }
@@ -1132,8 +1168,11 @@ async function fetchGoogleAvatar() {
     } else if (info.name) {
       av.textContent = info.name[0].toUpperCase();
     }
+    document.getElementById('avatar-menu-email').textContent = info.email || '';
   } catch(e) {}
 }
+
+
 
 function isTokenExpired() {
   const expiry = localStorage.getItem('gcal_jess_expiry');
@@ -2035,6 +2074,11 @@ function getEventById(id) {
 }
 
 // ── Event Modal ──
+function getPrimaryCalendarId() {
+  const p = calendarList.find(c => c.primary);
+  return p ? p.id : 'primary';
+}
+
 function populateCalendarSelect(selectedId) {
   const sel = document.getElementById('ev-calendar');
   if (!calendarList.length) { sel.innerHTML = '<option value="primary">主日曆</option>'; return; }
@@ -2046,14 +2090,14 @@ function populateCalendarSelect(selectedId) {
 
 function openCreateModal(dateStr, startTime, evType) {
   editingEventId = null;
-  editingCalendarId = 'primary';
+  editingCalendarId = getPrimaryCalendarId();
   document.getElementById('modal-event-title').textContent = '新增事件';
   document.getElementById('ev-title').value = '';
   document.getElementById('ev-date').value = dateStr || toDateStr(new Date());
   document.getElementById('ev-allday').checked = !startTime;
   document.getElementById('ev-desc').value = '';
   document.getElementById('ev-delete-btn').style.display = 'none';
-  populateCalendarSelect('primary');
+  populateCalendarSelect(editingCalendarId);
   setEvType(evType || 'default');
   if (startTime) {
     document.getElementById('ev-start').value = startTime;
