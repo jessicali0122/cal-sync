@@ -1117,11 +1117,14 @@ function handleAuth() {
     const token = gapi.client.getToken().access_token;
     localStorage.setItem('gcal_jess_token', token);
     localStorage.setItem('gcal_jess_expiry', String(Date.now() + resp.expires_in * 1000));
+    localStorage.setItem('gcal_jess_ever_auth', '1');
     setSignedIn(true);
     showToast('登入成功', 'ok');
     await loadCalendarEvents();
   };
-  tokenClient.requestAccessToken({ prompt: gapi.client.getToken() ? '' : 'consent' });
+  // 'consent' only on first-ever auth; returning users use '' to skip re-consent screen
+  const everAuthed = localStorage.getItem('gcal_jess_ever_auth');
+  tokenClient.requestAccessToken({ prompt: everAuthed ? '' : 'consent' });
 }
 
 function doLogout(e) {
