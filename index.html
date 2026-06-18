@@ -1115,6 +1115,15 @@ function handleAuth() {
   tokenClient.callback = async (resp) => {
     if (resp.error) { showToast('授權失敗', 'err'); return; }
     const token = gapi.client.getToken().access_token;
+    // 驗證 email domain
+    const userRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', { headers: { Authorization: `Bearer ${token}` } });
+    const userInfo = await userRes.json();
+    if (!userInfo.email || !userInfo.email.endsWith('@tsagroup.com.tw')) {
+      google.accounts.oauth2.revoke(token);
+      gapi.client.setToken('');
+      showToast('僅限 @tsagroup.com.tw 信箱登入', 'err');
+      return;
+    }
     localStorage.setItem('gcal_jess_token', token);
     localStorage.setItem('gcal_jess_expiry', String(Date.now() + resp.expires_in * 1000));
     localStorage.setItem('gcal_jess_ever_auth', '1');
