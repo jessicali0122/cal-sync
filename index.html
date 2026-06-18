@@ -1613,9 +1613,7 @@ function renderMonth() {
       return (a.start?.dateTime||a.start?.date||'').localeCompare(b.start?.dateTime||b.start?.date||'');
     });
     const isHoliday = !isToday && hasHolidayOnDate(dateStr);
-    html += `<div class="month-cell ${isToday?'today':''} ${isOther?'other-month':''}" style="${isHoliday?'background:#fffbeb;':''}" data-date="${dateStr}" onclick="monthCellClick('${dateStr}')">`
-      <div class="cell-day">${cur.getDate()}</div>
-      <div class="cell-events">`;
+    html += `<div class="month-cell ${isToday?'today':''} ${isOther?'other-month':''}" style="${isHoliday?'background:#fffbeb;':''}" data-date="${dateStr}" onclick="monthCellClick('${dateStr}')"><div class="cell-day">${cur.getDate()}</div><div class="cell-events">`;
     const show = evs.slice(0, 3); const more = evs.length - show.length;
     show.forEach(ev => {
       const title = ev.summary || '（無標題）';
