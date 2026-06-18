@@ -1622,7 +1622,7 @@ function renderMonth() {
       return (a.start?.dateTime||a.start?.date||'').localeCompare(b.start?.dateTime||b.start?.date||'');
     });
     const isHoliday = !isToday && hasHolidayOnDate(dateStr);
-    html += `<div class="month-cell ${isToday?'today':''} ${isOther?'other-month':''}" style="${isHoliday?'background:#fffbeb;':''}" data-date="${dateStr}" onclick="monthCellClick('${dateStr}')"><div class="cell-day">${cur.getDate()}</div><div class="cell-events">`;
+    html += `<div class="month-cell ${isToday?'today':''} ${isOther?'other-month':''}" style="${isHoliday?'background:#f1f3f4;':''}" data-date="${dateStr}" onclick="monthCellClick('${dateStr}')"><div class="cell-day">${cur.getDate()}</div><div class="cell-events">`;
     const show = evs.slice(0, 3); const more = evs.length - show.length;
     show.forEach(ev => {
       const title = ev.summary || '（無標題）';
@@ -1669,7 +1669,7 @@ function renderWeek() {
   cols.forEach(d => {
     const isToday = sameDay(d, today);
     const isHol = !isToday && hasHolidayOnDate(toDateStr(d));
-    headHtml += `<div class="week-day-head ${isToday?'today':''}" style="${isHol?'background:#fffbeb;':''}" onclick="weekDayClick('${toDateStr(d)}')">
+    headHtml += `<div class="week-day-head ${isToday?'today':''}" style="${isHol?'background:#f1f3f4;':''}" onclick="weekDayClick('${toDateStr(d)}')">
       <div class="wdh-name">${DAYS[d.getDay()]}</div>
       <div class="wdh-num">${d.getDate()}</div>
     </div>`;
