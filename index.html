@@ -1694,27 +1694,46 @@ function renderWeek() {
       const pct = (now.getHours()*60+now.getMinutes()) / (24*60) * 100;
       gridHtml += `<div class="time-now-line" style="top:${pct.toFixed(2)}%"></div>`;
     }
-    // Collision detection: assign column slots to overlapping events
+    // Collision detection — Google Calendar style:
+    // 1. Sort by start time
+    // 2. Group events into clusters where any event overlaps with at least one other (sweep-line)
+    // 3. Within each cluster, assign columns greedily
+    // 4. All events in same cluster share the same totalCols → consistent widths
     const sorted = evs.slice().sort((a,b) => new Date(a.start.dateTime)-new Date(b.start.dateTime));
     const evMeta = sorted.map(ev => ({
       s: new Date(ev.start.dateTime).getTime(),
       e: new Date(ev.end?.dateTime || ev.start.dateTime).getTime(),
-      col: 0, localMax: 1
+      col: 0, totalCols: 1, groupId: -1
     }));
-    const slots = [];
-    evMeta.forEach((ev, i) => {
-      let col = 0;
-      while (slots[col] && slots[col] > ev.s) col++;
-      slots[col] = ev.e;
-      evMeta[i].col = col;
-    });
-    // For each event, localMax = max column among all events overlapping with it + 1
-    evMeta.forEach((ev, i) => {
-      let localMax = 0;
-      evMeta.forEach(other => {
-        if (other.s < ev.e && other.e > ev.s) localMax = Math.max(localMax, other.col);
+    // Step 1: find clusters via sweep-line
+    let gid = 0;
+    const clusters = [];
+    for (let i = 0; i < evMeta.length; i++) {
+      if (evMeta[i].groupId !== -1) continue;
+      const cluster = [i];
+      evMeta[i].groupId = gid;
+      let maxE = evMeta[i].e;
+      for (let j = i + 1; j < evMeta.length; j++) {
+        if (evMeta[j].s < maxE) {
+          evMeta[j].groupId = gid;
+          cluster.push(j);
+          maxE = Math.max(maxE, evMeta[j].e);
+        }
+      }
+      clusters.push(cluster);
+      gid++;
+    }
+    // Step 2: assign columns within each cluster, set totalCols
+    clusters.forEach(cluster => {
+      const slots = [];
+      cluster.forEach(i => {
+        let col = 0;
+        while (slots[col] && slots[col] > evMeta[i].s) col++;
+        slots[col] = evMeta[i].e;
+        evMeta[i].col = col;
       });
-      evMeta[i].localMax = localMax + 1;
+      const totalCols = Math.max(...cluster.map(i => evMeta[i].col)) + 1;
+      cluster.forEach(i => { evMeta[i].totalCols = totalCols; });
     });
     sorted.forEach((ev, i) => {
       const s = new Date(ev.start.dateTime), e2 = new Date(ev.end?.dateTime||ev.start.dateTime);
@@ -1726,9 +1745,9 @@ function renderWeek() {
       const tlEnd = `${String(e2.getHours()).padStart(2,'0')}:${String(e2.getMinutes()).padStart(2,'0')}`;
       const wColor = getEvColor(ev);
       const colIdx = evMeta[i].col;
-      const localMax = evMeta[i].localMax;
-      const w = localMax > 1 ? `${(100/localMax).toFixed(1)}%` : 'calc(100% - 8px)';
-      const left = localMax > 1 ? `${(colIdx*100/localMax).toFixed(1)}%` : '4px';
+      const totalCols = evMeta[i].totalCols;
+      const w = totalCols > 1 ? `${(100/totalCols).toFixed(1)}%` : 'calc(100% - 8px)';
+      const left = totalCols > 1 ? `${(colIdx*100/totalCols).toFixed(1)}%` : '4px';
       gridHtml += `<div class="week-ev" style="top:${top}%;height:${ht}%;left:${left};right:auto;width:${w};background:${getEvBg(ev)};color:${wColor};border-left-color:${wColor}" title="${esc(title)}"
         onclick="weekEvClick(event,'${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">
         <div class="ev-time">${tl} – ${tlEnd}</div>
