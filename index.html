@@ -1497,7 +1497,9 @@ function renderMiniCal() {
     const dateStr = toDateStr(cur);
     const isSelected = sameDay(cur, viewDate);
     const hasDot = eventDates.has(dateStr);
-    html += `<div class="mini-cal-day ${isToday?'today':''} ${isOther?'other-month':''} ${isSelected&&!isToday?'selected':''}"
+    const isMiniWeekend = cur.getDay() === 0 || cur.getDay() === 6;
+    const isMiniHol = !isToday && !isSelected && (isMiniWeekend || hasHolidayOnDate(dateStr));
+    html += `<div class="mini-cal-day ${isToday?'today':''} ${isOther?'other-month':''} ${isSelected&&!isToday?'selected':''}" style="${isMiniHol?'background:#f1f3f4;border-radius:4px;':''}"
       onclick="miniCalSelectDay('${dateStr}')">${cur.getDate()}${hasDot ? '<span class="mini-day-dot"></span>' : ''}</div>`;
     cur.setDate(cur.getDate() + 1);
   }
@@ -1619,7 +1621,8 @@ function renderMonth() {
     const evs = getEventsOnDate(dateStr).sort((a,b) => {
       return (a.start?.dateTime||a.start?.date||'').localeCompare(b.start?.dateTime||b.start?.date||'');
     });
-    const isHoliday = !isToday && hasHolidayOnDate(dateStr);
+    const isWeekendCell = cur.getDay() === 0 || cur.getDay() === 6;
+    const isHoliday = !isToday && (isWeekendCell || hasHolidayOnDate(dateStr));
     html += `<div class="month-cell ${isToday?'today':''} ${isOther?'other-month':''}" style="${isHoliday?'background:#f1f3f4;':''}" data-date="${dateStr}" onclick="monthCellClick('${dateStr}')"><div class="cell-day">${cur.getDate()}</div><div class="cell-events">`;
     const show = evs.slice(0, 3); const more = evs.length - show.length;
     show.forEach(ev => {
@@ -1666,7 +1669,8 @@ function renderWeek() {
   let headHtml = `<div class="week-header-row"><div class="week-time-gutter"></div>`;
   cols.forEach(d => {
     const isToday = sameDay(d, today);
-    const isHol = !isToday && hasHolidayOnDate(toDateStr(d));
+    const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+    const isHol = !isToday && (isWeekend || hasHolidayOnDate(toDateStr(d)));
     headHtml += `<div class="week-day-head ${isToday?'today':''}" style="${isHol?'background:#f1f3f4;':''}" onclick="weekDayClick('${toDateStr(d)}')">
       <div class="wdh-name">${DAYS[d.getDay()]}</div>
       <div class="wdh-num">${d.getDate()}</div>
@@ -1683,9 +1687,10 @@ function renderWeek() {
 
   cols.forEach((d) => {
     const isToday = sameDay(d, today);
-    const isHolCol = !isToday && hasHolidayOnDate(toDateStr(d));
+    const isWeekendCol = d.getDay() === 0 || d.getDay() === 6;
+    const isHolCol = !isToday && (isWeekendCol || hasHolidayOnDate(toDateStr(d)));
     const evs = getEventsOnDate(toDateStr(d)).filter(e => !!e.start?.dateTime);
-    gridHtml += `<div class="week-col ${isToday?'today':''}" style="position:relative${isHolCol?';background:rgba(255,251,235,0.5)':''}">`;
+    gridHtml += `<div class="week-col ${isToday?'today':''}" style="position:relative${isHolCol?';background:#f8f9fa':''}">`;
     for (let h = 0; h < 24; h++) gridHtml += `<div class="week-hour-cell" onclick="weekSlotClick(event,'${toDateStr(d)}',${h})"></div>`;
     if (isToday) {
       const now = new Date();
