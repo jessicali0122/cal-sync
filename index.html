@@ -348,16 +348,50 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
 .refresh-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 .refresh-btn.spinning { animation: spin 0.8s linear infinite; }
 
-/* primary CTA — same height 32px, no extra shadow drama */
+/* Create dropdown */
+.create-wrap { position: relative; flex-shrink: 0; }
 .create-btn {
   font-family: var(--sans); font-size: 14px; font-weight: 600;
-  height: 32px; padding: 0 16px; border-radius: 8px; border: none;
+  height: 32px; border: none;
   background: var(--accent); color: white; cursor: pointer;
-  display: flex; align-items: center; gap: 6px;
-  transition: background 0.15s; flex-shrink: 0;
+  display: flex; align-items: center;
+  transition: background 0.15s; border-radius: 8px; overflow: hidden;
 }
-.create-btn:hover { background: var(--accent-dark); }
-.create-btn:active { opacity: 0.9; }
+.create-btn-main { padding: 0 14px; height: 100%; display: flex; align-items: center; gap: 6px; }
+.create-btn-main:hover { background: rgba(0,0,0,0.1); }
+.create-btn-arrow {
+  padding: 0 10px; height: 100%; display: flex; align-items: center;
+  border-left: 1px solid rgba(255,255,255,0.30); font-size: 12px;
+}
+.create-btn-arrow:hover { background: rgba(0,0,0,0.1); }
+.create-menu {
+  position: absolute; top: calc(100% + 6px); right: 0;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; box-shadow: var(--shadow-md);
+  overflow: hidden; z-index: 200; min-width: 148px;
+  display: none;
+}
+.create-menu.open { display: block; }
+.create-menu-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px; font-size: 14px; color: var(--text);
+  cursor: pointer; transition: background 0.1s;
+}
+.create-menu-item:hover { background: var(--bg); }
+.create-menu-item .cm-icon { font-size: 16px; width: 20px; text-align: center; }
+
+/* Event type tabs in modal */
+.ev-type-tabs {
+  display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px;
+}
+.ev-type-tab {
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--muted); cursor: pointer;
+  transition: all 0.15s;
+}
+.ev-type-tab:hover { border-color: var(--accent); color: var(--accent); }
+.ev-type-tab.active { background: var(--accent); color: white; border-color: var(--accent); font-weight: 600; }
 
 /* ── Calendar Body ── */
 .cal-body { flex: 1; overflow: hidden; display: flex; flex-direction: column; position: relative; }
@@ -832,9 +866,23 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
 
         <button class="refresh-btn" id="refresh-btn" onclick="refreshCalendar()" title="重新載入">↻</button>
 
-        <button class="create-btn" onclick="openCreateModal(toDateStr(new Date()), '09:00')">
-          ＋ 建立
-        </button>
+        <div class="create-wrap" id="create-wrap">
+          <div class="create-btn">
+            <span class="create-btn-main" onclick="openCreateModal(toDateStr(new Date()),'09:00','default')">＋ 建立</span>
+            <span class="create-btn-arrow" onclick="toggleCreateMenu(event)">▾</span>
+          </div>
+          <div class="create-menu" id="create-menu">
+            <div class="create-menu-item" onclick="openCreateModal(toDateStr(new Date()),'09:00','default');closeCreateMenu()">
+              <span class="cm-icon">📅</span>活動
+            </div>
+            <div class="create-menu-item" onclick="openCreateModal(toDateStr(new Date()),null,'outOfOffice');closeCreateMenu()">
+              <span class="cm-icon">🚪</span>不在辦公室
+            </div>
+            <div class="create-menu-item" onclick="openCreateModal(toDateStr(new Date()),'09:00','focusTime');closeCreateMenu()">
+              <span class="cm-icon">🎯</span>專注時間
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -879,6 +927,11 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
       <h3 id="modal-event-title" style="margin:0">新增事件</h3>
       <button onclick="closeEventModal()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:20px;line-height:1;padding:0">✕</button>
+    </div>
+    <div class="ev-type-tabs" id="ev-type-tabs">
+      <button class="ev-type-tab active" data-type="default"    onclick="setEvType('default')">📅 活動</button>
+      <button class="ev-type-tab"        data-type="outOfOffice" onclick="setEvType('outOfOffice')">🚪 不在辦公室</button>
+      <button class="ev-type-tab"        data-type="focusTime"   onclick="setEvType('focusTime')">🎯 專注時間</button>
     </div>
     <div style="display:flex;flex-direction:column;gap:14px">
       <div id="ev-cal-wrap">
@@ -1991,7 +2044,7 @@ function populateCalendarSelect(selectedId) {
     .join('');
 }
 
-function openCreateModal(dateStr, startTime) {
+function openCreateModal(dateStr, startTime, evType) {
   editingEventId = null;
   editingCalendarId = 'primary';
   document.getElementById('modal-event-title').textContent = '新增事件';
@@ -2001,6 +2054,7 @@ function openCreateModal(dateStr, startTime) {
   document.getElementById('ev-desc').value = '';
   document.getElementById('ev-delete-btn').style.display = 'none';
   populateCalendarSelect('primary');
+  setEvType(evType || 'default');
   if (startTime) {
     document.getElementById('ev-start').value = startTime;
     const [h, m] = startTime.split(':').map(Number);
@@ -2015,6 +2069,28 @@ function openCreateModal(dateStr, startTime) {
   document.getElementById('modal-event').classList.add('open');
   setTimeout(() => document.getElementById('ev-title').focus(), 100);
 }
+
+let currentEvType = 'default';
+function setEvType(type) {
+  currentEvType = type;
+  document.querySelectorAll('.ev-type-tab').forEach(b => {
+    b.classList.toggle('active', b.dataset.type === type);
+  });
+  // 不在辦公室 / 專注時間 → 強制全天
+  if (type === 'outOfOffice' || type === 'focusTime') {
+    document.getElementById('ev-allday').checked = true;
+    toggleAlldayFields();
+  }
+}
+
+function toggleCreateMenu(e) {
+  e.stopPropagation();
+  document.getElementById('create-menu').classList.toggle('open');
+}
+function closeCreateMenu() {
+  document.getElementById('create-menu').classList.remove('open');
+}
+document.addEventListener('click', () => closeCreateMenu());
 
 function openEditModal(id, calId) {
   const ev = getEventById(id);
@@ -2064,9 +2140,11 @@ async function saveEvent() {
     const next = new Date(dateStr + 'T12:00:00');
     next.setDate(next.getDate() + 1);
     resource = { summary: title, description: desc || undefined, visibility: 'private',
+      eventType: currentEvType || 'default',
       start: { date: dateStr }, end: { date: toDateStr(next) } };
   } else {
     resource = { summary: title, description: desc || undefined, visibility: 'private',
+      eventType: currentEvType || 'default',
       start: { dateTime: `${dateStr}T${start}:00`, timeZone: TZ },
       end:   { dateTime: `${dateStr}T${end}:00`,   timeZone: TZ } };
   }
