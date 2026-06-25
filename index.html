@@ -300,7 +300,7 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
 
 /* ── Main Calendar ── */
 .cal-main {
-  display: flex; flex-direction: column; overflow: hidden; background: var(--bg);
+  display: flex; flex-direction: column; overflow: hidden; background: var(--surface);
 }
 .cal-topbar {
   background: var(--surface); border-bottom: 1px solid var(--border);
@@ -1045,7 +1045,7 @@ function getEvColor(ev) {
 // Returns lightened bg color (hex → rgba with opacity)
 function getEvBg(ev) {
   const c = getEvColor(ev);
-  return c + '22'; // ~13% opacity via hex alpha
+  return c + '33'; // ~20% opacity via hex alpha
 }
 // Returns true if the event has fully ended (past events get dimmed)
 function isEventPast(ev) {
@@ -1669,7 +1669,7 @@ function renderWeek() {
     alldayHtml += `<div class="week-allday-col">`;
     evs.forEach(ev => {
       const adColor = getEvColor(ev);
-      alldayHtml += `<div class="allday-chip" style="background:${getEvBg(ev)};color:${adColor}${isEventPast(ev)?';opacity:0.42':''}" title="${esc(ev.summary||'')}" onclick="openEditModal('${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">${esc((ev.summary||'（無標題）').slice(0,12))}</div>`;
+      alldayHtml += `<div class="allday-chip" style="background:${getEvBg(ev)};color:${adColor}${isEventPast(ev)?';opacity:0.5;filter:grayscale(40%)':''}" title="${esc(ev.summary||'')}" onclick="openEditModal('${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">${esc((ev.summary||'（無標題）').slice(0,12))}</div>`;
     });
     alldayHtml += `</div>`;
   });
@@ -1766,7 +1766,7 @@ function renderWeek() {
       const rightPct = ((totalCols - colIdx - 1) / totalCols * 100).toFixed(2);
       const evLeft  = totalCols > 1 ? `${leftPct}%`        : '2px';
       const evRight = totalCols > 1 ? `calc(${rightPct}% + 2px)` : '2px';
-      gridHtml += `<div class="week-ev" style="top:${top}%;height:${ht}%;left:${evLeft};right:${evRight};width:auto;z-index:${zIdx};background:${getEvBg(ev)};color:${wColor};border-left-color:${wColor}${isEventPast(ev)?';opacity:0.42':''}" title="${esc(title)}"
+      gridHtml += `<div class="week-ev" style="top:${top}%;height:${ht}%;left:${evLeft};right:${evRight};width:auto;z-index:${zIdx};background:${getEvBg(ev)};color:${wColor};border-left-color:${wColor}${isEventPast(ev)?';opacity:0.5;filter:grayscale(40%)':''}" title="${esc(title)}"
         onclick="weekEvClick(event,'${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">
         <div class="ev-time">${tl} – ${tlEnd}</div>
         <div class="ev-title">${esc(title.length>20?title.slice(0,20)+'…':title)}</div>
@@ -1858,7 +1858,7 @@ function buildEventRowHTML(ev) {
   const statusClass = getStatusClass(row.status);
   const isUrgent = /^(true|是|yes|✓|v|✔)$/i.test((row.urgent||'').trim());
 
-  return `<div class="event-row" id="row-${esc(id)}" data-id="${esc(id)}"${isEventPast(ev) ? ' style="opacity:0.5"' : ''}>
+  return `<div class="event-row" id="row-${esc(id)}" data-id="${esc(id)}"${isEventPast(ev) ? ' style="opacity:0.5;filter:grayscale(40%)"' : ''}>
     <div class="event-bar" style="background:${getEvColor(ev)}"></div>
     <div class="event-body">
       <div class="event-top">
