@@ -1774,28 +1774,30 @@ function renderDashboard() {
   const tl = document.getElementById('dashboard-today-list');
   tl.innerHTML = todayEvs.length ? todayEvs.map(evCard).join('') : '<div style="color:var(--muted);font-size:14px">今天沒有事件</div>';
   const ul = document.getElementById('dashboard-upcoming-list');
-  if (!upcomingEvs.length) {
-    ul.innerHTML = '<div style="color:var(--muted);font-size:14px">未來 7 天無事件</div>';
-  } else {
-    const groups = {};
-    upcomingEvs.forEach(ev => {
-      const d = ev.start?.date || ev.start?.dateTime?.slice(0,10);
-      if (!groups[d]) groups[d] = [];
-      groups[d].push(ev);
-    });
-    const days = ['日','一','二','三','四','五','六'];
-    ul.innerHTML = Object.keys(groups).sort().map((dateStr, idx) => {
-      const d = new Date(dateStr + 'T12:00:00');
-      const label = `${d.getMonth()+1}/${d.getDate()} (週${days[d.getDay()]})`;
-      return `<div style="display:flex;align-items:center;gap:10px;${idx>0?'margin-top:20px;':''}margin-bottom:10px">
+  const groups = {};
+  upcomingEvs.forEach(ev => {
+    const d = ev.start?.date || ev.start?.dateTime?.slice(0,10);
+    if (!groups[d]) groups[d] = [];
+    groups[d].push(ev);
+  });
+  const days = ['日','一','二','三','四','五','六'];
+  let upHtml = '';
+  for (let i = 1; i <= 7; i++) {
+    const dt = new Date(today + 'T12:00:00');
+    dt.setDate(dt.getDate() + i);
+    const dateStr = toDateStr(dt);
+    const label = `${dt.getMonth()+1}/${dt.getDate()} 週${days[dt.getDay()]}`;
+    const evs = groups[dateStr] || [];
+    upHtml += `<div style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
         <div style="font-size:13px;font-weight:700;color:var(--accent-dark);background:var(--accent-dim);padding:4px 12px;border-radius:20px;white-space:nowrap">${label}</div>
         <div style="flex:1;height:1px;background:var(--border)"></div>
       </div>` +
-        `<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:4px">` +
-        groups[dateStr].map(evCard).join('') +
-        `</div>`;
-    }).join('');
+      (evs.length ? `<div style="display:flex;flex-direction:column;gap:6px">` + evs.map(evCard).join('') + `</div>` :
+        `<div style="color:var(--muted);font-size:13px;padding:0 4px">無行程</div>`) +
+      `</div>`;
   }
+  ul.innerHTML = upHtml;
 }
 
 // Returns true if user is a participant in this event (not just a calendar subscriber)
