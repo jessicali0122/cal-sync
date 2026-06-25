@@ -962,7 +962,7 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
     <div style="background:var(--surface);border-radius:var(--radius);padding:24px;width:360px;box-shadow:var(--shadow-md)">
       <h3 style="font-size:16px;font-weight:600;margin-bottom:16px">新增待辦事項</h3>
       <div style="display:flex;flex-direction:column;gap:12px">
-        <input id="task-input-title" placeholder="待辦事項名稱…" style="font-family:var(--sans);font-size:14px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;color:var(--text);background:var(--bg)" onkeydown="if(event.key==='Enter')saveTask()">
+        <input id="task-input-title" placeholder="待辦事項名稱…" style="font-family:var(--sans);font-size:14px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;color:var(--text);background:var(--bg)">
         <div style="display:flex;gap:8px">
           <input id="task-input-date" type="date" style="flex:1;font-family:var(--sans);font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;color:var(--text);background:var(--bg)">
           <input id="task-input-time" type="time" style="width:110px;font-family:var(--sans);font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;color:var(--text);background:var(--bg)">
@@ -1557,6 +1557,7 @@ function renderSidebarTasks() {
       <div class="sidebar-task-cb${t.done?' checked':''}" onclick="toggleTaskDone('${t.id}')"></div>
       <span class="sidebar-task-title${t.done?' done':''}" title="${esc(t.title)}">${esc(t.title)}</span>
       <span class="sidebar-task-date">${dateHint}</span>
+      <button onclick="deleteTask('${t.id}')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px;padding:0 2px;flex-shrink:0;line-height:1" title="刪除">✕</button>
     </div>`;
   }).join('');
 }
