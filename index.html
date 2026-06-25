@@ -851,13 +851,13 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
       <span class="cal-title-label">Analytics</span>
     </div>
     <div style="padding:24px;overflow-y:auto;height:calc(100% - 64px)">
-      <div id="analytics-by-cal" style="margin-bottom:32px">
+      <div id="analytics-busiest" style="margin-bottom:32px">
+        <h3 style="font-size:14px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px">本週最忙碌的天（我的參與事件）</h3>
+        <div id="analytics-busy-rows" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+      <div id="analytics-by-cal">
         <h3 style="font-size:14px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px">各日曆事件數（本月）</h3>
         <div id="analytics-cal-rows" style="display:flex;flex-direction:column;gap:10px"></div>
-      </div>
-      <div id="analytics-busiest">
-        <h3 style="font-size:14px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px">本週最忙碌的天</h3>
-        <div id="analytics-busy-rows" style="display:flex;flex-direction:column;gap:8px"></div>
       </div>
     </div>
   </div>
@@ -1032,10 +1032,28 @@ const SLOT_MAP = {
 };
 
 // ── Color helpers ──
-// Returns hex color for an event (uses calendar color if available)
+const CAL_COLOR_KEY = 'gcal_custom_colors';
+function getCustomCalColor(calId) {
+  try { return JSON.parse(localStorage.getItem(CAL_COLOR_KEY)||'{}')[calId]||null; } catch { return null; }
+}
+function setCustomCalColor(calId, color) {
+  try {
+    const m = JSON.parse(localStorage.getItem(CAL_COLOR_KEY)||'{}');
+    m[calId] = color; localStorage.setItem(CAL_COLOR_KEY, JSON.stringify(m));
+  } catch {}
+}
+// Returns hex color for an event
 function getEvColor(ev) {
+  const calId = ev._calId || '';
+  // Custom override (user-set via color picker)
+  const custom = calId ? getCustomCalColor(calId) : null;
+  if (custom) return custom;
+  // Resource/room calendars → unified purple
+  if (calId.includes('resource.calendar.google.com')) return '#7c3aed';
+  // Primary (own) calendar → pink
+  if (ev._calPrimary) return '#db2777';
+  // Fallback to Google Calendar color
   if (ev._calColor) return ev._calColor;
-  if (ev._source === 'gcal') return '#22c55e';
   const str = ev.summary || '';
   let h = 0;
   for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0;
@@ -1244,6 +1262,8 @@ async function loadCalendarEvents(showLoad = true) {
           _calId: cal.id,
           _calColor: cal.backgroundColor || '#6366f1',
           _calName: cal.summary || cal.id,
+          _calPrimary: !!cal.primary,
+          _calRole: cal.accessRole || '',
         })))
       )
     );
@@ -1263,17 +1283,40 @@ async function loadCalendarEvents(showLoad = true) {
 }
 
 // ── Render calendar list in sidebar ──
+function getCalDisplayColor(cal) {
+  const custom = getCustomCalColor(cal.id);
+  if (custom) return custom;
+  if (cal.id.includes('resource.calendar.google.com')) return '#7c3aed';
+  if (cal.primary) return '#db2777';
+  return cal.backgroundColor || '#6366f1';
+}
+
 function renderCalendarCategories() {
   const el = document.getElementById('category-list');
   if (!el || !calendarList.length) return;
   el.innerHTML = calendarList.map(cal => {
-    const color = cal.backgroundColor || '#6366f1';
+    const color = getCalDisplayColor(cal);
     const hidden = hiddenCalendars.has(cal.id);
-    return `<div class="category-item" onclick="toggleCalendar('${esc(cal.id)}')" style="cursor:pointer">
-      <div class="cat-checkbox" style="background:${hidden ? 'transparent' : color};border:2px solid ${color};transition:background .15s"></div>
-      <span class="cat-name" style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:${hidden ? 0.4 : 1};transition:opacity .15s" title="${esc(cal.summary||cal.id)}">${esc(cal.summary||cal.id)}</span>
+    return `<div class="category-item" style="cursor:pointer">
+      <div class="cat-checkbox" onclick="toggleCalendar('${esc(cal.id)}')" style="background:${hidden?'transparent':color};border:2px solid ${color};transition:background .15s;cursor:pointer"></div>
+      <span class="cat-name" onclick="toggleCalendar('${esc(cal.id)}')" style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:${hidden?0.4:1};transition:opacity .15s;flex:1" title="${esc(cal.summary||cal.id)}">${esc(cal.summary||cal.id)}</span>
+      <div title="更換顏色" onclick="openCalColorPicker('${esc(cal.id)}')" style="width:14px;height:14px;border-radius:50%;background:${color};border:1.5px solid rgba(0,0,0,0.12);cursor:pointer;flex-shrink:0;transition:transform .15s" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'"></div>
+      <input type="color" id="cp-${esc(cal.id)}" value="${color}" style="width:0;height:0;opacity:0;position:absolute;pointer-events:none" onchange="applyCalColor('${esc(cal.id)}',this.value)">
     </div>`;
   }).join('');
+}
+
+function openCalColorPicker(calId) {
+  const inp = document.getElementById('cp-' + calId);
+  if (inp) { inp.style.pointerEvents='auto'; inp.click(); inp.style.pointerEvents='none'; }
+}
+
+function applyCalColor(calId, color) {
+  setCustomCalColor(calId, color);
+  // Update cached event colors for this calendar
+  calEvents = calEvents.map(e => e._calId === calId ? {...e, _calColor: color} : e);
+  renderCalendarCategories();
+  renderView();
 }
 
 function toggleCalendar(calId) {
@@ -1397,13 +1440,27 @@ function renderDashboard() {
       groups[d].push(ev);
     });
     const days = ['日','一','二','三','四','五','六'];
-    ul.innerHTML = Object.keys(groups).sort().map(dateStr => {
+    ul.innerHTML = Object.keys(groups).sort().map((dateStr, idx) => {
       const d = new Date(dateStr + 'T12:00:00');
-      const label = `${d.getMonth()+1}/${d.getDate()} (${days[d.getDay()]})`;
-      return `<div style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.6px;margin:12px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--border)">${label}</div>` +
-        groups[dateStr].map(evCard).join('');
+      const label = `${d.getMonth()+1}/${d.getDate()} (週${days[d.getDay()]})`;
+      return `<div style="display:flex;align-items:center;gap:10px;${idx>0?'margin-top:20px;':''}margin-bottom:10px">
+        <div style="font-size:13px;font-weight:700;color:var(--accent-dark);background:var(--accent-dim);padding:4px 12px;border-radius:20px;white-space:nowrap">${label}</div>
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+      </div>` +
+        `<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:4px">` +
+        groups[dateStr].map(evCard).join('') +
+        `</div>`;
     }).join('');
   }
+}
+
+// Returns true if user is a participant in this event (not just a calendar subscriber)
+function isUserParticipant(ev) {
+  if (!ev.attendees || ev.attendees.length === 0) return true; // personal event
+  const self = ev.attendees.find(a => a.self);
+  if (self) return self.responseStatus !== 'declined';
+  // No self attendee but user owns the calendar
+  return ev._calPrimary || ev._calRole === 'owner' || ev._calRole === 'writer';
 }
 
 function renderAnalytics() {
@@ -1411,42 +1468,20 @@ function renderAnalytics() {
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0,10);
   const monthEnd = new Date(now.getFullYear(), now.getMonth()+1, 0).toISOString().slice(0,10);
 
-  const monthEvs = calEvents.filter(e => {
-    const d = e.start?.date || e.start?.dateTime?.slice(0,10);
-    return d >= monthStart && d <= monthEnd;
-  });
-
-  const byCalMap = {};
-  monthEvs.forEach(e => {
-    const key = e._calName || e._calId || 'primary';
-    const color = getEvColor(e);
-    if (!byCalMap[key]) byCalMap[key] = { count: 0, color };
-    byCalMap[key].count++;
-  });
-  const maxCount = Math.max(1, ...Object.values(byCalMap).map(v => v.count));
-
-  const calRows = document.getElementById('analytics-cal-rows');
-  calRows.innerHTML = Object.entries(byCalMap).sort((a,b)=>b[1].count-a[1].count).map(([name, v]) => `
-    <div style="display:flex;align-items:center;gap:12px">
-      <div style="width:120px;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${name}">${name}</div>
-      <div style="flex:1;height:12px;background:var(--border);border-radius:6px;overflow:hidden">
-        <div style="height:100%;width:${Math.round(v.count/maxCount*100)}%;background:${v.color};border-radius:6px;transition:width .4s"></div>
-      </div>
-      <div style="font-size:14px;font-weight:600;color:var(--text);min-width:24px;text-align:right">${v.count}</div>
-    </div>`).join('') || '<div style="color:var(--muted);font-size:14px">本月無資料</div>';
-
-  const weekStart = new Date(now); weekStart.setDate(now.getDate() - now.getDay());
+  // ── 本週最忙碌（先顯示，只算參與事件）──
+  const wd = now.getDay();
+  const weekStart = new Date(now); weekStart.setDate(now.getDate() - (wd === 0 ? 6 : wd - 1)); weekStart.setHours(0,0,0,0);
   const weekEvs = calEvents.filter(e => {
     const d = e.start?.date || e.start?.dateTime?.slice(0,10);
-    const dt = new Date(d);
-    return dt >= weekStart && dt <= now;
+    const dt = new Date(d + 'T12:00:00');
+    return dt >= weekStart && dt <= now && isUserParticipant(e);
   });
   const byDay = {};
   const dayNames = ['日','一','二','三','四','五','六'];
   weekEvs.forEach(e => {
     const d = e.start?.date || e.start?.dateTime?.slice(0,10);
-    const dow = new Date(d).getDay();
-    byDay[dow] = (byDay[dow]||0)+1;
+    const dow = new Date(d + 'T12:00:00').getDay();
+    byDay[dow] = (byDay[dow]||0) + 1;
   });
   const maxDay = Math.max(1, ...Object.values(byDay));
   const busyRows = document.getElementById('analytics-busy-rows');
@@ -1458,6 +1493,29 @@ function renderAnalytics() {
       </div>
       <div style="font-size:14px;font-weight:600;color:var(--text);min-width:24px;text-align:right">${cnt}</div>
     </div>`).join('') || '<div style="color:var(--muted);font-size:14px">本週無資料</div>';
+
+  // ── 各日曆事件數（本月）──
+  const monthEvs = calEvents.filter(e => {
+    const d = e.start?.date || e.start?.dateTime?.slice(0,10);
+    return d >= monthStart && d <= monthEnd;
+  });
+  const byCalMap = {};
+  monthEvs.forEach(e => {
+    const key = e._calName || e._calId || 'primary';
+    const color = getEvColor(e);
+    if (!byCalMap[key]) byCalMap[key] = { count: 0, color };
+    byCalMap[key].count++;
+  });
+  const maxCount = Math.max(1, ...Object.values(byCalMap).map(v => v.count));
+  const calRows = document.getElementById('analytics-cal-rows');
+  calRows.innerHTML = Object.entries(byCalMap).sort((a,b)=>b[1].count-a[1].count).map(([name, v]) => `
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="width:120px;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${name}">${name}</div>
+      <div style="flex:1;height:12px;background:var(--border);border-radius:6px;overflow:hidden">
+        <div style="height:100%;width:${Math.round(v.count/maxCount*100)}%;background:${v.color};border-radius:6px;transition:width .4s"></div>
+      </div>
+      <div style="font-size:14px;font-weight:600;color:var(--text);min-width:24px;text-align:right">${v.count}</div>
+    </div>`).join('') || '<div style="color:var(--muted);font-size:14px">本月無資料</div>';
 }
 
 function goToday() {
