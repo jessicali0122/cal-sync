@@ -1047,6 +1047,15 @@ function getEvBg(ev) {
   const c = getEvColor(ev);
   return c + '22'; // ~13% opacity via hex alpha
 }
+// Returns true if the event has fully ended (past events get dimmed)
+function isEventPast(ev) {
+  const now = new Date();
+  if (ev.end?.dateTime) return new Date(ev.end.dateTime) < now;
+  if (ev.end?.date) return new Date(ev.end.date) <= new Date(toDateStr(now));
+  if (ev.start?.dateTime) return new Date(ev.start.dateTime) < now;
+  if (ev.start?.date) return ev.start.date < toDateStr(now);
+  return false;
+}
 // colorClass / barClass kept for compatibility but now use inline styles
 function colorClass(ev) { return '_ev'; }
 function barClass(ev) { return '_bar'; }
@@ -1500,7 +1509,7 @@ function renderMiniCal() {
     const isMiniWeekend = cur.getDay() === 0 || cur.getDay() === 6;
     const isMiniHol = !isToday && !isSelected && (isMiniWeekend || hasHolidayOnDate(dateStr));
     html += `<div class="mini-cal-day ${isToday?'today':''} ${isOther?'other-month':''} ${isSelected&&!isToday?'selected':''}" style="${isMiniHol?'background:#f1f3f4;border-radius:4px;':''}"
-      onclick="miniCalSelectDay('${dateStr}')">${cur.getDate()}</div>`;
+      onclick="miniCalSelectDay('${dateStr}')">${cur.getDate()}${hasDot?'<div class="mini-day-dot"></div>':''}</div>`;
     cur.setDate(cur.getDate() + 1);
   }
   document.getElementById('mini-cal-days').innerHTML = html;
@@ -1629,7 +1638,8 @@ function renderMonth() {
       const title = ev.summary || '（無標題）';
       const time = ev.start?.dateTime ? ev.start.dateTime.slice(11,16)+' ' : '';
       const evColor = getEvColor(ev), evBg = getEvBg(ev);
-      html += `<div class="cell-ev" style="background:${evBg};color:${evColor};border-left:2px solid ${evColor}" title="${esc(title)}" onclick="event.stopPropagation();openEditModal('${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">${time}${esc(title.length>14?title.slice(0,14)+'…':title)}</div>`;
+      const pastStyle = isEventPast(ev) ? ';opacity:0.42' : '';
+      html += `<div class="cell-ev" style="background:${evBg};color:${evColor};border-left:2px solid ${evColor}${pastStyle}" title="${esc(title)}" onclick="event.stopPropagation();openEditModal('${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">${time}${esc(title.length>14?title.slice(0,14)+'…':title)}</div>`;
     });
     if (more > 0) html += `<div class="cell-more">+${more} 筆</div>`;
     html += `</div></div>`;
@@ -1659,7 +1669,7 @@ function renderWeek() {
     alldayHtml += `<div class="week-allday-col">`;
     evs.forEach(ev => {
       const adColor = getEvColor(ev);
-      alldayHtml += `<div class="allday-chip" style="background:${getEvBg(ev)};color:${adColor}" title="${esc(ev.summary||'')}" onclick="openEditModal('${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">${esc((ev.summary||'（無標題）').slice(0,12))}</div>`;
+      alldayHtml += `<div class="allday-chip" style="background:${getEvBg(ev)};color:${adColor}${isEventPast(ev)?';opacity:0.42':''}" title="${esc(ev.summary||'')}" onclick="openEditModal('${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">${esc((ev.summary||'（無標題）').slice(0,12))}</div>`;
     });
     alldayHtml += `</div>`;
   });
@@ -1756,7 +1766,7 @@ function renderWeek() {
       const rightPct = ((totalCols - colIdx - 1) / totalCols * 100).toFixed(2);
       const evLeft  = totalCols > 1 ? `${leftPct}%`        : '2px';
       const evRight = totalCols > 1 ? `calc(${rightPct}% + 2px)` : '2px';
-      gridHtml += `<div class="week-ev" style="top:${top}%;height:${ht}%;left:${evLeft};right:${evRight};width:auto;z-index:${zIdx};background:${getEvBg(ev)};color:${wColor};border-left-color:${wColor}" title="${esc(title)}"
+      gridHtml += `<div class="week-ev" style="top:${top}%;height:${ht}%;left:${evLeft};right:${evRight};width:auto;z-index:${zIdx};background:${getEvBg(ev)};color:${wColor};border-left-color:${wColor}${isEventPast(ev)?';opacity:0.42':''}" title="${esc(title)}"
         onclick="weekEvClick(event,'${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">
         <div class="ev-time">${tl} – ${tlEnd}</div>
         <div class="ev-title">${esc(title.length>20?title.slice(0,20)+'…':title)}</div>
@@ -1848,7 +1858,7 @@ function buildEventRowHTML(ev) {
   const statusClass = getStatusClass(row.status);
   const isUrgent = /^(true|是|yes|✓|v|✔)$/i.test((row.urgent||'').trim());
 
-  return `<div class="event-row" id="row-${esc(id)}" data-id="${esc(id)}">
+  return `<div class="event-row" id="row-${esc(id)}" data-id="${esc(id)}"${isEventPast(ev) ? ' style="opacity:0.5"' : ''}>
     <div class="event-bar" style="background:${getEvColor(ev)}"></div>
     <div class="event-body">
       <div class="event-top">
