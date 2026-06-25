@@ -557,6 +557,59 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
   margin-bottom: 6px;
 }
 .list-date-label:first-child { border-top: none; padding-top: 4px; }
+/* ── Task Items ── */
+.task-date-group { margin-bottom: 24px; }
+.task-date-header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+}
+.task-date-pill {
+  font-size: 12px; font-weight: 600; padding: 3px 12px;
+  border-radius: 20px; background: var(--accent); color: white;
+  letter-spacing: 0.03em;
+}
+.task-date-pill.today-pill { background: var(--accent); }
+.task-date-pill.future-pill { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+.task-date-divider { flex: 1; height: 1px; background: var(--border); }
+.task-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 12px 16px; margin-bottom: 8px;
+  transition: all 0.15s; cursor: default;
+}
+.task-item:hover { border-color: var(--border2); box-shadow: var(--shadow); }
+.task-item.done-item { opacity: 0.5; }
+.task-cb {
+  width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border2);
+  flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; background: transparent;
+}
+.task-cb:hover { border-color: var(--accent); background: var(--accent-dim); }
+.task-cb.checked { background: var(--accent); border-color: var(--accent); }
+.task-cb.checked::after { content: '✓'; color: white; font-size: 11px; font-weight: 700; }
+.task-title { flex: 1; font-size: 14px; color: var(--text); }
+.task-title.done-title { text-decoration: line-through; color: var(--muted); }
+.task-time { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.task-tag {
+  font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; white-space: nowrap;
+}
+.task-tag-quick   { background: #dbeafe; color: #1d4ed8; }
+.task-tag-deepwork { background: #1e293b; color: #e2e8f0; }
+.task-tag-errand  { background: #ffedd5; color: #c2410c; }
+.task-tag-social  { background: #ede9fe; color: #6d28d9; }
+.task-tag-calming { background: #dcfce7; color: #15803d; }
+.task-tag-reflective { background: #fce7f3; color: #9d174d; }
+.task-del { opacity: 0; background: none; border: none; cursor: pointer; color: var(--muted); font-size: 14px; padding: 2px 4px; border-radius: 4px; transition: opacity 0.15s; }
+.task-item:hover .task-del { opacity: 1; }
+.done-section-toggle {
+  display: flex; align-items: center; gap: 8px; cursor: pointer;
+  font-size: 13px; font-weight: 600; color: var(--muted); padding: 8px 0; margin-top: 8px;
+  user-select: none;
+}
+.done-section-toggle:hover { color: var(--text); }
+.done-section-caret { transition: transform 0.2s; display: inline-block; }
+.done-section-caret.open { transform: rotate(90deg); }
+/* ── /Task Items ── */
+
 .event-row {
   background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
   padding: 14px 16px; display: grid;
@@ -743,6 +796,10 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
       <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="9" width="3" height="6" rx="1" opacity=".5"/><rect x="6" y="6" width="3" height="9" rx="1" opacity=".7"/><rect x="11" y="3" width="3" height="12" rx="1"/></svg>
       Analytics
     </button>
+    <button class="nav-item" id="main-nav-tasks" onclick="switchMainView('tasks')">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="14" height="14" rx="2"/><path d="M5 8l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Tasks
+    </button>
   </nav>
 
   <div class="header-right">
@@ -858,6 +915,44 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
       <div id="analytics-by-cal">
         <h3 style="font-size:14px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px">各日曆事件數（本月）</h3>
         <div id="analytics-cal-rows" style="display:flex;flex-direction:column;gap:10px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Tasks Panel ── -->
+  <div class="cal-main" id="panel-tasks" style="display:none">
+    <div class="cal-topbar">
+      <span class="cal-title-label">待辦事項</span>
+      <div class="cal-topbar-right">
+        <button class="today-btn" onclick="openAddTaskModal()" style="display:flex;align-items:center;gap:4px">＋ 新增</button>
+      </div>
+    </div>
+    <div id="tasks-body" style="padding:24px 28px;overflow-y:auto;height:calc(100% - 64px);max-width:680px;margin:0 auto;width:100%"></div>
+  </div>
+
+  <!-- Add Task Modal -->
+  <div id="task-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.4);z-index:900;align-items:center;justify-content:center" onclick="if(event.target===this)closeTaskModal()">
+    <div style="background:var(--surface);border-radius:var(--radius);padding:24px;width:360px;box-shadow:var(--shadow-md)">
+      <h3 style="font-size:16px;font-weight:600;margin-bottom:16px">新增待辦事項</h3>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <input id="task-input-title" placeholder="待辦事項名稱…" style="font-family:var(--sans);font-size:14px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;color:var(--text);background:var(--bg)" onkeydown="if(event.key==='Enter')saveTask()">
+        <div style="display:flex;gap:8px">
+          <input id="task-input-date" type="date" style="flex:1;font-family:var(--sans);font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;color:var(--text);background:var(--bg)">
+          <input id="task-input-time" type="time" style="width:110px;font-family:var(--sans);font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;color:var(--text);background:var(--bg)">
+        </div>
+        <select id="task-input-tag" style="font-family:var(--sans);font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;color:var(--text);background:var(--bg)">
+          <option value="">無標籤</option>
+          <option value="quick">⚡ quick</option>
+          <option value="deepwork">🧠 deepwork</option>
+          <option value="errand">🛒 errand</option>
+          <option value="social">💬 social</option>
+          <option value="calming">🌿 calming</option>
+          <option value="reflective">💭 reflective</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:20px;justify-content:flex-end">
+        <button onclick="closeTaskModal()" style="font-family:var(--sans);font-size:13px;padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;cursor:pointer;color:var(--muted)">取消</button>
+        <button onclick="saveTask()" style="font-family:var(--sans);font-size:13px;padding:8px 16px;border:none;border-radius:var(--radius-sm);background:var(--accent);color:white;cursor:pointer;font-weight:500">儲存</button>
       </div>
     </div>
   </div>
@@ -1384,7 +1479,7 @@ function navNext() {
 }
 
 function switchMainView(v) {
-  ['dashboard','calendar','analytics'].forEach(n => {
+  ['dashboard','calendar','analytics','tasks'].forEach(n => {
     const p = document.getElementById('panel-'+n);
     const b = document.getElementById('main-nav-'+n);
     if (p) p.style.display = n === v ? '' : 'none';
@@ -1392,7 +1487,189 @@ function switchMainView(v) {
   });
   if (v === 'dashboard') renderDashboard();
   if (v === 'analytics') renderAnalytics();
+  if (v === 'tasks') renderTasks();
 }
+
+// ── Tasks ──────────────────────────────────────────────────────────────────
+const TASKS_KEY = 'gcal_tasks';
+let tasksData = JSON.parse(localStorage.getItem(TASKS_KEY) || '[]');
+let doneExpanded = false;
+let editingTaskId = null;
+
+function saveTasks() {
+  localStorage.setItem(TASKS_KEY, JSON.stringify(tasksData));
+}
+
+function openAddTaskModal(dateStr) {
+  editingTaskId = null;
+  document.getElementById('task-input-title').value = '';
+  document.getElementById('task-input-date').value = dateStr || toDateStr(new Date());
+  document.getElementById('task-input-time').value = '';
+  document.getElementById('task-input-tag').value = '';
+  const ov = document.getElementById('task-modal-overlay');
+  ov.style.display = 'flex';
+  setTimeout(() => document.getElementById('task-input-title').focus(), 50);
+}
+
+function closeTaskModal() {
+  document.getElementById('task-modal-overlay').style.display = 'none';
+}
+
+function saveTask() {
+  const title = document.getElementById('task-input-title').value.trim();
+  if (!title) { document.getElementById('task-input-title').focus(); return; }
+  const date  = document.getElementById('task-input-date').value || toDateStr(new Date());
+  const time  = document.getElementById('task-input-time').value || '';
+  const tag   = document.getElementById('task-input-tag').value || '';
+  if (editingTaskId) {
+    const t = tasksData.find(t => t.id === editingTaskId);
+    if (t) { t.title = title; t.date = date; t.time = time; t.tag = tag; }
+  } else {
+    tasksData.push({ id: 'task_' + Date.now(), title, date, time, tag, done: false, doneAt: 0 });
+  }
+  saveTasks();
+  closeTaskModal();
+  renderTasks();
+}
+
+function toggleTaskDone(id) {
+  const t = tasksData.find(t => t.id === id);
+  if (!t) return;
+  t.done = !t.done;
+  t.doneAt = t.done ? Date.now() : 0;
+  saveTasks();
+  renderTasks();
+}
+
+function deleteTask(id) {
+  tasksData = tasksData.filter(t => t.id !== id);
+  saveTasks();
+  renderTasks();
+}
+
+function editTask(id) {
+  const t = tasksData.find(t => t.id === id);
+  if (!t) return;
+  editingTaskId = id;
+  document.getElementById('task-input-title').value = t.title;
+  document.getElementById('task-input-date').value = t.date;
+  document.getElementById('task-input-time').value = t.time || '';
+  document.getElementById('task-input-tag').value = t.tag || '';
+  const ov = document.getElementById('task-modal-overlay');
+  ov.style.display = 'flex';
+  setTimeout(() => document.getElementById('task-input-title').focus(), 50);
+}
+
+function renderTasks() {
+  const body = document.getElementById('tasks-body');
+  if (!body) return;
+  const todayStr = toDateStr(new Date());
+  const in7 = new Date(); in7.setDate(in7.getDate() + 7);
+  const in7Str = toDateStr(in7);
+
+  const pending = tasksData.filter(t => !t.done).sort((a,b) => {
+    const ad = a.date + (a.time ? 'T'+a.time : 'T23:59');
+    const bd = b.date + (b.time ? 'T'+b.time : 'T23:59');
+    return ad.localeCompare(bd);
+  });
+  const done = tasksData.filter(t => t.done).sort((a,b) => b.doneAt - a.doneAt);
+
+  // Group pending by date
+  const groups = {};
+  pending.forEach(t => {
+    if (!groups[t.date]) groups[t.date] = [];
+    groups[t.date].push(t);
+  });
+
+  const DAY_ZH = ['日','一','二','三','四','五','六'];
+  function dateLabel(dateStr) {
+    if (dateStr === todayStr) return '今天';
+    const tom = new Date(); tom.setDate(tom.getDate()+1);
+    if (dateStr === toDateStr(tom)) return '明天';
+    const d = new Date(dateStr+'T12:00:00');
+    return `${d.getMonth()+1}/${d.getDate()} 週${DAY_ZH[d.getDay()]}`;
+  }
+
+  function tagChip(tag) {
+    if (!tag) return '';
+    const labels = {quick:'quick',deepwork:'deepwork',errand:'errand',social:'social',calming:'calming',reflective:'reflective'};
+    return `<span class="task-tag task-tag-${tag}">${labels[tag]||tag}</span>`;
+  }
+
+  function taskRow(t) {
+    return `<div class="task-item${t.done?' done-item':''}" id="titem-${t.id}">
+      <div class="task-cb${t.done?' checked':''}" onclick="toggleTaskDone('${t.id}')"></div>
+      <span class="task-title${t.done?' done-title':''}" ondblclick="editTask('${t.id}')">${esc(t.title)}</span>
+      ${tagChip(t.tag)}
+      ${t.time ? `<span class="task-time">🕐 ${t.time}</span>` : ''}
+      <button class="task-del" onclick="deleteTask('${t.id}')" title="刪除">✕</button>
+    </div>`;
+  }
+
+  let html = '';
+
+  if (pending.length === 0 && done.length === 0) {
+    html = `<div style="text-align:center;padding:60px 0;color:var(--muted)">
+      <div style="font-size:40px;margin-bottom:12px">✓</div>
+      <div style="font-size:15px;font-weight:500">目前沒有待辦事項</div>
+      <div style="font-size:13px;margin-top:6px">點右上角「＋ 新增」來建立</div>
+    </div>`;
+  } else {
+    // Overdue (before today) group
+    const overdues = Object.entries(groups).filter(([d]) => d < todayStr);
+    if (overdues.length) {
+      html += `<div class="task-date-group">
+        <div class="task-date-header">
+          <span class="task-date-pill" style="background:#ef4444">過期</span>
+          <div class="task-date-divider"></div>
+        </div>`;
+      overdues.forEach(([,ts]) => ts.forEach(t => { html += taskRow(t); }));
+      html += `</div>`;
+    }
+
+    // Today through next 7 days
+    const upcoming = Object.entries(groups).filter(([d]) => d >= todayStr && d <= in7Str);
+    upcoming.forEach(([dateStr, ts]) => {
+      const isToday = dateStr === todayStr;
+      html += `<div class="task-date-group">
+        <div class="task-date-header">
+          <span class="task-date-pill${isToday ? ' today-pill' : ' future-pill'}">${dateLabel(dateStr)}</span>
+          <div class="task-date-divider"></div>
+          <button onclick="openAddTaskModal('${dateStr}')" style="font-size:11px;background:none;border:none;cursor:pointer;color:var(--muted);padding:2px 4px;border-radius:4px" title="新增到這一天">＋</button>
+        </div>`;
+      ts.forEach(t => { html += taskRow(t); });
+      html += `</div>`;
+    });
+
+    // Future beyond 7 days
+    const farFuture = Object.entries(groups).filter(([d]) => d > in7Str);
+    if (farFuture.length) {
+      html += `<div class="task-date-group">
+        <div class="task-date-header">
+          <span class="task-date-pill future-pill">未來</span>
+          <div class="task-date-divider"></div>
+        </div>`;
+      farFuture.forEach(([,ts]) => ts.forEach(t => { html += taskRow(t); }));
+      html += `</div>`;
+    }
+
+    // Done section
+    if (done.length) {
+      html += `<div class="done-section-toggle" onclick="doneExpanded=!doneExpanded;renderTasks()">
+        <span class="done-section-caret${doneExpanded?' open':''}">›</span>
+        已完成（${done.length}）
+      </div>`;
+      if (doneExpanded) {
+        html += `<div>`;
+        done.forEach(t => { html += taskRow(t); });
+        html += `</div>`;
+      }
+    }
+  }
+
+  body.innerHTML = html;
+}
+// ── /Tasks ─────────────────────────────────────────────────────────────────
 
 function renderDashboard() {
   const today = toDateStr(new Date());
