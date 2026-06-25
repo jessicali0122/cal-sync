@@ -625,6 +625,45 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
 .sidebar-task-title { flex: 1; font-size: 12px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sidebar-task-title.done { text-decoration: line-through; color: var(--muted); }
 .sidebar-task-date { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.task-modal-input {
+  font-family: var(--sans); font-size: 13px;
+  padding: 9px 12px; background: var(--bg);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  color: var(--text); outline: none; width: 100%;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.task-modal-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+input[type="date"].task-modal-input, input[type="time"].task-modal-input {
+  -webkit-appearance: none; appearance: none; cursor: pointer;
+}
+input[type="date"].task-modal-input::-webkit-calendar-picker-indicator,
+input[type="time"].task-modal-input::-webkit-calendar-picker-indicator {
+  opacity: 0; position: absolute; right: 0; width: 100%; height: 100%; cursor: pointer;
+}
+.task-tag-pill {
+  font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 20px;
+  cursor: pointer; border: 1.5px solid transparent; transition: all 0.12s; user-select: none;
+  background: var(--bg); color: var(--muted); border-color: var(--border);
+}
+.task-tag-pill.selected { border-color: currentColor; box-shadow: 0 0 0 2px var(--accent-dim); }
+.task-tag-pill.task-tag-quick.selected   { background: #dbeafe; color: #1d4ed8; }
+.task-tag-pill.task-tag-deepwork.selected{ background: #1e293b; color: #e2e8f0; }
+.task-tag-pill.task-tag-errand.selected  { background: #ffedd5; color: #c2410c; }
+.task-tag-pill.task-tag-social.selected  { background: #ede9fe; color: #6d28d9; }
+.task-tag-pill.task-tag-calming.selected { background: #dcfce7; color: #15803d; }
+.task-tag-pill.task-tag-reflective.selected { background: #fce7f3; color: #9d174d; }
+.task-modal-btn-cancel {
+  font-family: var(--sans); font-size: 13px; padding: 8px 18px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: transparent; cursor: pointer; color: var(--muted); transition: background 0.12s;
+}
+.task-modal-btn-cancel:hover { background: var(--bg); }
+.task-modal-btn-save {
+  font-family: var(--sans); font-size: 13px; padding: 8px 18px;
+  border: none; border-radius: var(--radius-sm);
+  background: var(--accent); color: white; cursor: pointer; font-weight: 500; transition: background 0.12s;
+}
+.task-modal-btn-save:hover { background: var(--accent-dark); }
 /* ── /Task Items ── */
 
 .event-row {
@@ -959,27 +998,39 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
 
   <!-- Add Task Modal -->
   <div id="task-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.4);z-index:900;align-items:center;justify-content:center" onclick="if(event.target===this)closeTaskModal()">
-    <div style="background:var(--surface);border-radius:var(--radius);padding:24px;width:360px;box-shadow:var(--shadow-md)">
-      <h3 style="font-size:16px;font-weight:600;margin-bottom:16px">新增待辦事項</h3>
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <input id="task-input-title" placeholder="待辦事項名稱…" style="font-family:var(--sans);font-size:14px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;color:var(--text);background:var(--bg)">
+    <div style="background:var(--surface);border-radius:var(--radius);padding:24px;width:380px;box-shadow:var(--shadow-md)">
+      <h3 style="font-size:16px;font-weight:600;margin-bottom:20px" id="task-modal-title">新增待辦事項</h3>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <input id="task-input-title" placeholder="待辦事項名稱…" class="task-modal-input" style="font-size:14px;padding:10px 12px">
+
         <div style="display:flex;gap:8px">
-          <input id="task-input-date" type="date" style="flex:1;font-family:var(--sans);font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;color:var(--text);background:var(--bg)">
-          <input id="task-input-time" type="time" style="width:110px;font-family:var(--sans);font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;color:var(--text);background:var(--bg)">
+          <div style="flex:1;position:relative">
+            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none">📅</span>
+            <input id="task-input-date" type="date" class="task-modal-input" style="padding-left:30px;width:100%">
+          </div>
+          <div style="position:relative">
+            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none">🕐</span>
+            <input id="task-input-time" type="time" class="task-modal-input" style="padding-left:30px;width:120px">
+          </div>
         </div>
-        <select id="task-input-tag" style="font-family:var(--sans);font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;color:var(--text);background:var(--bg)">
-          <option value="">無標籤</option>
-          <option value="quick">⚡ quick</option>
-          <option value="deepwork">🧠 deepwork</option>
-          <option value="errand">🛒 errand</option>
-          <option value="social">💬 social</option>
-          <option value="calming">🌿 calming</option>
-          <option value="reflective">💭 reflective</option>
-        </select>
+
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">標籤</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap" id="task-tag-pills">
+            <span class="task-tag-pill" data-tag="" onclick="selectTaskTag(this)">無</span>
+            <span class="task-tag-pill task-tag-quick" data-tag="quick" onclick="selectTaskTag(this)">⚡ quick</span>
+            <span class="task-tag-pill task-tag-deepwork" data-tag="deepwork" onclick="selectTaskTag(this)">🧠 deepwork</span>
+            <span class="task-tag-pill task-tag-errand" data-tag="errand" onclick="selectTaskTag(this)">🛒 errand</span>
+            <span class="task-tag-pill task-tag-social" data-tag="social" onclick="selectTaskTag(this)">💬 social</span>
+            <span class="task-tag-pill task-tag-calming" data-tag="calming" onclick="selectTaskTag(this)">🌿 calming</span>
+            <span class="task-tag-pill task-tag-reflective" data-tag="reflective" onclick="selectTaskTag(this)">💭 reflective</span>
+          </div>
+          <input type="hidden" id="task-input-tag" value="">
+        </div>
       </div>
-      <div style="display:flex;gap:8px;margin-top:20px;justify-content:flex-end">
-        <button onclick="closeTaskModal()" style="font-family:var(--sans);font-size:13px;padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;cursor:pointer;color:var(--muted)">取消</button>
-        <button onclick="saveTask()" style="font-family:var(--sans);font-size:13px;padding:8px 16px;border:none;border-radius:var(--radius-sm);background:var(--accent);color:white;cursor:pointer;font-weight:500">儲存</button>
+      <div style="display:flex;gap:8px;margin-top:24px;justify-content:flex-end">
+        <button onclick="closeTaskModal()" class="task-modal-btn-cancel">取消</button>
+        <button onclick="saveTask()" class="task-modal-btn-save">儲存</button>
       </div>
     </div>
   </div>
@@ -1556,18 +1607,28 @@ function renderSidebarTasks() {
     return `<div class="sidebar-task-item">
       <div class="sidebar-task-cb${t.done?' checked':''}" onclick="toggleTaskDone('${t.id}')"></div>
       <span class="sidebar-task-title${t.done?' done':''}" title="${esc(t.title)}">${esc(t.title)}</span>
+      ${t.tag ? `<span class="task-tag task-tag-${t.tag}" style="font-size:10px;padding:1px 6px">${t.tag}</span>` : ''}
       <span class="sidebar-task-date">${dateHint}</span>
       <button onclick="deleteTask('${t.id}')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px;padding:0 2px;flex-shrink:0;line-height:1" title="刪除">✕</button>
     </div>`;
   }).join('');
 }
 
+function selectTaskTag(el) {
+  document.querySelectorAll('#task-tag-pills .task-tag-pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('task-input-tag').value = el.dataset.tag;
+}
+
 function openAddTaskModal(dateStr) {
   editingTaskId = null;
+  document.getElementById('task-modal-title').textContent = '新增待辦事項';
   document.getElementById('task-input-title').value = '';
   document.getElementById('task-input-date').value = dateStr || toDateStr(new Date());
   document.getElementById('task-input-time').value = '';
   document.getElementById('task-input-tag').value = '';
+  document.querySelectorAll('#task-tag-pills .task-tag-pill').forEach(p => p.classList.remove('selected'));
+  document.querySelector('#task-tag-pills .task-tag-pill[data-tag=""]').classList.add('selected');
   const ov = document.getElementById('task-modal-overlay');
   ov.style.display = 'flex';
   setTimeout(() => document.getElementById('task-input-title').focus(), 50);
@@ -1613,10 +1674,14 @@ function editTask(id) {
   const t = tasksData.find(t => t.id === id);
   if (!t) return;
   editingTaskId = id;
+  document.getElementById('task-modal-title').textContent = '編輯待辦事項';
   document.getElementById('task-input-title').value = t.title;
   document.getElementById('task-input-date').value = t.date;
   document.getElementById('task-input-time').value = t.time || '';
   document.getElementById('task-input-tag').value = t.tag || '';
+  document.querySelectorAll('#task-tag-pills .task-tag-pill').forEach(p => p.classList.remove('selected'));
+  const sel = document.querySelector(`#task-tag-pills .task-tag-pill[data-tag="${t.tag||''}"]`);
+  if (sel) sel.classList.add('selected');
   const ov = document.getElementById('task-modal-overlay');
   ov.style.display = 'flex';
   setTimeout(() => document.getElementById('task-input-title').focus(), 50);
