@@ -1690,10 +1690,13 @@ function renderTasks() {
       html += `</div>`;
     }
 
-    // Today through next 7 days
-    const upcoming = Object.entries(groups).filter(([d]) => d >= todayStr && d <= in7Str);
-    upcoming.forEach(([dateStr, ts]) => {
+    // Always show all 7 days (even empty)
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(todayStr + 'T12:00:00');
+      d.setDate(d.getDate() + i);
+      const dateStr = toDateStr(d);
       const isToday = dateStr === todayStr;
+      const ts = groups[dateStr] || [];
       html += `<div class="task-date-group">
         <div class="task-date-header">
           <span class="task-date-pill${isToday ? ' today-pill' : ' future-pill'}">${dateLabel(dateStr)}</span>
@@ -1702,7 +1705,7 @@ function renderTasks() {
         </div>`;
       ts.forEach(t => { html += taskRow(t); });
       html += `</div>`;
-    });
+    }
 
     // Future beyond 7 days
     const farFuture = Object.entries(groups).filter(([d]) => d > in7Str);
