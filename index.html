@@ -870,12 +870,12 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
     </div>
 
     <!-- Sidebar Tasks -->
-    <div class="sidebar-section" style="flex:1;display:flex;flex-direction:column;min-height:0">
-      <div class="sidebar-section-title" style="display:flex;align-items:center;justify-content:space-between">
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">
         To Do List
         <button onclick="openAddTaskModal()" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:16px;line-height:1;padding:0 2px" title="新增">＋</button>
       </div>
-      <div id="sidebar-tasks-list" style="display:flex;flex-direction:column;gap:4px;overflow-y:auto;flex:1;padding-bottom:8px"></div>
+      <div id="sidebar-tasks-list" style="display:flex;flex-direction:column;gap:4px;max-height:220px;overflow-y:auto"></div>
     </div>
 
     <!-- Categories -->
