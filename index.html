@@ -652,6 +652,17 @@ input[type="time"].task-modal-input::-webkit-calendar-picker-indicator {
 .task-tag-pill.task-tag-social.selected  { background: #ede9fe; color: #6d28d9; }
 .task-tag-pill.task-tag-calming.selected { background: #dcfce7; color: #15803d; }
 .task-tag-pill.task-tag-reflective.selected { background: #fce7f3; color: #9d174d; }
+.task-modal-select {
+  font-family: var(--sans); font-size: 13px;
+  padding: 8px 28px 8px 10px; background: var(--bg);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  color: var(--text); outline: none; cursor: pointer; width: 100%;
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.task-modal-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
 .task-modal-btn-cancel {
   font-family: var(--sans); font-size: 13px; padding: 8px 18px;
   border: 1px solid var(--border); border-radius: var(--radius-sm);
@@ -1003,14 +1014,21 @@ input[type="time"].task-modal-input::-webkit-calendar-picker-indicator {
       <div style="display:flex;flex-direction:column;gap:14px">
         <input id="task-input-title" placeholder="待辦事項名稱…" class="task-modal-input" style="font-size:14px;padding:10px 12px">
 
-        <div style="display:flex;gap:8px">
-          <div style="flex:1;position:relative">
-            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none">📅</span>
-            <input id="task-input-date" type="date" class="task-modal-input" style="padding-left:30px;width:100%">
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">日期</div>
+          <div style="display:flex;gap:6px">
+            <select id="task-sel-year" class="task-modal-select" style="flex:1" onchange="updateTaskDays()"></select>
+            <select id="task-sel-month" class="task-modal-select" style="flex:1" onchange="updateTaskDays()"></select>
+            <select id="task-sel-day" class="task-modal-select" style="flex:1"></select>
           </div>
-          <div style="position:relative">
-            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none">🕐</span>
-            <input id="task-input-time" type="time" class="task-modal-input" style="padding-left:30px;width:120px">
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">時間（選填）</div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <select id="task-sel-hour" class="task-modal-select" style="flex:1"></select>
+            <span style="color:var(--muted);font-weight:600">:</span>
+            <select id="task-sel-minute" class="task-modal-select" style="flex:1"></select>
+            <button onclick="clearTaskTime()" style="font-family:var(--sans);font-size:12px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;cursor:pointer;color:var(--muted);white-space:nowrap">清除</button>
           </div>
         </div>
 
@@ -1614,6 +1632,76 @@ function renderSidebarTasks() {
   }).join('');
 }
 
+function initTaskSelects() {
+  const now = new Date();
+  const yEl = document.getElementById('task-sel-year');
+  const mEl = document.getElementById('task-sel-month');
+  const hEl = document.getElementById('task-sel-hour');
+  const minEl = document.getElementById('task-sel-minute');
+  const MONTHS = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  if (!yEl.options.length) {
+    for (let y = now.getFullYear(); y <= now.getFullYear() + 2; y++)
+      yEl.add(new Option(y + '年', y));
+    MONTHS.forEach((m, i) => mEl.add(new Option(m, i + 1)));
+    for (let h = 0; h < 24; h++) hEl.add(new Option(String(h).padStart(2,'0'), String(h).padStart(2,'0')));
+    [0,5,10,15,20,25,30,35,40,45,50,55].forEach(m => minEl.add(new Option(String(m).padStart(2,'0'), String(m).padStart(2,'0'))));
+  }
+  updateTaskDays();
+}
+
+function updateTaskDays() {
+  const y = +document.getElementById('task-sel-year').value;
+  const m = +document.getElementById('task-sel-month').value;
+  const dEl = document.getElementById('task-sel-day');
+  const cur = +dEl.value || 1;
+  const days = new Date(y, m, 0).getDate();
+  dEl.innerHTML = '';
+  for (let d = 1; d <= days; d++) dEl.add(new Option(d + '日', d));
+  dEl.value = Math.min(cur, days);
+}
+
+function getTaskModalDate() {
+  const y = document.getElementById('task-sel-year').value;
+  const m = String(document.getElementById('task-sel-month').value).padStart(2,'0');
+  const d = String(document.getElementById('task-sel-day').value).padStart(2,'0');
+  return `${y}-${m}-${d}`;
+}
+
+function getTaskModalTime() {
+  const h = document.getElementById('task-sel-hour').value;
+  const min = document.getElementById('task-sel-minute').value;
+  if (!h && h !== '00') return '';
+  return `${h}:${min}`;
+}
+
+function setTaskModalDate(dateStr) {
+  if (!dateStr) return;
+  const [y, m, d] = dateStr.split('-');
+  document.getElementById('task-sel-year').value = +y;
+  document.getElementById('task-sel-month').value = +m;
+  updateTaskDays();
+  document.getElementById('task-sel-day').value = +d;
+}
+
+function setTaskModalTime(timeStr) {
+  if (!timeStr) { clearTaskTime(); return; }
+  const [h, min] = timeStr.split(':');
+  const hEl = document.getElementById('task-sel-hour');
+  const minEl = document.getElementById('task-sel-minute');
+  hEl.value = h;
+  // snap minute to nearest 5
+  const minNum = +min;
+  const snapped = String(Math.round(minNum / 5) * 5 % 60).padStart(2,'0');
+  minEl.value = snapped || '00';
+}
+
+function clearTaskTime() {
+  document.getElementById('task-sel-hour').selectedIndex = -1;
+  document.getElementById('task-sel-minute').selectedIndex = -1;
+  document.getElementById('task-sel-hour').value = '';
+  document.getElementById('task-sel-minute').value = '';
+}
+
 function selectTaskTag(el) {
   document.querySelectorAll('#task-tag-pills .task-tag-pill').forEach(p => p.classList.remove('selected'));
   el.classList.add('selected');
@@ -1624,11 +1712,12 @@ function openAddTaskModal(dateStr) {
   editingTaskId = null;
   document.getElementById('task-modal-title').textContent = '新增待辦事項';
   document.getElementById('task-input-title').value = '';
-  document.getElementById('task-input-date').value = dateStr || toDateStr(new Date());
-  document.getElementById('task-input-time').value = '';
   document.getElementById('task-input-tag').value = '';
   document.querySelectorAll('#task-tag-pills .task-tag-pill').forEach(p => p.classList.remove('selected'));
   document.querySelector('#task-tag-pills .task-tag-pill[data-tag=""]').classList.add('selected');
+  initTaskSelects();
+  setTaskModalDate(dateStr || toDateStr(new Date()));
+  clearTaskTime();
   const ov = document.getElementById('task-modal-overlay');
   ov.style.display = 'flex';
   setTimeout(() => document.getElementById('task-input-title').focus(), 50);
@@ -1641,8 +1730,8 @@ function closeTaskModal() {
 function saveTask() {
   const title = document.getElementById('task-input-title').value.trim();
   if (!title) { document.getElementById('task-input-title').focus(); return; }
-  const date  = document.getElementById('task-input-date').value || toDateStr(new Date());
-  const time  = document.getElementById('task-input-time').value || '';
+  const date  = getTaskModalDate() || toDateStr(new Date());
+  const time  = getTaskModalTime();
   const tag   = document.getElementById('task-input-tag').value || '';
   if (editingTaskId) {
     const t = tasksData.find(t => t.id === editingTaskId);
@@ -1676,8 +1765,9 @@ function editTask(id) {
   editingTaskId = id;
   document.getElementById('task-modal-title').textContent = '編輯待辦事項';
   document.getElementById('task-input-title').value = t.title;
-  document.getElementById('task-input-date').value = t.date;
-  document.getElementById('task-input-time').value = t.time || '';
+  initTaskSelects();
+  setTaskModalDate(t.date);
+  setTaskModalTime(t.time || '');
   document.getElementById('task-input-tag').value = t.tag || '';
   document.querySelectorAll('#task-tag-pills .task-tag-pill').forEach(p => p.classList.remove('selected'));
   const sel = document.querySelector(`#task-tag-pills .task-tag-pill[data-tag="${t.tag||''}"]`);
