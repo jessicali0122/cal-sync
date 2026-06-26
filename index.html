@@ -139,7 +139,7 @@ header {
 /* ── Body Layout ── */
 .app-body {
   flex: 1; display: grid;
-  grid-template-columns: var(--sidebar-w) 1fr;
+  grid-template-columns: var(--sidebar-w) 220px 1fr;
   overflow: hidden; min-height: 0;
 }
 
@@ -831,9 +831,76 @@ input[type="time"].task-modal-input::-webkit-calendar-picker-indicator {
 .ev-tooltip .ev-tt-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
 .ev-tooltip .ev-tt-time { font-size: 12px; color: var(--muted); }
 
+/* ── Task Panel ── */
+.task-panel {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.task-panel-header {
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.task-panel-title {
+  font-size: 13px; font-weight: 700; color: var(--text);
+}
+.task-panel-count {
+  font-size: 11px; font-weight: 500; color: var(--muted);
+  background: var(--bg); border: 1px solid var(--border);
+  padding: 2px 8px; border-radius: 10px;
+}
+.task-panel-body {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+}
+.task-day-header {
+  position: sticky; top: 0;
+  padding: 8px 14px 4px;
+  font-size: 10px; font-weight: 700; color: var(--muted);
+  letter-spacing: .08em; text-transform: uppercase;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  z-index: 2;
+}
+.task-day-header.is-today { color: var(--accent); }
+.task-item {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background 0.12s;
+}
+.task-item:hover { background: var(--bg); }
+.task-item:last-child { border-bottom: none; }
+.task-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  flex-shrink: 0; margin-top: 3px;
+}
+.task-content { flex: 1; min-width: 0; }
+.task-title {
+  font-size: 12px; font-weight: 500; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  line-height: 1.4;
+}
+.task-time {
+  font-size: 10px; color: var(--muted); margin-top: 2px;
+}
+.task-tag-row { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+.task-tag {
+  font-size: 10px; font-weight: 500;
+  padding: 1px 6px; border-radius: 4px;
+  white-space: nowrap;
+}
+.task-panel-empty {
+  padding: 32px 14px; text-align: center;
+  font-size: 12px; color: var(--muted); line-height: 2;
+}
+
 @media (max-width: 900px) {
   .app-body { grid-template-columns: 1fr; }
   .sidebar { display: none; }
+  .task-panel { display: none; }
 }
 </style>
 </head>
@@ -961,6 +1028,17 @@ input[type="time"].task-modal-input::-webkit-calendar-picker-indicator {
 
 
   </aside>
+
+  <!-- ── Task Panel ── -->
+  <div class="task-panel">
+    <div class="task-panel-header">
+      <span class="task-panel-title">Next 7 Days</span>
+      <span class="task-panel-count" id="task-panel-count">0 筆</span>
+    </div>
+    <div class="task-panel-body" id="task-panel-body">
+      <div class="task-panel-empty">登入後顯示<br>近 7 天行程</div>
+    </div>
+  </div>
 
   <!-- ── Dashboard Panel ── -->
   <div class="cal-main" id="panel-dashboard" style="display:none">
@@ -2116,6 +2194,86 @@ function renderView() {
   else if (currentView === 'week') renderWeek();
   else renderList();
   renderMiniCal();
+  renderTaskPanel();
+}
+
+function renderTaskPanel() {
+  const body = document.getElementById('task-panel-body');
+  const countEl = document.getElementById('task-panel-count');
+  if (!body) return;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    days.push(d);
+  }
+
+  const pushedIds = new Set(Object.keys(events));
+  const allEvs = [...Object.values(events), ...calEvents.filter(e => !pushedIds.has(e.id))];
+
+  const weekdays = ['日','一','二','三','四','五','六'];
+  let totalCount = 0;
+  let html = '';
+
+  days.forEach(d => {
+    const ds = toDateStr(d);
+    const dayEvs = allEvs.filter(ev => {
+      const s = ev.start?.dateTime || ev.start?.date || '';
+      return s.startsWith(ds);
+    }).sort((a, b) => {
+      const sa = a.start?.dateTime || a.start?.date || '';
+      const sb = b.start?.dateTime || b.start?.date || '';
+      return sa.localeCompare(sb);
+    });
+
+    if (!dayEvs.length) return;
+    totalCount += dayEvs.length;
+
+    const isToday = sameDay(d, new Date());
+    const label = isToday
+      ? `今天 · ${d.getMonth()+1}/${d.getDate()} (週${weekdays[d.getDay()]})`
+      : `${d.getMonth()+1}/${d.getDate()} (週${weekdays[d.getDay()]})`;
+
+    html += `<div class="task-day-header${isToday?' is-today':''}">${label}</div>`;
+
+    dayEvs.forEach(ev => {
+      const isAllDay = !!ev.start?.date;
+      const title = ev.summary || '（無標題）';
+      const color = getEvColor(ev);
+      const bg = getEvBg(ev);
+      let timeStr = '全天';
+      if (!isAllDay && ev.start?.dateTime) {
+        const s = new Date(ev.start.dateTime);
+        const e2 = ev.end?.dateTime ? new Date(ev.end.dateTime) : s;
+        timeStr = `${String(s.getHours()).padStart(2,'0')}:${String(s.getMinutes()).padStart(2,'0')} – ${String(e2.getHours()).padStart(2,'0')}:${String(e2.getMinutes()).padStart(2,'0')}`;
+      }
+      const calName = ev._calName || '';
+      const tagHtml = calName
+        ? `<div class="task-tag-row"><span class="task-tag" style="background:${bg};color:${color}">${esc(calName.length>10?calName.slice(0,10)+'…':calName)}</span></div>`
+        : '';
+
+      html += `<div class="task-item" onclick="openEditModal('${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">
+        <div class="task-dot" style="background:${color}"></div>
+        <div class="task-content">
+          <div class="task-title" title="${esc(title)}">${esc(title.length>22?title.slice(0,22)+'…':title)}</div>
+          <div class="task-time">${timeStr}</div>
+          ${tagHtml}
+        </div>
+      </div>`;
+    });
+  });
+
+  if (!html) {
+    body.innerHTML = `<div class="task-panel-empty">${calEvents.length||Object.keys(events).length ? '近 7 天無行程' : '登入後顯示<br>近 7 天行程'}</div>`;
+    if (countEl) countEl.textContent = '0 筆';
+    return;
+  }
+
+  body.innerHTML = html;
+  if (countEl) countEl.textContent = `${totalCount} 筆`;
 }
 
 function getWeekNum(d) {
