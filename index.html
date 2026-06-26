@@ -4,22 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cal Sync</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236366f1'/%3E%3Crect x='6' y='10' width='20' height='16' rx='3' fill='white'/%3E%3Crect x='6' y='10' width='20' height='6' rx='2' fill='%234f46e5'/%3E%3Crect x='10' y='6' width='3' height='6' rx='1.5' fill='white'/%3E%3Crect x='19' y='6' width='3' height='6' rx='1.5' fill='white'/%3E%3Crect x='10' y='20' width='3' height='3' rx='1' fill='%236366f1'/%3E%3Crect x='14.5' y='20' width='3' height='3' rx='1' fill='%236366f1'/%3E%3Crect x='19' y='20' width='3' height='3' rx='1' fill='%236366f1'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%97%93%EF%B8%8F%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #f5f3ff;
+  --bg: #eef2ff;
   --surface: #ffffff;
   --border: #e2e8f0;
-  --border2: #ddd6fe;
+  --border2: #c7d2fe;
   --text: #0f172a;
   --muted: #64748b;
-  --accent: #7c3aed;
-  --accent-dark: #6d28d9;
-  --accent-dim: rgba(124,58,237,0.08);
-  --accent-glow: rgba(124,58,237,0.22);
+  --accent: #6366f1;
+  --accent-dark: #4f46e5;
+  --accent-dim: rgba(99,102,241,0.08);
+  --accent-glow: rgba(99,102,241,0.22);
   --sidebar-w: 264px;
   --header-h: 64px;
   --sans: 'Noto Sans TC', 'Segoe UI', sans-serif;
@@ -116,25 +116,6 @@ header {
   width: 8px; height: 8px; background: #1e293b;
   transform: rotate(45deg);
 }
-.avatar-menu {
-  display: none; position: absolute; top: calc(100% + 8px); right: 0;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; box-shadow: var(--shadow-md);
-  min-width: 200px; padding: 6px; z-index: 101;
-}
-.avatar-menu.open { display: block; }
-.avatar-menu-email {
-  font-size: 12px; color: var(--muted); padding: 8px 10px 6px;
-  border-bottom: 1px solid var(--border); margin-bottom: 4px;
-  word-break: break-all;
-}
-.avatar-menu-item {
-  width: 100%; text-align: left; font-family: var(--sans);
-  font-size: 13px; font-weight: 500; color: var(--text);
-  background: transparent; border: none; border-radius: 6px;
-  padding: 8px 10px; cursor: pointer; transition: background 0.12s;
-}
-.avatar-menu-item:hover { background: var(--accent-dim); color: var(--accent-dark); }
 
 /* ── Body Layout ── */
 .app-body {
@@ -184,7 +165,7 @@ header {
   aspect-ratio: 1; display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   font-size: 12px; font-weight: 400; color: var(--text);
-  cursor: pointer; border-radius: 6px; transition: all 0.12s;
+  cursor: pointer; border-radius: 50%; transition: all 0.12s;
   position: relative; user-select: none;
 }
 .mini-cal-day:hover:not(.today) { background: var(--bg); }
@@ -300,7 +281,7 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
 
 /* ── Main Calendar ── */
 .cal-main {
-  display: flex; flex-direction: column; overflow: hidden; background: var(--surface);
+  display: flex; flex-direction: column; overflow: hidden; background: var(--bg);
 }
 .cal-topbar {
   background: var(--surface); border-bottom: 1px solid var(--border);
@@ -317,8 +298,10 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
 .cal-nav-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 .cal-title-label { font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.4px; }
 .week-badge {
-  font-size: 13px; font-weight: 500; color: var(--muted);
-  height: 32px; padding: 0 2px; display: flex; align-items: center;
+  font-size: 12px; font-weight: 500; color: var(--muted);
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 6px; padding: 0 10px; height: 32px;
+  display: flex; align-items: center;
 }
 .today-btn {
   font-family: var(--sans); font-size: 14px; font-weight: 500;
@@ -470,7 +453,7 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
 }
 .week-time-gutter { border-right: 1px solid var(--border); }
 .week-day-head {
-  padding: 6px 4px 8px; text-align: center;
+  padding: 10px 4px; text-align: center;
   border-right: 1px solid var(--border); cursor: pointer;
   transition: background 0.12s;
 }
@@ -478,10 +461,10 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
 .week-day-head:hover .wdh-num { background: var(--bg); }
 .wdh-name { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.8px; text-transform: uppercase; }
 .wdh-num {
-  font-size: 18px; font-weight: 400; color: var(--text);
-  width: 30px; height: 30px; border-radius: 50%;
+  font-size: 22px; font-weight: 300; color: var(--text);
+  width: 38px; height: 38px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  margin: 2px auto 0; transition: background 0.12s;
+  margin: 4px auto 0; transition: background 0.12s;
 }
 .week-day-head.today .wdh-num { background: var(--accent); color: white; font-weight: 700; }
 .week-allday-row {
@@ -557,126 +540,6 @@ textarea#paste-input::placeholder { color: var(--muted); opacity: 0.6; }
   margin-bottom: 6px;
 }
 .list-date-label:first-child { border-top: none; padding-top: 4px; }
-/* ── Task Items ── */
-.task-date-group { margin-bottom: 24px; }
-.task-date-header {
-  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
-}
-.task-date-pill {
-  font-size: 12px; font-weight: 600; padding: 3px 12px;
-  border-radius: 20px; background: var(--accent); color: white;
-  letter-spacing: 0.03em;
-}
-.task-date-pill.today-pill { background: var(--accent); }
-.task-date-pill.future-pill { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
-.task-date-divider { flex: 1; height: 1px; background: var(--border); }
-.task-item {
-  display: flex; align-items: center; gap: 12px;
-  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-  padding: 12px 16px; margin-bottom: 8px;
-  transition: all 0.15s; cursor: default;
-}
-.task-item:hover { border-color: var(--border2); box-shadow: var(--shadow); }
-.task-item.done-item { opacity: 0.5; }
-.task-cb {
-  width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border2);
-  flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.15s; background: transparent;
-}
-.task-cb:hover { border-color: var(--accent); background: var(--accent-dim); }
-.task-cb.checked { background: var(--accent); border-color: var(--accent); }
-.task-cb.checked::after { content: '✓'; color: white; font-size: 11px; font-weight: 700; }
-.task-title { flex: 1; font-size: 14px; color: var(--text); }
-.task-title.done-title { text-decoration: line-through; color: var(--muted); }
-.task-time { font-size: 12px; color: var(--muted); white-space: nowrap; }
-.task-tag {
-  font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; white-space: nowrap;
-}
-.task-tag-quick   { background: #dbeafe; color: #1d4ed8; }
-.task-tag-deepwork { background: #1e293b; color: #e2e8f0; }
-.task-tag-errand  { background: #ffedd5; color: #c2410c; }
-.task-tag-social  { background: #ede9fe; color: #6d28d9; }
-.task-tag-calming { background: #dcfce7; color: #15803d; }
-.task-tag-reflective { background: #fce7f3; color: #9d174d; }
-.task-del { opacity: 0; background: none; border: none; cursor: pointer; color: var(--muted); font-size: 14px; padding: 2px 4px; border-radius: 4px; transition: opacity 0.15s; }
-.task-item:hover .task-del { opacity: 1; }
-.done-section-toggle {
-  display: flex; align-items: center; gap: 8px; cursor: pointer;
-  font-size: 13px; font-weight: 600; color: var(--muted); padding: 8px 0; margin-top: 8px;
-  user-select: none;
-}
-.done-section-toggle:hover { color: var(--text); }
-.done-section-caret { transition: transform 0.2s; display: inline-block; }
-.done-section-caret.open { transform: rotate(90deg); }
-.sidebar-task-item {
-  display: flex; align-items: center; gap: 8px;
-  padding: 6px 8px; border-radius: 8px; cursor: default;
-  transition: background 0.12s;
-}
-.sidebar-task-item:hover { background: var(--accent-dim); }
-.sidebar-task-cb {
-  width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border2);
-  flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.15s;
-}
-.sidebar-task-cb:hover { border-color: var(--accent); }
-.sidebar-task-cb.checked { background: var(--accent); border-color: var(--accent); }
-.sidebar-task-cb.checked::after { content: '✓'; color: white; font-size: 9px; font-weight: 700; }
-.sidebar-task-title { flex: 1; font-size: 12px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.sidebar-task-title.done { text-decoration: line-through; color: var(--muted); }
-.sidebar-task-date { font-size: 11px; color: var(--muted); white-space: nowrap; }
-.task-modal-input {
-  font-family: var(--sans); font-size: 13px;
-  padding: 9px 12px; background: var(--bg);
-  border: 1px solid var(--border); border-radius: var(--radius-sm);
-  color: var(--text); outline: none; width: 100%;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-.task-modal-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
-input[type="date"].task-modal-input, input[type="time"].task-modal-input {
-  -webkit-appearance: none; appearance: none; cursor: pointer;
-}
-input[type="date"].task-modal-input::-webkit-calendar-picker-indicator,
-input[type="time"].task-modal-input::-webkit-calendar-picker-indicator {
-  opacity: 0; position: absolute; right: 0; width: 100%; height: 100%; cursor: pointer;
-}
-.task-tag-pill {
-  font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 20px;
-  cursor: pointer; border: 1.5px solid transparent; transition: all 0.12s; user-select: none;
-  background: var(--bg); color: var(--muted); border-color: var(--border);
-}
-.task-tag-pill.selected { border-color: currentColor; box-shadow: 0 0 0 2px var(--accent-dim); }
-.task-tag-pill.task-tag-quick.selected   { background: #dbeafe; color: #1d4ed8; }
-.task-tag-pill.task-tag-deepwork.selected{ background: #1e293b; color: #e2e8f0; }
-.task-tag-pill.task-tag-errand.selected  { background: #ffedd5; color: #c2410c; }
-.task-tag-pill.task-tag-social.selected  { background: #ede9fe; color: #6d28d9; }
-.task-tag-pill.task-tag-calming.selected { background: #dcfce7; color: #15803d; }
-.task-tag-pill.task-tag-reflective.selected { background: #fce7f3; color: #9d174d; }
-.task-modal-select {
-  font-family: var(--sans); font-size: 13px;
-  padding: 8px 28px 8px 10px; background: var(--bg);
-  border: 1px solid var(--border); border-radius: var(--radius-sm);
-  color: var(--text); outline: none; cursor: pointer; width: 100%;
-  appearance: none; -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 10px center;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-.task-modal-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
-.task-modal-btn-cancel {
-  font-family: var(--sans); font-size: 13px; padding: 8px 18px;
-  border: 1px solid var(--border); border-radius: var(--radius-sm);
-  background: transparent; cursor: pointer; color: var(--muted); transition: background 0.12s;
-}
-.task-modal-btn-cancel:hover { background: var(--bg); }
-.task-modal-btn-save {
-  font-family: var(--sans); font-size: 13px; padding: 8px 18px;
-  border: none; border-radius: var(--radius-sm);
-  background: var(--accent); color: white; cursor: pointer; font-weight: 500; transition: background 0.12s;
-}
-.task-modal-btn-save:hover { background: var(--accent-dark); }
-/* ── /Task Items ── */
-
 .event-row {
   background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
   padding: 14px 16px; display: grid;
@@ -711,13 +574,13 @@ input[type="time"].task-modal-input::-webkit-calendar-picker-indicator {
 .event-meta { font-size: 12px; color: var(--muted); display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
 .meta-item { display: flex; align-items: center; gap: 4px; }
 .event-desc { font-size: 12px; color: var(--muted); line-height: 1.6; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 380px; }
-.event-controls { display: flex; flex-direction: row; gap: 8px; align-items: center; flex-shrink: 0; }
+.event-controls { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
 .time-inputs { display: flex; align-items: center; gap: 4px; }
 .time-input {
   font-family: var(--sans); font-size: 12px;
-  padding: 5px 6px; background: var(--bg);
+  padding: 6px 8px; background: var(--bg);
   border: 1px solid var(--border); border-radius: var(--radius-sm);
-  color: var(--text); outline: none; width: 92px;
+  color: var(--text); outline: none; width: 76px;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 .time-input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-dim); }
@@ -873,15 +736,25 @@ input[type="time"].task-modal-input::-webkit-calendar-picker-indicator {
 }
 .task-item:hover { background: var(--bg); }
 .task-item:last-child { border-bottom: none; }
-.task-dot {
-  width: 10px; height: 10px; border-radius: 50%;
-  flex-shrink: 0; margin-top: 3px;
+.task-check {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 1.5px solid var(--border); flex-shrink: 0; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.15s; background: transparent;
+}
+.task-check:hover { border-color: var(--accent); background: var(--accent-dim); }
+.task-check.done { border-color: transparent; }
+.task-check.done::after {
+  content: '✓'; font-size: 10px; font-weight: 700; color: white;
 }
 .task-content { flex: 1; min-width: 0; }
 .task-title {
   font-size: 12px; font-weight: 500; color: var(--text);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  line-height: 1.4;
+  line-height: 1.4; transition: all 0.15s;
+}
+.task-item.done .task-title {
+  text-decoration: line-through; color: var(--muted); opacity: 0.6;
 }
 .task-time {
   font-size: 10px; color: var(--muted); margin-top: 2px;
@@ -913,7 +786,7 @@ input[type="time"].task-modal-input::-webkit-calendar-picker-indicator {
 
 <header>
   <div class="logo">
-    <div class="logo-mark"><svg width="28" height="28" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="8" fill="#6366f1"/><rect x="6" y="10" width="20" height="16" rx="3" fill="white"/><rect x="6" y="10" width="20" height="6" rx="2" fill="#4f46e5"/><rect x="10" y="6" width="3" height="6" rx="1.5" fill="white"/><rect x="19" y="6" width="3" height="6" rx="1.5" fill="white"/><rect x="10" y="20" width="3" height="3" rx="1" fill="#6366f1"/><rect x="14.5" y="20" width="3" height="3" rx="1" fill="#6366f1"/><rect x="19" y="20" width="3" height="3" rx="1" fill="#6366f1"/></svg></div>
+    <div class="logo-mark">🗓️</div>
     Cal Sync
   </div>
 
@@ -930,22 +803,14 @@ input[type="time"].task-modal-input::-webkit-calendar-picker-indicator {
       <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="9" width="3" height="6" rx="1" opacity=".5"/><rect x="6" y="6" width="3" height="9" rx="1" opacity=".7"/><rect x="11" y="3" width="3" height="12" rx="1"/></svg>
       Analytics
     </button>
-    <button class="nav-item" id="main-nav-tasks" onclick="switchMainView('tasks')">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="14" height="14" rx="2"/><path d="M5 8l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Tasks
-    </button>
   </nav>
 
   <div class="header-right">
-    <div class="avatar-wrap" id="avatar-wrap" onclick="onAvatarClick(event)">
+    <div class="avatar-wrap" id="avatar-wrap" onclick="handleAuth()">
       <div class="avatar" id="user-avatar">
         <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
       </div>
       <div class="avatar-tip" id="avatar-tip">登入 Google</div>
-      <div class="avatar-menu" id="avatar-menu">
-        <div class="avatar-menu-email" id="avatar-menu-email"></div>
-        <button class="avatar-menu-item" id="avatar-menu-logout" onclick="doLogout(event)">登出</button>
-      </div>
     </div>
   </div>
 </header>
@@ -969,14 +834,14 @@ input[type="time"].task-modal-input::-webkit-calendar-picker-indicator {
     <!-- Import -->
     <div class="sidebar-section">
       <div class="sidebar-section-title">
-        快速新增行程
+        貼上 Sheets 資料
         <span class="sidebar-badge">auto detect</span>
       </div>
       <div class="paste-hint">
-        直接輸入 <strong>日期、時間、事件</strong> 就好<br>
-        <span style="font-size:12px;opacity:0.8">✓ 自動判讀格式　✓ 支援貼上試算表</span>
+        從 Google Sheets <strong>Ctrl+C</strong> 複製後貼到下方<br>
+        <span style="font-size:12px;opacity:0.8">✓ 自動判讀欄位　✓ 不限順序與標題</span>
       </div>
-      <textarea id="paste-input" placeholder="例如：6/20 14:00 團隊會議&#10;或直接貼上試算表內容…"></textarea>
+      <textarea id="paste-input" placeholder="在此貼上複製的表格內容…"></textarea>
       <div class="push-progress" id="push-progress">
         <div class="push-progress-bar" id="push-progress-bar"></div>
       </div>
@@ -984,15 +849,6 @@ input[type="time"].task-modal-input::-webkit-calendar-picker-indicator {
         ↑ 解析並推送到 Calendar
       </button>
       <button class="btn btn-ghost" onclick="clearInput()">清除</button>
-    </div>
-
-    <!-- Sidebar Tasks -->
-    <div class="sidebar-section">
-      <div class="sidebar-section-title">
-        To Do List
-        <button onclick="openAddTaskModal()" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:16px;line-height:1;padding:0 2px" title="新增">＋</button>
-      </div>
-      <div id="sidebar-tasks-list" style="display:flex;flex-direction:column;gap:4px;max-height:220px;overflow-y:auto"></div>
     </div>
 
     <!-- Categories -->
@@ -1025,7 +881,6 @@ input[type="time"].task-modal-input::-webkit-calendar-picker-indicator {
         </div>
       </div>
     </div>
-
 
   </aside>
 
@@ -1063,70 +918,13 @@ input[type="time"].task-modal-input::-webkit-calendar-picker-indicator {
       <span class="cal-title-label">Analytics</span>
     </div>
     <div style="padding:24px;overflow-y:auto;height:calc(100% - 64px)">
-      <div id="analytics-busiest" style="margin-bottom:32px">
-        <h3 style="font-size:14px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px">本週最忙碌的天（我的參與事件）</h3>
-        <div id="analytics-busy-rows" style="display:flex;flex-direction:column;gap:8px"></div>
-      </div>
-      <div id="analytics-by-cal">
+      <div id="analytics-by-cal" style="margin-bottom:32px">
         <h3 style="font-size:14px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px">各日曆事件數（本月）</h3>
         <div id="analytics-cal-rows" style="display:flex;flex-direction:column;gap:10px"></div>
       </div>
-    </div>
-  </div>
-
-  <!-- ── Tasks Panel ── -->
-  <div class="cal-main" id="panel-tasks" style="display:none">
-    <div class="cal-topbar">
-      <span class="cal-title-label">待辦事項</span>
-      <div class="cal-topbar-right">
-        <button class="today-btn" onclick="openAddTaskModal()" style="display:flex;align-items:center;gap:4px">＋ 新增</button>
-      </div>
-    </div>
-    <div id="tasks-body" style="padding:24px 28px;overflow-y:auto;height:calc(100% - 64px);max-width:680px;margin:0 auto;width:100%"></div>
-  </div>
-
-  <!-- Add Task Modal -->
-  <div id="task-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.4);z-index:900;align-items:center;justify-content:center" onclick="if(event.target===this)closeTaskModal()">
-    <div style="background:var(--surface);border-radius:var(--radius);padding:24px;width:380px;box-shadow:var(--shadow-md)">
-      <h3 style="font-size:16px;font-weight:600;margin-bottom:20px" id="task-modal-title">新增待辦事項</h3>
-      <div style="display:flex;flex-direction:column;gap:14px">
-        <input id="task-input-title" placeholder="待辦事項名稱…" class="task-modal-input" style="font-size:14px;padding:10px 12px">
-
-        <div>
-          <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">日期</div>
-          <div style="display:flex;gap:6px">
-            <select id="task-sel-year" class="task-modal-select" style="flex:1" onchange="updateTaskDays()"></select>
-            <select id="task-sel-month" class="task-modal-select" style="flex:1" onchange="updateTaskDays()"></select>
-            <select id="task-sel-day" class="task-modal-select" style="flex:1"></select>
-          </div>
-        </div>
-        <div>
-          <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">時間（選填）</div>
-          <div style="display:flex;gap:6px;align-items:center">
-            <select id="task-sel-hour" class="task-modal-select" style="flex:1"></select>
-            <span style="color:var(--muted);font-weight:600">:</span>
-            <select id="task-sel-minute" class="task-modal-select" style="flex:1"></select>
-            <button onclick="clearTaskTime()" style="font-family:var(--sans);font-size:12px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;cursor:pointer;color:var(--muted);white-space:nowrap">清除</button>
-          </div>
-        </div>
-
-        <div>
-          <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">標籤</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap" id="task-tag-pills">
-            <span class="task-tag-pill" data-tag="" onclick="selectTaskTag(this)">無</span>
-            <span class="task-tag-pill task-tag-quick" data-tag="quick" onclick="selectTaskTag(this)">⚡ quick</span>
-            <span class="task-tag-pill task-tag-deepwork" data-tag="deepwork" onclick="selectTaskTag(this)">🧠 deepwork</span>
-            <span class="task-tag-pill task-tag-errand" data-tag="errand" onclick="selectTaskTag(this)">🛒 errand</span>
-            <span class="task-tag-pill task-tag-social" data-tag="social" onclick="selectTaskTag(this)">💬 social</span>
-            <span class="task-tag-pill task-tag-calming" data-tag="calming" onclick="selectTaskTag(this)">🌿 calming</span>
-            <span class="task-tag-pill task-tag-reflective" data-tag="reflective" onclick="selectTaskTag(this)">💭 reflective</span>
-          </div>
-          <input type="hidden" id="task-input-tag" value="">
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:24px;justify-content:flex-end">
-        <button onclick="closeTaskModal()" class="task-modal-btn-cancel">取消</button>
-        <button onclick="saveTask()" class="task-modal-btn-save">儲存</button>
+      <div id="analytics-busiest">
+        <h3 style="font-size:14px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px">本週最忙碌的天</h3>
+        <div id="analytics-busy-rows" style="display:flex;flex-direction:column;gap:8px"></div>
       </div>
     </div>
   </div>
@@ -1141,7 +939,6 @@ input[type="time"].task-modal-input::-webkit-calendar-picker-indicator {
         <button class="cal-nav-btn" onclick="navNext()">›</button>
         <span class="cal-title-label" id="cal-label">—</span>
         <span class="week-badge" id="week-badge" style="display:none">—</span>
-        <span id="holiday-badge" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center"></span>
       </div>
 
       <!-- right: stats → view tabs → refresh → create -->
@@ -1277,12 +1074,12 @@ input[type="time"].task-modal-input::-webkit-calendar-picker-indicator {
 
 <script>
 // ── Constants ──
-const SCOPES = 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
+const SCOPES = 'https://www.googleapis.com/auth/calendar';
 const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
 const CLIENT_ID_KEY = 'gcal_jess_client_id';
 const TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-let CLIENT_ID = localStorage.getItem(CLIENT_ID_KEY) || '475833252870-0geampmdcde48p5l21bkpgrqjjvlecbh.apps.googleusercontent.com';
+let CLIENT_ID = localStorage.getItem(CLIENT_ID_KEY) || '';
 let gapiInited = false, gisInited = false, isSignedIn = false;
 let tokenClient;
 
@@ -1302,28 +1099,10 @@ const SLOT_MAP = {
 };
 
 // ── Color helpers ──
-const CAL_COLOR_KEY = 'gcal_custom_colors';
-function getCustomCalColor(calId) {
-  try { return JSON.parse(localStorage.getItem(CAL_COLOR_KEY)||'{}')[calId]||null; } catch { return null; }
-}
-function setCustomCalColor(calId, color) {
-  try {
-    const m = JSON.parse(localStorage.getItem(CAL_COLOR_KEY)||'{}');
-    m[calId] = color; localStorage.setItem(CAL_COLOR_KEY, JSON.stringify(m));
-  } catch {}
-}
-// Returns hex color for an event
+// Returns hex color for an event (uses calendar color if available)
 function getEvColor(ev) {
-  const calId = ev._calId || '';
-  // Custom override (user-set via color picker)
-  const custom = calId ? getCustomCalColor(calId) : null;
-  if (custom) return custom;
-  // Resource/room calendars → unified purple
-  if (calId.includes('resource.calendar.google.com')) return '#7c3aed';
-  // Primary (own) calendar → pink
-  if (ev._calPrimary) return '#db2777';
-  // Fallback to Google Calendar color
   if (ev._calColor) return ev._calColor;
+  if (ev._source === 'gcal') return '#22c55e';
   const str = ev.summary || '';
   let h = 0;
   for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0;
@@ -1333,16 +1112,7 @@ function getEvColor(ev) {
 // Returns lightened bg color (hex → rgba with opacity)
 function getEvBg(ev) {
   const c = getEvColor(ev);
-  return c + '33'; // ~20% opacity via hex alpha
-}
-// Returns true if the event has fully ended (past events get dimmed)
-function isEventPast(ev) {
-  const now = new Date();
-  if (ev.end?.dateTime) return new Date(ev.end.dateTime) < now;
-  if (ev.end?.date) return new Date(ev.end.date) <= new Date(toDateStr(now));
-  if (ev.start?.dateTime) return new Date(ev.start.dateTime) < now;
-  if (ev.start?.date) return ev.start.date < toDateStr(now);
-  return false;
+  return c + '22'; // ~13% opacity via hex alpha
 }
 // colorClass / barClass kept for compatibility but now use inline styles
 function colorClass(ev) { return '_ev'; }
@@ -1395,57 +1165,31 @@ function tryAutoLogin() {
   }
 }
 
-function onAvatarClick(e) {
-  e.stopPropagation();
-  if (!isSignedIn) { handleAuth(); return; }
-  document.getElementById('avatar-menu').classList.toggle('open');
-}
-
-document.addEventListener('click', (e) => {
-  const wrap = document.getElementById('avatar-wrap');
-  const menu = document.getElementById('avatar-menu');
-  if (menu && wrap && !wrap.contains(e.target)) menu.classList.remove('open');
-});
-
 function handleAuth() {
   if (!CLIENT_ID) { openSetup(); return; }
+  if (isSignedIn) {
+    google.accounts.oauth2.revoke(gapi.client.getToken()?.access_token || '');
+    gapi.client.setToken('');
+    localStorage.removeItem('gcal_jess_token');
+    localStorage.removeItem('gcal_jess_expiry');
+    setSignedIn(false);
+    calEvents = [];
+    calendarList = [];
+    document.getElementById('category-list').innerHTML = '';
+    renderView();
+    showToast('已登出', 'ok');
+    return;
+  }
   tokenClient.callback = async (resp) => {
     if (resp.error) { showToast('授權失敗', 'err'); return; }
     const token = gapi.client.getToken().access_token;
-    // 驗證 email domain
-    const userRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', { headers: { Authorization: `Bearer ${token}` } });
-    const userInfo = await userRes.json();
-    if (!userInfo.email || !userInfo.email.endsWith('@tsagroup.com.tw')) {
-      google.accounts.oauth2.revoke(token);
-      gapi.client.setToken('');
-      showToast('僅限 @tsagroup.com.tw 信箱登入', 'err');
-      return;
-    }
     localStorage.setItem('gcal_jess_token', token);
     localStorage.setItem('gcal_jess_expiry', String(Date.now() + resp.expires_in * 1000));
-    localStorage.setItem('gcal_jess_ever_auth', '1');
     setSignedIn(true);
     showToast('登入成功', 'ok');
     await loadCalendarEvents();
   };
-  // 'consent' only on first-ever auth; returning users use '' to skip re-consent screen
-  const everAuthed = localStorage.getItem('gcal_jess_ever_auth');
-  tokenClient.requestAccessToken({ prompt: everAuthed ? '' : 'consent' });
-}
-
-function doLogout(e) {
-  if (e) e.stopPropagation();
-  google.accounts.oauth2.revoke(gapi.client.getToken()?.access_token || '');
-  gapi.client.setToken('');
-  localStorage.removeItem('gcal_jess_token');
-  localStorage.removeItem('gcal_jess_expiry');
-  setSignedIn(false);
-  calEvents = [];
-  calendarList = [];
-  document.getElementById('category-list').innerHTML = '';
-  document.getElementById('avatar-menu').classList.remove('open');
-  renderView();
-  showToast('已登出', 'ok');
+  tokenClient.requestAccessToken({ prompt: gapi.client.getToken() ? '' : 'consent' });
 }
 
 function setSignedIn(v) {
@@ -1453,12 +1197,11 @@ function setSignedIn(v) {
   const tip = document.getElementById('avatar-tip');
   const av  = document.getElementById('user-avatar');
   if (v) {
-    tip.textContent = '帳戶選項';
+    tip.textContent = '登出';
     fetchGoogleAvatar();
   } else {
     tip.textContent = '登入 Google';
     av.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>';
-    document.getElementById('avatar-menu-email').textContent = '';
   }
   updatePushBtn();
 }
@@ -1477,11 +1220,8 @@ async function fetchGoogleAvatar() {
     } else if (info.name) {
       av.textContent = info.name[0].toUpperCase();
     }
-    document.getElementById('avatar-menu-email').textContent = info.email || '';
   } catch(e) {}
 }
-
-
 
 function isTokenExpired() {
   const expiry = localStorage.getItem('gcal_jess_expiry');
@@ -1532,8 +1272,6 @@ async function loadCalendarEvents(showLoad = true) {
           _calId: cal.id,
           _calColor: cal.backgroundColor || '#6366f1',
           _calName: cal.summary || cal.id,
-          _calPrimary: !!cal.primary,
-          _calRole: cal.accessRole || '',
         })))
       )
     );
@@ -1553,40 +1291,17 @@ async function loadCalendarEvents(showLoad = true) {
 }
 
 // ── Render calendar list in sidebar ──
-function getCalDisplayColor(cal) {
-  const custom = getCustomCalColor(cal.id);
-  if (custom) return custom;
-  if (cal.id.includes('resource.calendar.google.com')) return '#7c3aed';
-  if (cal.primary) return '#db2777';
-  return cal.backgroundColor || '#6366f1';
-}
-
 function renderCalendarCategories() {
   const el = document.getElementById('category-list');
   if (!el || !calendarList.length) return;
   el.innerHTML = calendarList.map(cal => {
-    const color = getCalDisplayColor(cal);
+    const color = cal.backgroundColor || '#6366f1';
     const hidden = hiddenCalendars.has(cal.id);
-    return `<div class="category-item" style="cursor:pointer">
-      <div class="cat-checkbox" onclick="toggleCalendar('${esc(cal.id)}')" style="background:${hidden?'transparent':color};border:2px solid ${color};transition:background .15s;cursor:pointer"></div>
-      <span class="cat-name" onclick="toggleCalendar('${esc(cal.id)}')" style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:${hidden?0.4:1};transition:opacity .15s;flex:1" title="${esc(cal.summary||cal.id)}">${esc(cal.summary||cal.id)}</span>
-      <div title="更換顏色" onclick="openCalColorPicker('${esc(cal.id)}')" style="width:14px;height:14px;border-radius:50%;background:${color};border:1.5px solid rgba(0,0,0,0.12);cursor:pointer;flex-shrink:0;transition:transform .15s" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'"></div>
-      <input type="color" id="cp-${esc(cal.id)}" value="${color}" style="width:0;height:0;opacity:0;position:absolute;pointer-events:none" onchange="applyCalColor('${esc(cal.id)}',this.value)">
+    return `<div class="category-item" onclick="toggleCalendar('${esc(cal.id)}')" style="cursor:pointer">
+      <div class="cat-checkbox" style="background:${hidden ? 'transparent' : color};border:2px solid ${color};transition:background .15s"></div>
+      <span class="cat-name" style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:${hidden ? 0.4 : 1};transition:opacity .15s" title="${esc(cal.summary||cal.id)}">${esc(cal.summary||cal.id)}</span>
     </div>`;
   }).join('');
-}
-
-function openCalColorPicker(calId) {
-  const inp = document.getElementById('cp-' + calId);
-  if (inp) { inp.style.pointerEvents='auto'; inp.click(); inp.style.pointerEvents='none'; }
-}
-
-function applyCalColor(calId, color) {
-  setCustomCalColor(calId, color);
-  // Update cached event colors for this calendar
-  calEvents = calEvents.map(e => e._calId === calId ? {...e, _calColor: color} : e);
-  renderCalendarCategories();
-  renderView();
 }
 
 function toggleCalendar(calId) {
@@ -1598,8 +1313,8 @@ function toggleCalendar(calId) {
 
 function getViewRangeStart() {
   const d = new Date(viewDate);
-  if (currentView === 'month') { d.setDate(1); const fd=d.getDay(); d.setDate(1-(fd===0?6:fd-1)); }
-  else if (currentView === 'week') { const wd=d.getDay(); d.setDate(d.getDate()-(wd===0?6:wd-1)); }
+  if (currentView === 'month') { d.setDate(1); d.setDate(1 - d.getDay()); }
+  else if (currentView === 'week') { d.setDate(d.getDate() - d.getDay()); }
   else { d.setDate(1); }
   d.setHours(0,0,0,0); return d;
 }
@@ -1608,9 +1323,9 @@ function getViewRangeEnd() {
   const d = new Date(viewDate);
   if (currentView === 'month') {
     d.setMonth(d.getMonth() + 1, 0);
-    const ed=d.getDay(); d.setDate(d.getDate()+(ed===0?0:7-ed));
+    d.setDate(d.getDate() + (6 - d.getDay()));
   } else if (currentView === 'week') {
-    const wd=d.getDay(); d.setDate(d.getDate()-(wd===0?6:wd-1)+6);
+    d.setDate(d.getDate() - d.getDay() + 7);
   } else { d.setMonth(d.getMonth() + 2, 0); }
   d.setHours(23,59,59,999); return d;
 }
@@ -1653,7 +1368,7 @@ function navNext() {
 }
 
 function switchMainView(v) {
-  ['dashboard','calendar','analytics','tasks'].forEach(n => {
+  ['dashboard','calendar','analytics'].forEach(n => {
     const p = document.getElementById('panel-'+n);
     const b = document.getElementById('main-nav-'+n);
     if (p) p.style.display = n === v ? '' : 'none';
@@ -1661,318 +1376,12 @@ function switchMainView(v) {
   });
   if (v === 'dashboard') renderDashboard();
   if (v === 'analytics') renderAnalytics();
-  if (v === 'tasks') renderTasks();
 }
-
-// ── Tasks ──────────────────────────────────────────────────────────────────
-const TASKS_KEY = 'gcal_tasks';
-let tasksData = JSON.parse(localStorage.getItem(TASKS_KEY) || '[]');
-let doneExpanded = false;
-let editingTaskId = null;
-
-function saveTasks() {
-  localStorage.setItem(TASKS_KEY, JSON.stringify(tasksData));
-  renderSidebarTasks();
-}
-
-function renderSidebarTasks() {
-  const el = document.getElementById('sidebar-tasks-list');
-  if (!el) return;
-  const todayStr = toDateStr(new Date());
-  const in7 = new Date(); in7.setDate(in7.getDate() + 7);
-  const in7Str = toDateStr(in7);
-  const DAY_ZH = ['日','一','二','三','四','五','六'];
-
-  const pending = tasksData
-    .filter(t => !t.done && t.date <= in7Str)
-    .sort((a,b) => (a.date+(a.time||'23:59')).localeCompare(b.date+(b.time||'23:59')));
-
-  if (pending.length === 0) {
-    el.innerHTML = `<div style="font-size:12px;color:var(--muted);padding:8px;text-align:center">沒有待辦事項 ✓</div>`;
-    return;
-  }
-
-  el.innerHTML = pending.map(t => {
-    let dateHint = '';
-    if (t.date === todayStr) dateHint = t.time || '今天';
-    else {
-      const tom = new Date(); tom.setDate(tom.getDate()+1);
-      if (t.date === toDateStr(tom)) dateHint = '明天';
-      else { const d = new Date(t.date+'T12:00:00'); dateHint = `${d.getMonth()+1}/${d.getDate()} 週${DAY_ZH[d.getDay()]}`; }
-    }
-    return `<div class="sidebar-task-item">
-      <div class="sidebar-task-cb${t.done?' checked':''}" onclick="toggleTaskDone('${t.id}')"></div>
-      <span class="sidebar-task-title${t.done?' done':''}" title="${esc(t.title)}">${esc(t.title)}</span>
-      ${t.tag ? `<span class="task-tag task-tag-${t.tag}" style="font-size:10px;padding:1px 6px">${t.tag}</span>` : ''}
-      <span class="sidebar-task-date">${dateHint}</span>
-      <button onclick="deleteTask('${t.id}')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px;padding:0 2px;flex-shrink:0;line-height:1" title="刪除">✕</button>
-    </div>`;
-  }).join('');
-}
-
-function initTaskSelects() {
-  const now = new Date();
-  const yEl = document.getElementById('task-sel-year');
-  const mEl = document.getElementById('task-sel-month');
-  const hEl = document.getElementById('task-sel-hour');
-  const minEl = document.getElementById('task-sel-minute');
-  const MONTHS = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
-  if (!yEl.options.length) {
-    for (let y = now.getFullYear(); y <= now.getFullYear() + 2; y++)
-      yEl.add(new Option(y + '年', y));
-    MONTHS.forEach((m, i) => mEl.add(new Option(m, i + 1)));
-    for (let h = 0; h < 24; h++) hEl.add(new Option(String(h).padStart(2,'0'), String(h).padStart(2,'0')));
-    [0,5,10,15,20,25,30,35,40,45,50,55].forEach(m => minEl.add(new Option(String(m).padStart(2,'0'), String(m).padStart(2,'0'))));
-  }
-  updateTaskDays();
-}
-
-function updateTaskDays() {
-  const y = +document.getElementById('task-sel-year').value;
-  const m = +document.getElementById('task-sel-month').value;
-  const dEl = document.getElementById('task-sel-day');
-  const cur = +dEl.value || 1;
-  const days = new Date(y, m, 0).getDate();
-  dEl.innerHTML = '';
-  for (let d = 1; d <= days; d++) dEl.add(new Option(d + '日', d));
-  dEl.value = Math.min(cur, days);
-}
-
-function getTaskModalDate() {
-  const y = document.getElementById('task-sel-year').value;
-  const m = String(document.getElementById('task-sel-month').value).padStart(2,'0');
-  const d = String(document.getElementById('task-sel-day').value).padStart(2,'0');
-  return `${y}-${m}-${d}`;
-}
-
-function getTaskModalTime() {
-  const h = document.getElementById('task-sel-hour').value;
-  const min = document.getElementById('task-sel-minute').value;
-  if (!h && h !== '00') return '';
-  return `${h}:${min}`;
-}
-
-function setTaskModalDate(dateStr) {
-  if (!dateStr) return;
-  const [y, m, d] = dateStr.split('-');
-  document.getElementById('task-sel-year').value = +y;
-  document.getElementById('task-sel-month').value = +m;
-  updateTaskDays();
-  document.getElementById('task-sel-day').value = +d;
-}
-
-function setTaskModalTime(timeStr) {
-  if (!timeStr) { clearTaskTime(); return; }
-  const [h, min] = timeStr.split(':');
-  const hEl = document.getElementById('task-sel-hour');
-  const minEl = document.getElementById('task-sel-minute');
-  hEl.value = h;
-  // snap minute to nearest 5
-  const minNum = +min;
-  const snapped = String(Math.round(minNum / 5) * 5 % 60).padStart(2,'0');
-  minEl.value = snapped || '00';
-}
-
-function clearTaskTime() {
-  document.getElementById('task-sel-hour').selectedIndex = -1;
-  document.getElementById('task-sel-minute').selectedIndex = -1;
-  document.getElementById('task-sel-hour').value = '';
-  document.getElementById('task-sel-minute').value = '';
-}
-
-function selectTaskTag(el) {
-  document.querySelectorAll('#task-tag-pills .task-tag-pill').forEach(p => p.classList.remove('selected'));
-  el.classList.add('selected');
-  document.getElementById('task-input-tag').value = el.dataset.tag;
-}
-
-function openAddTaskModal(dateStr) {
-  editingTaskId = null;
-  document.getElementById('task-modal-title').textContent = '新增待辦事項';
-  document.getElementById('task-input-title').value = '';
-  document.getElementById('task-input-tag').value = '';
-  document.querySelectorAll('#task-tag-pills .task-tag-pill').forEach(p => p.classList.remove('selected'));
-  document.querySelector('#task-tag-pills .task-tag-pill[data-tag=""]').classList.add('selected');
-  initTaskSelects();
-  setTaskModalDate(dateStr || toDateStr(new Date()));
-  clearTaskTime();
-  const ov = document.getElementById('task-modal-overlay');
-  ov.style.display = 'flex';
-  setTimeout(() => document.getElementById('task-input-title').focus(), 50);
-}
-
-function closeTaskModal() {
-  document.getElementById('task-modal-overlay').style.display = 'none';
-}
-
-function saveTask() {
-  const title = document.getElementById('task-input-title').value.trim();
-  if (!title) { document.getElementById('task-input-title').focus(); return; }
-  const date  = getTaskModalDate() || toDateStr(new Date());
-  const time  = getTaskModalTime();
-  const tag   = document.getElementById('task-input-tag').value || '';
-  if (editingTaskId) {
-    const t = tasksData.find(t => t.id === editingTaskId);
-    if (t) { t.title = title; t.date = date; t.time = time; t.tag = tag; }
-  } else {
-    tasksData.push({ id: 'task_' + Date.now(), title, date, time, tag, done: false, doneAt: 0 });
-  }
-  saveTasks();
-  closeTaskModal();
-  renderTasks();
-}
-
-function toggleTaskDone(id) {
-  const t = tasksData.find(t => t.id === id);
-  if (!t) return;
-  t.done = !t.done;
-  t.doneAt = t.done ? Date.now() : 0;
-  saveTasks();
-  renderTasks();
-}
-
-function deleteTask(id) {
-  tasksData = tasksData.filter(t => t.id !== id);
-  saveTasks();
-  renderTasks();
-}
-
-function editTask(id) {
-  const t = tasksData.find(t => t.id === id);
-  if (!t) return;
-  editingTaskId = id;
-  document.getElementById('task-modal-title').textContent = '編輯待辦事項';
-  document.getElementById('task-input-title').value = t.title;
-  initTaskSelects();
-  setTaskModalDate(t.date);
-  setTaskModalTime(t.time || '');
-  document.getElementById('task-input-tag').value = t.tag || '';
-  document.querySelectorAll('#task-tag-pills .task-tag-pill').forEach(p => p.classList.remove('selected'));
-  const sel = document.querySelector(`#task-tag-pills .task-tag-pill[data-tag="${t.tag||''}"]`);
-  if (sel) sel.classList.add('selected');
-  const ov = document.getElementById('task-modal-overlay');
-  ov.style.display = 'flex';
-  setTimeout(() => document.getElementById('task-input-title').focus(), 50);
-}
-
-function renderTasks() {
-  const body = document.getElementById('tasks-body');
-  if (!body) return;
-  const todayStr = toDateStr(new Date());
-  const in7 = new Date(); in7.setDate(in7.getDate() + 7);
-  const in7Str = toDateStr(in7);
-
-  const pending = tasksData.filter(t => !t.done).sort((a,b) => {
-    const ad = a.date + (a.time ? 'T'+a.time : 'T23:59');
-    const bd = b.date + (b.time ? 'T'+b.time : 'T23:59');
-    return ad.localeCompare(bd);
-  });
-  const done = tasksData.filter(t => t.done).sort((a,b) => b.doneAt - a.doneAt);
-
-  // Group pending by date
-  const groups = {};
-  pending.forEach(t => {
-    if (!groups[t.date]) groups[t.date] = [];
-    groups[t.date].push(t);
-  });
-
-  const DAY_ZH = ['日','一','二','三','四','五','六'];
-  function dateLabel(dateStr) {
-    if (dateStr === todayStr) return '今天';
-    const tom = new Date(); tom.setDate(tom.getDate()+1);
-    if (dateStr === toDateStr(tom)) return '明天';
-    const d = new Date(dateStr+'T12:00:00');
-    return `${d.getMonth()+1}/${d.getDate()} 週${DAY_ZH[d.getDay()]}`;
-  }
-
-  function tagChip(tag) {
-    if (!tag) return '';
-    const labels = {quick:'quick',deepwork:'deepwork',errand:'errand',social:'social',calming:'calming',reflective:'reflective'};
-    return `<span class="task-tag task-tag-${tag}">${labels[tag]||tag}</span>`;
-  }
-
-  function taskRow(t) {
-    return `<div class="task-item${t.done?' done-item':''}" id="titem-${t.id}">
-      <div class="task-cb${t.done?' checked':''}" onclick="toggleTaskDone('${t.id}')"></div>
-      <span class="task-title${t.done?' done-title':''}" ondblclick="editTask('${t.id}')">${esc(t.title)}</span>
-      ${tagChip(t.tag)}
-      ${t.time ? `<span class="task-time">🕐 ${t.time}</span>` : ''}
-      <button class="task-del" onclick="deleteTask('${t.id}')" title="刪除">✕</button>
-    </div>`;
-  }
-
-  let html = '';
-
-  if (pending.length === 0 && done.length === 0) {
-    html = `<div style="text-align:center;padding:60px 0;color:var(--muted)">
-      <div style="font-size:40px;margin-bottom:12px">✓</div>
-      <div style="font-size:15px;font-weight:500">目前沒有待辦事項</div>
-      <div style="font-size:13px;margin-top:6px">點右上角「＋ 新增」來建立</div>
-    </div>`;
-  } else {
-    // Overdue (before today) group
-    const overdues = Object.entries(groups).filter(([d]) => d < todayStr);
-    if (overdues.length) {
-      html += `<div class="task-date-group">
-        <div class="task-date-header">
-          <span class="task-date-pill" style="background:#ef4444">過期</span>
-          <div class="task-date-divider"></div>
-        </div>`;
-      overdues.forEach(([,ts]) => ts.forEach(t => { html += taskRow(t); }));
-      html += `</div>`;
-    }
-
-    // Always show all 7 days (even empty)
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(todayStr + 'T12:00:00');
-      d.setDate(d.getDate() + i);
-      const dateStr = toDateStr(d);
-      const isToday = dateStr === todayStr;
-      const ts = groups[dateStr] || [];
-      html += `<div class="task-date-group">
-        <div class="task-date-header">
-          <span class="task-date-pill${isToday ? ' today-pill' : ' future-pill'}">${dateLabel(dateStr)}</span>
-          <div class="task-date-divider"></div>
-          <button onclick="openAddTaskModal('${dateStr}')" style="font-size:11px;background:none;border:none;cursor:pointer;color:var(--muted);padding:2px 4px;border-radius:4px" title="新增到這一天">＋</button>
-        </div>`;
-      ts.forEach(t => { html += taskRow(t); });
-      html += `</div>`;
-    }
-
-    // Future beyond 7 days
-    const farFuture = Object.entries(groups).filter(([d]) => d > in7Str);
-    if (farFuture.length) {
-      html += `<div class="task-date-group">
-        <div class="task-date-header">
-          <span class="task-date-pill future-pill">未來</span>
-          <div class="task-date-divider"></div>
-        </div>`;
-      farFuture.forEach(([,ts]) => ts.forEach(t => { html += taskRow(t); }));
-      html += `</div>`;
-    }
-
-    // Done section
-    if (done.length) {
-      html += `<div class="done-section-toggle" onclick="doneExpanded=!doneExpanded;renderTasks()">
-        <span class="done-section-caret${doneExpanded?' open':''}">›</span>
-        已完成（${done.length}）
-      </div>`;
-      if (doneExpanded) {
-        html += `<div>`;
-        done.forEach(t => { html += taskRow(t); });
-        html += `</div>`;
-      }
-    }
-  }
-
-  body.innerHTML = html;
-}
-// ── /Tasks ─────────────────────────────────────────────────────────────────
 
 function renderDashboard() {
   const today = toDateStr(new Date());
   const in7 = new Date(); in7.setDate(in7.getDate() + 7);
-  const todayStr = toDateStr(in7);
+  const todayStr = in7.toISOString().slice(0,10);
 
   const todayEvs = calEvents.filter(e => {
     const d = e.start?.date || e.start?.dateTime?.slice(0,10);
@@ -2006,39 +1415,7 @@ function renderDashboard() {
   const tl = document.getElementById('dashboard-today-list');
   tl.innerHTML = todayEvs.length ? todayEvs.map(evCard).join('') : '<div style="color:var(--muted);font-size:14px">今天沒有事件</div>';
   const ul = document.getElementById('dashboard-upcoming-list');
-  const groups = {};
-  upcomingEvs.forEach(ev => {
-    const d = ev.start?.date || ev.start?.dateTime?.slice(0,10);
-    if (!groups[d]) groups[d] = [];
-    groups[d].push(ev);
-  });
-  const days = ['日','一','二','三','四','五','六'];
-  let upHtml = '';
-  for (let i = 1; i <= 7; i++) {
-    const dt = new Date(today + 'T12:00:00');
-    dt.setDate(dt.getDate() + i);
-    const dateStr = toDateStr(dt);
-    const label = `${dt.getMonth()+1}/${dt.getDate()} 週${days[dt.getDay()]}`;
-    const evs = groups[dateStr] || [];
-    upHtml += `<div style="margin-bottom:16px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-        <div style="font-size:13px;font-weight:700;color:var(--accent-dark);background:var(--accent-dim);padding:4px 12px;border-radius:20px;white-space:nowrap">${label}</div>
-        <div style="flex:1;height:1px;background:var(--border)"></div>
-      </div>` +
-      (evs.length ? `<div style="display:flex;flex-direction:column;gap:6px">` + evs.map(evCard).join('') + `</div>` :
-        `<div style="color:var(--muted);font-size:13px;padding:0 4px">無行程</div>`) +
-      `</div>`;
-  }
-  ul.innerHTML = upHtml;
-}
-
-// Returns true if user is a participant in this event (not just a calendar subscriber)
-function isUserParticipant(ev) {
-  if (!ev.attendees || ev.attendees.length === 0) return true; // personal event
-  const self = ev.attendees.find(a => a.self);
-  if (self) return self.responseStatus !== 'declined';
-  // No self attendee but user owns the calendar
-  return ev._calPrimary || ev._calRole === 'owner' || ev._calRole === 'writer';
+  ul.innerHTML = upcomingEvs.length ? upcomingEvs.map(evCard).join('') : '<div style="color:var(--muted);font-size:14px">未來 7 天無事件</div>';
 }
 
 function renderAnalytics() {
@@ -2046,20 +1423,42 @@ function renderAnalytics() {
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0,10);
   const monthEnd = new Date(now.getFullYear(), now.getMonth()+1, 0).toISOString().slice(0,10);
 
-  // ── 本週最忙碌（先顯示，只算參與事件）──
-  const wd = now.getDay();
-  const weekStart = new Date(now); weekStart.setDate(now.getDate() - (wd === 0 ? 6 : wd - 1)); weekStart.setHours(0,0,0,0);
+  const monthEvs = calEvents.filter(e => {
+    const d = e.start?.date || e.start?.dateTime?.slice(0,10);
+    return d >= monthStart && d <= monthEnd;
+  });
+
+  const byCalMap = {};
+  monthEvs.forEach(e => {
+    const key = e._calName || e._calId || 'primary';
+    const color = getEvColor(e);
+    if (!byCalMap[key]) byCalMap[key] = { count: 0, color };
+    byCalMap[key].count++;
+  });
+  const maxCount = Math.max(1, ...Object.values(byCalMap).map(v => v.count));
+
+  const calRows = document.getElementById('analytics-cal-rows');
+  calRows.innerHTML = Object.entries(byCalMap).sort((a,b)=>b[1].count-a[1].count).map(([name, v]) => `
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="width:120px;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${name}">${name}</div>
+      <div style="flex:1;height:12px;background:var(--border);border-radius:6px;overflow:hidden">
+        <div style="height:100%;width:${Math.round(v.count/maxCount*100)}%;background:${v.color};border-radius:6px;transition:width .4s"></div>
+      </div>
+      <div style="font-size:14px;font-weight:600;color:var(--text);min-width:24px;text-align:right">${v.count}</div>
+    </div>`).join('') || '<div style="color:var(--muted);font-size:14px">本月無資料</div>';
+
+  const weekStart = new Date(now); weekStart.setDate(now.getDate() - now.getDay());
   const weekEvs = calEvents.filter(e => {
     const d = e.start?.date || e.start?.dateTime?.slice(0,10);
-    const dt = new Date(d + 'T12:00:00');
-    return dt >= weekStart && dt <= now && isUserParticipant(e);
+    const dt = new Date(d);
+    return dt >= weekStart && dt <= now;
   });
   const byDay = {};
   const dayNames = ['日','一','二','三','四','五','六'];
   weekEvs.forEach(e => {
     const d = e.start?.date || e.start?.dateTime?.slice(0,10);
-    const dow = new Date(d + 'T12:00:00').getDay();
-    byDay[dow] = (byDay[dow]||0) + 1;
+    const dow = new Date(d).getDay();
+    byDay[dow] = (byDay[dow]||0)+1;
   });
   const maxDay = Math.max(1, ...Object.values(byDay));
   const busyRows = document.getElementById('analytics-busy-rows');
@@ -2071,29 +1470,6 @@ function renderAnalytics() {
       </div>
       <div style="font-size:14px;font-weight:600;color:var(--text);min-width:24px;text-align:right">${cnt}</div>
     </div>`).join('') || '<div style="color:var(--muted);font-size:14px">本週無資料</div>';
-
-  // ── 各日曆事件數（本月）──
-  const monthEvs = calEvents.filter(e => {
-    const d = e.start?.date || e.start?.dateTime?.slice(0,10);
-    return d >= monthStart && d <= monthEnd;
-  });
-  const byCalMap = {};
-  monthEvs.forEach(e => {
-    const key = e._calName || e._calId || 'primary';
-    const color = getEvColor(e);
-    if (!byCalMap[key]) byCalMap[key] = { count: 0, color };
-    byCalMap[key].count++;
-  });
-  const maxCount = Math.max(1, ...Object.values(byCalMap).map(v => v.count));
-  const calRows = document.getElementById('analytics-cal-rows');
-  calRows.innerHTML = Object.entries(byCalMap).sort((a,b)=>b[1].count-a[1].count).map(([name, v]) => `
-    <div style="display:flex;align-items:center;gap:12px">
-      <div style="width:120px;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${name}">${name}</div>
-      <div style="flex:1;height:12px;background:var(--border);border-radius:6px;overflow:hidden">
-        <div style="height:100%;width:${Math.round(v.count/maxCount*100)}%;background:${v.color};border-radius:6px;transition:width .4s"></div>
-      </div>
-      <div style="font-size:14px;font-weight:600;color:var(--text);min-width:24px;text-align:right">${v.count}</div>
-    </div>`).join('') || '<div style="color:var(--muted);font-size:14px">本月無資料</div>';
 }
 
 function goToday() {
@@ -2142,10 +1518,8 @@ function renderMiniCal() {
     const dateStr = toDateStr(cur);
     const isSelected = sameDay(cur, viewDate);
     const hasDot = eventDates.has(dateStr);
-    const isMiniWeekend = cur.getDay() === 0 || cur.getDay() === 6;
-    const isMiniHol = !isToday && !isSelected && (isMiniWeekend || hasHolidayOnDate(dateStr));
-    html += `<div class="mini-cal-day ${isToday?'today':''} ${isOther?'other-month':''} ${isSelected&&!isToday?'selected':''}" style="${isMiniHol?'background:#f1f3f4;border-radius:4px;':''}"
-      onclick="miniCalSelectDay('${dateStr}')">${cur.getDate()}</div>`;
+    html += `<div class="mini-cal-day ${isToday?'today':''} ${isOther?'other-month':''} ${isSelected&&!isToday?'selected':''}"
+      onclick="miniCalSelectDay('${dateStr}')">${cur.getDate()}${hasDot ? '<span class="mini-day-dot"></span>' : ''}</div>`;
     cur.setDate(cur.getDate() + 1);
   }
   document.getElementById('mini-cal-days').innerHTML = html;
@@ -2161,16 +1535,6 @@ function miniCalSelectDay(dateStr) {
   renderView();
   renderMiniCal();
   if (isSignedIn) loadCalendarEvents(false);
-}
-
-// ── Holiday detection ──
-function isHolidayEvent(ev) {
-  const calName = (ev._calName || '').toLowerCase();
-  // Only trust dedicated holiday calendars (e.g. 台灣的節慶假日)
-  return calName.includes('節慶假日') || calName.includes('holidays in taiwan') || calName.includes('taiwan holiday');
-}
-function hasHolidayOnDate(dateStr) {
-  return getEventsOnDate(dateStr).some(isHolidayEvent);
 }
 
 // ── Merge events ──
@@ -2195,6 +1559,24 @@ function renderView() {
   else renderList();
   renderMiniCal();
   renderTaskPanel();
+}
+
+function getTaskDoneKey(id) { return 'task-done:' + id; }
+function isTaskDone(id) { return localStorage.getItem(getTaskDoneKey(id)) === '1'; }
+function toggleTaskDone(id, el) {
+  const done = !isTaskDone(id);
+  done ? localStorage.setItem(getTaskDoneKey(id), '1') : localStorage.removeItem(getTaskDoneKey(id));
+  const item = el.closest('.task-item');
+  const check = el;
+  if (done) {
+    item.classList.add('done');
+    check.classList.add('done');
+    check.style.background = check.dataset.color;
+  } else {
+    item.classList.remove('done');
+    check.classList.remove('done');
+    check.style.background = '';
+  }
 }
 
 function renderTaskPanel() {
@@ -2244,6 +1626,7 @@ function renderTaskPanel() {
       const title = ev.summary || '（無標題）';
       const color = getEvColor(ev);
       const bg = getEvBg(ev);
+      const done = isTaskDone(ev.id || title);
       let timeStr = '全天';
       if (!isAllDay && ev.start?.dateTime) {
         const s = new Date(ev.start.dateTime);
@@ -2254,10 +1637,13 @@ function renderTaskPanel() {
       const tagHtml = calName
         ? `<div class="task-tag-row"><span class="task-tag" style="background:${bg};color:${color}">${esc(calName.length>10?calName.slice(0,10)+'…':calName)}</span></div>`
         : '';
+      const checkStyle = done ? `background:${color};border-color:transparent` : '';
+      const evId = esc(ev.id || title);
 
-      html += `<div class="task-item" onclick="openEditModal('${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">
-        <div class="task-dot" style="background:${color}"></div>
-        <div class="task-content">
+      html += `<div class="task-item${done?' done':''}" data-id="${evId}">
+        <div class="task-check${done?' done':''}" style="${checkStyle}" data-color="${color}" data-id="${evId}"
+          onclick="event.stopPropagation();toggleTaskDone('${evId}',this)"></div>
+        <div class="task-content" onclick="openEditModal('${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">
           <div class="task-title" title="${esc(title)}">${esc(title.length>22?title.slice(0,22)+'…':title)}</div>
           <div class="task-time">${timeStr}</div>
           ${tagHtml}
@@ -2286,37 +1672,19 @@ function getWeekNum(d) {
 function updateLabel() {
   const label = document.getElementById('cal-label');
   const badge = document.getElementById('week-badge');
-  const holBadge = document.getElementById('holiday-badge');
   const y = viewDate.getFullYear(), m = viewDate.getMonth();
   if (currentView === 'week') {
-    label.textContent = `${y} 年 ${m+1} 月`;
-    badge.textContent = `第 ${getWeekNum(viewDate)} 週`;
+    const sun = new Date(viewDate); sun.setDate(sun.getDate() - sun.getDay());
+    const sat = new Date(sun); sat.setDate(sat.getDate() + 6);
+    const fmt = d => `${d.getMonth()+1}/${d.getDate()}`;
+    label.textContent = `${fmt(sun)} – ${fmt(sat)}, ${y}`;
+    badge.textContent = `Week ${getWeekNum(viewDate)}`;
     badge.style.display = '';
-    // Show Taiwan holidays in the current week
-    const wd = viewDate.getDay();
-    const mon = new Date(viewDate);
-    mon.setDate(viewDate.getDate() - (wd === 0 ? 6 : wd - 1));
-    const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
-    const weekHols = calEvents.filter(ev => {
-      if (!isHolidayEvent(ev)) return false;
-      const d = ev.start?.date || ev.start?.dateTime?.slice(0,10);
-      if (!d) return false;
-      const dt = new Date(d + 'T00:00:00');
-      return dt >= mon && dt <= sun;
-    });
-    const seen = new Set();
-    holBadge.innerHTML = weekHols.filter(ev => {
-      const n = ev.summary || '';
-      if (seen.has(n)) return false;
-      seen.add(n); return true;
-    }).map(ev => `<span style="font-size:11px;padding:2px 8px;background:var(--accent-dim);color:var(--accent);border-radius:20px;font-weight:500">${ev.summary}</span>`).join('');
   } else {
     label.textContent = `${y} 年 ${m+1} 月`;
     badge.style.display = 'none';
-    if (holBadge) holBadge.innerHTML = '';
   }
 }
-
 
 function updateStats() {
   const pushed = Object.values(events);
@@ -2352,33 +1720,30 @@ function renderMonth() {
   const today = new Date();
   const y = viewDate.getFullYear(), mo = viewDate.getMonth();
   const firstDay = new Date(y, mo, 1);
-  const fdow = firstDay.getDay();
-  const startMon = new Date(firstDay); startMon.setDate(1 - (fdow === 0 ? 6 : fdow - 1));
+  const startSun = new Date(firstDay); startSun.setDate(1 - firstDay.getDay());
   const lastDay = new Date(y, mo + 1, 0);
-  const edow = lastDay.getDay();
-  const endSun = new Date(lastDay); endSun.setDate(lastDay.getDate() + (edow === 0 ? 0 : 7 - edow));
-  const DAYS = ['一','二','三','四','五','六','日'];
+  const endSat = new Date(lastDay); endSat.setDate(lastDay.getDate() + (6 - lastDay.getDay()));
+  const DAYS = ['日','一','二','三','四','五','六'];
   let html = `<div class="month-grid">
     <div class="month-weekdays">${DAYS.map(d=>`<div class="month-weekday">${d}</div>`).join('')}</div>
     <div class="month-cells" id="month-cells">`;
-  const cur = new Date(startMon);
-  while (cur <= endSun) {
+  const cur = new Date(startSun);
+  while (cur <= endSat) {
     const dateStr = toDateStr(cur);
     const isToday = sameDay(cur, today);
     const isOther = cur.getMonth() !== mo;
     const evs = getEventsOnDate(dateStr).sort((a,b) => {
       return (a.start?.dateTime||a.start?.date||'').localeCompare(b.start?.dateTime||b.start?.date||'');
     });
-    const isWeekendCell = cur.getDay() === 0 || cur.getDay() === 6;
-    const isHoliday = !isToday && (isWeekendCell || hasHolidayOnDate(dateStr));
-    html += `<div class="month-cell ${isToday?'today':''} ${isOther?'other-month':''}" style="${isHoliday?'background:#f1f3f4;':''}" data-date="${dateStr}" onclick="monthCellClick('${dateStr}')"><div class="cell-day">${cur.getDate()}</div><div class="cell-events">`;
+    html += `<div class="month-cell ${isToday?'today':''} ${isOther?'other-month':''}" data-date="${dateStr}" onclick="monthCellClick('${dateStr}')">
+      <div class="cell-day">${cur.getDate()}</div>
+      <div class="cell-events">`;
     const show = evs.slice(0, 3); const more = evs.length - show.length;
     show.forEach(ev => {
       const title = ev.summary || '（無標題）';
       const time = ev.start?.dateTime ? ev.start.dateTime.slice(11,16)+' ' : '';
       const evColor = getEvColor(ev), evBg = getEvBg(ev);
-      const pastStyle = isEventPast(ev) ? ';opacity:0.42' : '';
-      html += `<div class="cell-ev" style="background:${evBg};color:${evColor};border-left:2px solid ${evColor}${pastStyle}" title="${esc(title)}" onclick="event.stopPropagation();openEditModal('${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">${time}${esc(title.length>14?title.slice(0,14)+'…':title)}</div>`;
+      html += `<div class="cell-ev" style="background:${evBg};color:${evColor};border-left:2px solid ${evColor}" title="${esc(title)}" onclick="event.stopPropagation();openEditModal('${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">${time}${esc(title.length>14?title.slice(0,14)+'…':title)}</div>`;
     });
     if (more > 0) html += `<div class="cell-more">+${more} 筆</div>`;
     html += `</div></div>`;
@@ -2397,9 +1762,9 @@ function monthCellClick(dateStr) {
 function renderWeek() {
   const body = document.getElementById('cal-body');
   const today = new Date();
-  const mon = new Date(viewDate); const vdow = mon.getDay(); mon.setDate(mon.getDate() - (vdow === 0 ? 6 : vdow - 1));
+  const sun = new Date(viewDate); sun.setDate(sun.getDate() - sun.getDay());
   const DAYS = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-  const cols = Array.from({length:7}, (_,i) => { const d = new Date(mon); d.setDate(mon.getDate()+i); return d; });
+  const cols = Array.from({length:7}, (_,i) => { const d = new Date(sun); d.setDate(sun.getDate()+i); return d; });
 
   // All-day row
   let alldayHtml = `<div class="week-allday-row"><div class="week-allday-gutter">全天</div>`;
@@ -2408,7 +1773,7 @@ function renderWeek() {
     alldayHtml += `<div class="week-allday-col">`;
     evs.forEach(ev => {
       const adColor = getEvColor(ev);
-      alldayHtml += `<div class="allday-chip" style="background:${getEvBg(ev)};color:${adColor}${isEventPast(ev)?';opacity:0.5;filter:grayscale(40%)':''}" title="${esc(ev.summary||'')}" onclick="openEditModal('${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">${esc((ev.summary||'（無標題）').slice(0,12))}</div>`;
+      alldayHtml += `<div class="allday-chip" style="background:${getEvBg(ev)};color:${adColor}" title="${esc(ev.summary||'')}" onclick="openEditModal('${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">${esc((ev.summary||'（無標題）').slice(0,12))}</div>`;
     });
     alldayHtml += `</div>`;
   });
@@ -2418,9 +1783,7 @@ function renderWeek() {
   let headHtml = `<div class="week-header-row"><div class="week-time-gutter"></div>`;
   cols.forEach(d => {
     const isToday = sameDay(d, today);
-    const isWeekend = d.getDay() === 0 || d.getDay() === 6;
-    const isHol = !isToday && (isWeekend || hasHolidayOnDate(toDateStr(d)));
-    headHtml += `<div class="week-day-head ${isToday?'today':''}" style="${isHol?'background:#f1f3f4;':''}" onclick="weekDayClick('${toDateStr(d)}')">
+    headHtml += `<div class="week-day-head ${isToday?'today':''}" onclick="weekDayClick('${toDateStr(d)}')">
       <div class="wdh-name">${DAYS[d.getDay()]}</div>
       <div class="wdh-num">${d.getDate()}</div>
     </div>`;
@@ -2436,58 +1799,15 @@ function renderWeek() {
 
   cols.forEach((d) => {
     const isToday = sameDay(d, today);
-    const isWeekendCol = d.getDay() === 0 || d.getDay() === 6;
-    const isHolCol = !isToday && (isWeekendCol || hasHolidayOnDate(toDateStr(d)));
     const evs = getEventsOnDate(toDateStr(d)).filter(e => !!e.start?.dateTime);
-    gridHtml += `<div class="week-col ${isToday?'today':''}" style="position:relative${isHolCol?';background:#f8f9fa':''}">`;
+    gridHtml += `<div class="week-col ${isToday?'today':''}" style="position:relative">`;
     for (let h = 0; h < 24; h++) gridHtml += `<div class="week-hour-cell" onclick="weekSlotClick(event,'${toDateStr(d)}',${h})"></div>`;
     if (isToday) {
       const now = new Date();
       const pct = (now.getHours()*60+now.getMinutes()) / (24*60) * 100;
       gridHtml += `<div class="time-now-line" style="top:${pct.toFixed(2)}%"></div>`;
     }
-    // Collision detection — Google Calendar style:
-    // 1. Sort by start time
-    // 2. Group events into clusters where any event overlaps with at least one other (sweep-line)
-    // 3. Within each cluster, assign columns greedily
-    // 4. All events in same cluster share the same totalCols → consistent widths
-    const sorted = evs.slice().sort((a,b) => new Date(a.start.dateTime)-new Date(b.start.dateTime));
-    const evMeta = sorted.map(ev => ({
-      s: new Date(ev.start.dateTime).getTime(),
-      e: new Date(ev.end?.dateTime || ev.start.dateTime).getTime(),
-      col: 0, totalCols: 1, groupId: -1
-    }));
-    // Step 1: find clusters via sweep-line
-    let gid = 0;
-    const clusters = [];
-    for (let i = 0; i < evMeta.length; i++) {
-      if (evMeta[i].groupId !== -1) continue;
-      const cluster = [i];
-      evMeta[i].groupId = gid;
-      let maxE = evMeta[i].e;
-      for (let j = i + 1; j < evMeta.length; j++) {
-        if (evMeta[j].s < maxE) {
-          evMeta[j].groupId = gid;
-          cluster.push(j);
-          maxE = Math.max(maxE, evMeta[j].e);
-        }
-      }
-      clusters.push(cluster);
-      gid++;
-    }
-    // Step 2: assign columns within each cluster, set totalCols
-    clusters.forEach(cluster => {
-      const slots = [];
-      cluster.forEach(i => {
-        let col = 0;
-        while (slots[col] && slots[col] > evMeta[i].s) col++;
-        slots[col] = evMeta[i].e;
-        evMeta[i].col = col;
-      });
-      const totalCols = Math.max(...cluster.map(i => evMeta[i].col)) + 1;
-      cluster.forEach(i => { evMeta[i].totalCols = totalCols; });
-    });
-    sorted.forEach((ev, i) => {
+    evs.forEach(ev => {
       const s = new Date(ev.start.dateTime), e2 = new Date(ev.end?.dateTime||ev.start.dateTime);
       const sm = s.getHours()*60+s.getMinutes(), em = e2.getHours()*60+e2.getMinutes();
       const top = (sm/(24*60)*100).toFixed(2);
@@ -2496,16 +1816,7 @@ function renderWeek() {
       const title = ev.summary || '（無標題）';
       const tlEnd = `${String(e2.getHours()).padStart(2,'0')}:${String(e2.getMinutes()).padStart(2,'0')}`;
       const wColor = getEvColor(ev);
-      const colIdx = evMeta[i].col;
-      const totalCols = evMeta[i].totalCols;
-      // Google Calendar style: left = col/total, right = (total-col-1)/total * 100% - gap
-      // This makes each event fill its column slot; the rightmost event fills to the edge
-      const zIdx = 10 + colIdx;
-      const leftPct  = (colIdx / totalCols * 100).toFixed(2);
-      const rightPct = ((totalCols - colIdx - 1) / totalCols * 100).toFixed(2);
-      const evLeft  = totalCols > 1 ? `${leftPct}%`        : '2px';
-      const evRight = totalCols > 1 ? `calc(${rightPct}% + 2px)` : '2px';
-      gridHtml += `<div class="week-ev" style="top:${top}%;height:${ht}%;left:${evLeft};right:${evRight};width:auto;z-index:${zIdx};background:${getEvBg(ev)};color:${wColor};border-left-color:${wColor}${isEventPast(ev)?';opacity:0.5;filter:grayscale(40%)':''}" title="${esc(title)}"
+      gridHtml += `<div class="week-ev" style="top:${top}%;height:${ht}%;background:${getEvBg(ev)};color:${wColor};border-left-color:${wColor}" title="${esc(title)}"
         onclick="weekEvClick(event,'${esc(ev.id||'')}','${esc(ev._calId||'primary')}')">
         <div class="ev-time">${tl} – ${tlEnd}</div>
         <div class="ev-title">${esc(title.length>20?title.slice(0,20)+'…':title)}</div>
@@ -2597,7 +1908,7 @@ function buildEventRowHTML(ev) {
   const statusClass = getStatusClass(row.status);
   const isUrgent = /^(true|是|yes|✓|v|✔)$/i.test((row.urgent||'').trim());
 
-  return `<div class="event-row" id="row-${esc(id)}" data-id="${esc(id)}"${isEventPast(ev) ? ' style="opacity:0.5;filter:grayscale(40%)"' : ''}>
+  return `<div class="event-row" id="row-${esc(id)}" data-id="${esc(id)}">
     <div class="event-bar" style="background:${getEvColor(ev)}"></div>
     <div class="event-body">
       <div class="event-top">
@@ -2914,11 +2225,6 @@ function getEventById(id) {
 }
 
 // ── Event Modal ──
-function getPrimaryCalendarId() {
-  const p = calendarList.find(c => c.primary);
-  return p ? p.id : 'primary';
-}
-
 function populateCalendarSelect(selectedId) {
   const sel = document.getElementById('ev-calendar');
   if (!calendarList.length) { sel.innerHTML = '<option value="primary">主日曆</option>'; return; }
@@ -2930,14 +2236,14 @@ function populateCalendarSelect(selectedId) {
 
 function openCreateModal(dateStr, startTime, evType) {
   editingEventId = null;
-  editingCalendarId = getPrimaryCalendarId();
+  editingCalendarId = 'primary';
   document.getElementById('modal-event-title').textContent = '新增事件';
   document.getElementById('ev-title').value = '';
   document.getElementById('ev-date').value = dateStr || toDateStr(new Date());
   document.getElementById('ev-allday').checked = !startTime;
   document.getElementById('ev-desc').value = '';
   document.getElementById('ev-delete-btn').style.display = 'none';
-  populateCalendarSelect(editingCalendarId);
+  populateCalendarSelect('primary');
   setEvType(evType || 'default');
   if (startTime) {
     document.getElementById('ev-start').value = startTime;
@@ -3122,7 +2428,6 @@ function showToast(msg, type='') {
 miniCalDate2 = new Date();
 window.addEventListener('load', () => {
   document.getElementById('paste-input').addEventListener('input', updatePushBtn);
-  renderSidebarTasks();
   renderView();
   if (!CLIENT_ID) {
     document.getElementById('setup-banner').style.display = 'flex'; return;
